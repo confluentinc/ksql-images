@@ -27,3 +27,5 @@ Pushing images to a registry is not currently part of the build.
 ```
 mvn clean package  # Build local images
 ```
+
+poke: 1
