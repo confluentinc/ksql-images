@@ -26,8 +26,6 @@ else
     BOOTSTRAP_SERVER_CONFIG=${KSQL_KSQL_STREAMS_BOOTSTRAP_SERVERS}
 fi
 
-CUB_CLASSPATH='"/usr/share/java/cp-base-new/*"'
-
 if [[ -n "${KSQL_SECURITY_PROTOCOL-}" ]] && [[ $KSQL_SECURITY_PROTOCOL != "PLAINTEXT" ]]
 then
     cub kafka-ready \
