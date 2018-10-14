@@ -22,10 +22,8 @@ This project uses `maven-assembly-plugin` and `dockerfile-maven-plugin` to build
 
 To build SNAPSHOT images, configure `.m2/settings.xml` for SNAPSHOT dependencies. These must be available at build time.
 
-Pushing images to a registry is not currently part of the build.
-
 ```
-mvn clean package  # Build local images
+mvn clean package -Pdocker  # Build local images
 ```
 
 poke: 1
