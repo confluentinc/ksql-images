@@ -46,7 +46,7 @@
             <artifactId>ksql-examples</artifactId>
             <version>${project.version}</version>
         </dependency>
- 
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>ksql-console-scripts</artifactId>
@@ -101,6 +101,25 @@
                         <phase>generate-resources</phase>
                         <configuration>
                             <includeArtifactIds>ksql-console-scripts,ksql-etc</includeArtifactIds>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>package</id>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                        <configuration>
+                            <buildArgs>
+                                <KSQL_EXAMPLES_ARTIFACT_ID>ksql-examples</KSQL_EXAMPLES_ARTIFACT_ID>
+                            </buildArgs>
+                            <repository>${docker.registry}confluentinc/ksql-examples</repository>
                         </configuration>
                     </execution>
                 </executions>
