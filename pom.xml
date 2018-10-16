@@ -20,6 +20,7 @@
     <modules>
         <module>cp-ksql-server</module>
         <module>cp-ksql-cli</module>
+        <module>cp-ksql-examples</module>
     </modules>
     
     <properties>
