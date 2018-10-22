@@ -9,4 +9,5 @@ dockerfile {
     mvnSkipDeploy = true
     nodeLabel = 'docker-oraclejdk8-compose'
     dockerPush = true
+    slackChannel = '#ksql-eng'
 }
