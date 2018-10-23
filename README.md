@@ -25,5 +25,3 @@ To build SNAPSHOT images, configure `.m2/settings.xml` for SNAPSHOT dependencies
 ```
 mvn clean package -Pdocker  # Build local images
 ```
-
-poke: 1
