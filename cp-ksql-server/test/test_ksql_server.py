@@ -87,7 +87,7 @@ class KsqlServerTest(unittest.TestCase):
 
     @classmethod
     def teardown_class(cls):
-        pass
+        cls.cluster.shutdown()
 
     def test_server_start(self):
         client = KsqlClient(self.cluster, 'ksql-cli', 'ksql-server', 8088)
