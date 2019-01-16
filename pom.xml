@@ -13,9 +13,9 @@
     <groupId>io.confluent.ksql</groupId>
     <artifactId>ksql-images-parent</artifactId>
     <packaging>pom</packaging>
-
     <name>KSQL Docker Images</name>
     <description>Build files for Confluent's KSQL Docker images</description>
+    <version>5.2.0-SNAPSHOT</version>
 
     <modules>
         <module>cp-ksql-server</module>
