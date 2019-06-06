@@ -66,6 +66,12 @@
             <version>${project.version}</version>
         </dependency>
 
+	<dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>ksql-functional-testsp</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>ksql-console-scripts</artifactId>
