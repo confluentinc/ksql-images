@@ -2,7 +2,7 @@
 
 dockerfile {
     upstreamProjects = ['confluentinc/common-docker', 'confluentinc/ksql']
-    dockerRepos = ['confluentinc/cp-ksql-server', 'confluentinc/cp-ksql-cli', 'confluentinc/ksql-examples']
+    dockerRepos = ['confluentinc/cp-ksql-server', 'confluentinc/cp-ksql-cli', 'confluentinc/ksql-examples', 'confluentinc/ksql-test-runner']
     dockerPullDeps = ['confluentinc/cp-base-new']
     dockerRegistry = '368821881613.dkr.ecr.us-west-2.amazonaws.com/'
     mvnPhase = 'package integration-test'
