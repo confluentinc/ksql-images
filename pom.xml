@@ -21,6 +21,7 @@
         <module>cp-ksql-cli</module>
         <module>cp-ksql-server</module>
         <module>cp-ksql-examples</module>
+        <module>cp-ksql-test-runner</module>
     </modules>
     
     <properties>
