@@ -23,7 +23,7 @@
     <parent>
         <groupId>io.confluent.ksql</groupId>
         <artifactId>ksql-images-parent</artifactId>
-        <version>5.2.3-SNAPSHOT</version>
+        <version>5.1.4-SNAPSHOT</version>
     </parent>
 
     <groupId>io.confluent.ksql</groupId>
@@ -49,12 +49,6 @@
         </dependency>
 
         <dependency>
-            <groupId>io.confluent.ksql</groupId>
-            <artifactId>cp-ksql-cli</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>monitoring-interceptors</artifactId>
             <version>${project.version}</version>
@@ -69,15 +63,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>ksql-console-scripts</artifactId>
-            <version>${project.version}</version>
-            <classifier>resources</classifier>
-            <type>zip</type>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>ksql-etc</artifactId>
             <version>${project.version}</version>
             <classifier>resources</classifier>
             <type>zip</type>
@@ -108,7 +93,7 @@
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <includeArtifactIds>ksql-console-scripts,ksql-etc</includeArtifactIds>
+                            <includeArtifactIds>ksql-console-scripts</includeArtifactIds>
                         </configuration>
                     </execution>
                 </executions>
