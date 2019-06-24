@@ -89,6 +89,12 @@
             <type>zip</type>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>io.confluent</groupId>
+            <artifactId>confluent-ksql-security-plugin</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
