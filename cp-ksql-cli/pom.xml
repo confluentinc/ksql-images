@@ -23,7 +23,7 @@
     <parent>
         <groupId>io.confluent.ksql</groupId>
         <artifactId>ksql-images-parent</artifactId>
-        <version>5.3.1-SNAPSHOT</version>
+        <version>5.3.1-beta190722193225</version>
     </parent>
 
     <groupId>io.confluent.ksql</groupId>
@@ -32,7 +32,7 @@
 
     <properties>
         <docker.skip-build>false</docker.skip-build>
-        <kafka.version>5.3.1-ccs-SNAPSHOT</kafka.version>
+        <kafka.version>5.3.1-ccs-beta190722193225</kafka.version>
     </properties>
 
     <dependencies>
