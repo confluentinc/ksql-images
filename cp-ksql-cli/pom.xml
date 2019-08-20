@@ -32,7 +32,7 @@
 
     <properties>
         <docker.skip-build>false</docker.skip-build>
-        <kafka.version>5.4.0-ccs-SNAPSHOT</kafka.version>
+        <kafka.version>5.4.0-ccs-beta1</kafka.version>
     </properties>
 
     <dependencies>
