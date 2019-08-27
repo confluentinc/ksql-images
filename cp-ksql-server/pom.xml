@@ -33,6 +33,7 @@
     <properties>
         <docker.skip-build>false</docker.skip-build>
         <docker.skip-test>false</docker.skip-test>
+        <docker.test-tag>5.3.x-latest</docker.test-tag>
     </properties>
 
     <dependencies>
