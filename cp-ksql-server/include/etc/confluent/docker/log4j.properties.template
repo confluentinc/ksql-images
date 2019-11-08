@@ -14,7 +14,7 @@ log4j.logger.processing=ERROR, kafka_appender
 
 {% if env['KSQL_LOG4J_LOGGERS'] %}
 {% set loggers = parse_log4j_loggers(env['KSQL_LOG4J_LOGGERS']) %}
-{% for logger,loglevel in loggers.items() %}
+{% for logger,loglevel in loggers.iteritems() %}
 log4j.logger.{{logger}}={{loglevel}}, stdout
 {% endfor %}
 {% endif %}

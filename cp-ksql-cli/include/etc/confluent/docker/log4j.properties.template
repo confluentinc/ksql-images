@@ -10,7 +10,7 @@ log4j.appender.default.file.layout.ConversionPattern=[%d] %p %m (%c:%L)%n
 
 {% if env['KSQL_LOG4J_LOGGERS'] %}
 {% set loggers = parse_log4j_loggers(env['KSQL_LOG4J_LOGGERS']) %}
-{% for logger,loglevel in loggers.items() %}
+{% for logger,loglevel in loggers.iteritems() %}
 log4j.logger.{{logger}}={{loglevel}}, stdout
 {% endfor %}
 {% endif %}
