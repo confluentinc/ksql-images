@@ -10,4 +10,5 @@ dockerfile {
     nodeLabel = 'docker-oraclejdk8-compose-swarm'
     dockerPush = true
     slackChannel = '#ksql-alerts'
+    cron = ''
 }
