@@ -4,6 +4,9 @@ log4j.appender.stdout=org.apache.log4j.ConsoleAppender
 log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
 log4j.appender.stdout.layout.ConversionPattern=[%d] %p %m (%c)%n
 
+# To achieve high throughput on pull queries, avoid logging every request from Jetty
+log4j.logger.io.confluent.rest-utils.requests=WARN
+
 {% if env['KSQL_LOG4J_PROCESSING_LOG_BROKERLIST'] %}
 log4j.appender.kafka_appender=org.apache.kafka.log4jappender.KafkaLog4jAppender
 log4j.appender.kafka_appender.layout=io.confluent.common.logging.log4j.StructuredJsonLayout
