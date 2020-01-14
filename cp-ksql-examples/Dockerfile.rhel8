@@ -6,6 +6,14 @@ FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-new:${DOCKER_UPSTREAM_TAG}
 ARG PROJECT_VERSION
 ARG ARTIFACT_ID
 ARG KSQL_EXAMPLES_ARTIFACT_ID
+ARG GIT_COMMIT
+
+LABEL maintainer="partner-support@confluent.io"
+LABEL vendor="Confluent"
+LABEL version=$GIT_COMMIT
+LABEL release=$PROJECT_VERSION
+LABEL name=$ARTIFACT_ID
+LABEL summary="Confluent KSQL is the streaming SQL engine that enables real-time data processing against Apache Kafka®."
 
 USER root
 
