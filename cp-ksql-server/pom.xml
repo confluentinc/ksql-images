@@ -63,19 +63,19 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>ksql-rest-app</artifactId>
+            <artifactId>ksqldb-rest-app</artifactId>
             <version>${project.version}</version>
         </dependency>
 
 	<dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>ksql-functional-tests</artifactId>
+            <artifactId>ksqldb-functional-tests</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>ksql-console-scripts</artifactId>
+            <artifactId>ksqldb-console-scripts</artifactId>
             <version>${project.version}</version>
             <classifier>resources</classifier>
             <type>zip</type>
@@ -84,7 +84,7 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>ksql-etc</artifactId>
+            <artifactId>ksqldb-etc</artifactId>
             <version>${project.version}</version>
             <classifier>resources</classifier>
             <type>zip</type>
@@ -121,7 +121,7 @@
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <includeArtifactIds>ksql-console-scripts,ksql-etc</includeArtifactIds>
+                            <includeArtifactIds>ksqldb-console-scripts,ksqldb-etc</includeArtifactIds>
                         </configuration>
                     </execution>
                 </executions>
