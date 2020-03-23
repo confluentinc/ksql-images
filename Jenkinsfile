@@ -1,5 +1,4 @@
 #!/usr/bin/env groovy
-
 dockerfile {
     dockerRepos = ['confluentinc/cp-ksqldb-server', 'confluentinc/cp-ksqldb-cli',
       'confluentinc/ksqldb-examples']
@@ -14,3 +13,4 @@ dockerfile {
     cpImages = true
     osTypes = ['deb9', 'ubi8']
 }
+
