@@ -28,7 +28,7 @@ USER root
 ADD --chown=appuser:appuser target/${ARTIFACT_ID}-${PROJECT_VERSION}-package/share/java/${ARTIFACT_ID}/* /usr/share/java/${COMPONENT}/
 ADD --chown=appuser:appuser target/${ARTIFACT_ID}-${PROJECT_VERSION}-package/share/doc/* /usr/share/doc/${ARTIFACT_ID}/
 ADD --chown=appuser:appuser target/dependency/ksqldb-console-scripts-${PROJECT_VERSION}/* /usr/bin/
-ADD --chown=appuser:appuser target/dependency/ksqldb-etc-${PROJECT_VERSION}/* /etc/ksql/
+ADD --chown=appuser:appuser target/dependency/ksqldb-etc-${PROJECT_VERSION}/* /etc/ksqldb/
 
 COPY --chown=appuser:appuser include/etc/confluent/docker /etc/confluent/docker
 

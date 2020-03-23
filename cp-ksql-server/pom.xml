@@ -27,7 +27,7 @@
     </parent>
 
     <groupId>io.confluent.ksql</groupId>
-    <artifactId>cp-ksql-server</artifactId>
+    <artifactId>cp-ksqldb-server</artifactId>
     <name>KSQL Server Docker image</name>
 
     <properties>
@@ -51,7 +51,7 @@
 
         <dependency>
             <groupId>io.confluent.ksql</groupId>
-            <artifactId>cp-ksql-cli</artifactId>
+            <artifactId>cp-ksqldb-cli</artifactId>
             <version>${project.version}</version>
         </dependency>
 

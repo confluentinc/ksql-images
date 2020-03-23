@@ -45,9 +45,9 @@ services:
     labels:
       - io.confluent.docker.testing=true
 
-  ksql-server:
-    hostname: ksql-server
-    image: "${DOCKER_TEST_REGISTRY}confluentinc/cp-ksql-server:${DOCKER_TAG}"
+  ksqldb-server:
+    hostname: ksqldb-server
+    image: "${DOCKER_TEST_REGISTRY}confluentinc/cp-ksqldb-server:${DOCKER_TAG}"
     depends_on:
       - kafka
       - schema-registry
@@ -58,11 +58,11 @@ services:
     labels:
       - io.confluent.docker.testing=true
 
-  ksql-cli:
-    hostname: ksql-cli 
-    image: "${DOCKER_TEST_REGISTRY}confluentinc/cp-ksql-cli:${DOCKER_TAG}"
+  ksqldb-cli:
+    hostname: ksqldb-cli 
+    image: "${DOCKER_TEST_REGISTRY}confluentinc/cp-ksqldb-cli:${DOCKER_TAG}"
     depends_on:
-      - ksql-server
+      - ksqldb-server
     entrypoint:
         - "/bin/sleep"
         - "1800"

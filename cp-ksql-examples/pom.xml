@@ -27,7 +27,7 @@
     </parent>
 
     <groupId>io.confluent.ksql</groupId>
-    <artifactId>cp-ksql-examples</artifactId>
+    <artifactId>cp-ksqldb-examples</artifactId>
     <name>KSQL examples image</name>
 
     <properties>
