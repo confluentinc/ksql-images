@@ -90,5 +90,5 @@ class KsqlServerTest(unittest.TestCase):
         cls.cluster.shutdown()
 
     def test_server_start(self):
-        client = KsqlClient(self.cluster, 'ksql-cli', 'ksql-server', 8088)
+        client = KsqlClient(self.cluster, 'ksqldb-cli', 'ksqldb-server', 8088)
         retry(client.info)

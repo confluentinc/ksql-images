@@ -3,9 +3,7 @@ ARG DOCKER_UPSTREAM_TAG
 
 FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-new:${DOCKER_UPSTREAM_TAG}
 
-EXPOSE 8088
-
-ENV COMPONENT=ksql-server
+ENV COMPONENT=ksqldb-cli
 ENV KSQL_CLASSPATH=/usr/share/java/${COMPONENT}/*
 
 ARG PROJECT_VERSION
@@ -28,26 +26,17 @@ USER root
 ADD --chown=appuser:appuser target/${ARTIFACT_ID}-${PROJECT_VERSION}-package/share/java/${ARTIFACT_ID}/* /usr/share/java/${COMPONENT}/
 ADD --chown=appuser:appuser target/${ARTIFACT_ID}-${PROJECT_VERSION}-package/share/doc/* /usr/share/doc/${ARTIFACT_ID}/
 ADD --chown=appuser:appuser target/dependency/ksqldb-console-scripts-${PROJECT_VERSION}/* /usr/bin/
-ADD --chown=appuser:appuser target/dependency/ksqldb-etc-${PROJECT_VERSION}/* /etc/ksql/
+ADD --chown=appuser:appuser target/dependency/ksqldb-etc-${PROJECT_VERSION}/* /etc/ksqldb/
 
 COPY --chown=appuser:appuser include/etc/confluent/docker /etc/confluent/docker
 
-RUN mkdir -p /etc/${COMPONENT} /etc/${COMPONENT}/secrets /usr/logs \
-  && chown appuser:appuser -R /etc/${COMPONENT} /usr/logs
-
-RUN chmod +x /etc/confluent/docker/run
-RUN chmod +x /etc/confluent/docker/configure
-RUN chmod +x /etc/confluent/docker/launch
-RUN chmod +x /etc/confluent/docker/ensure
+RUN mkdir -p /etc/${COMPONENT} /etc/${COMPONENT}/secrets /var/log/${COMPONENT} /usr/logs \
+  && chown appuser:appuser -R /etc/${COMPONENT} /var/log/${COMPONENT} /usr/logs
 
 USER appuser
 
-CMD ["/etc/confluent/docker/run"]
+RUN bash /etc/confluent/docker/configure
+ENV KSQL_LOG4J_OPTS=-Dlog4j.configuration=file:/etc/${COMPONENT}/log4j.properties
 
-# Polling period  : 5 seconds
-# Timeout period  :10 seconds (if the polling does not return within this time, treat as a failed poll)
-# Start-up period :10 minutes (during which failures are not counted as failures)
-# Retry period    :30 seconds (after which container is deemed unhealthy)
-# All settings can be overriden at run-time in Docker/Docker Compose. 
-HEALTHCHECK --start-period=600s --interval=5s --timeout=10s --retries=6 \
-	CMD /etc/confluent/docker/healthcheck.sh
+ENTRYPOINT ["ksql"]
+CMD ["http://localhost:8088"]
