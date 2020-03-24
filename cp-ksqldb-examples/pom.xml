@@ -125,7 +125,7 @@
                             <buildArgs>
                                 <KSQL_EXAMPLES_ARTIFACT_ID>ksqldb-examples</KSQL_EXAMPLES_ARTIFACT_ID>
                             </buildArgs>
-                            <repository>${docker.registry}confluentinc/ksql-examples</repository>
+                            <repository>${docker.registry}confluentinc/ksqldb-examples</repository>
                         </configuration>
                     </execution>
                 </executions>
