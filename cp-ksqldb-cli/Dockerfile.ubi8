@@ -3,7 +3,7 @@ ARG DOCKER_UPSTREAM_TAG
 
 FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-new:${DOCKER_UPSTREAM_TAG}
 
-ENV COMPONENT=ksql-cli
+ENV COMPONENT=ksqldb-cli
 ENV KSQL_CLASSPATH=/usr/share/java/${COMPONENT}/*
 
 ARG PROJECT_VERSION
@@ -26,7 +26,7 @@ USER root
 ADD --chown=appuser:appuser target/${ARTIFACT_ID}-${PROJECT_VERSION}-package/share/java/${ARTIFACT_ID}/* /usr/share/java/${COMPONENT}/
 ADD --chown=appuser:appuser target/${ARTIFACT_ID}-${PROJECT_VERSION}-package/share/doc/* /usr/share/doc/${ARTIFACT_ID}/
 ADD --chown=appuser:appuser target/dependency/ksqldb-console-scripts-${PROJECT_VERSION}/* /usr/bin/
-ADD --chown=appuser:appuser target/dependency/ksqldb-etc-${PROJECT_VERSION}/* /etc/ksql/
+ADD --chown=appuser:appuser target/dependency/ksqldb-etc-${PROJECT_VERSION}/* /etc/ksqldb/
 
 COPY --chown=appuser:appuser include/etc/confluent/docker /etc/confluent/docker
 

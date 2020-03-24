@@ -27,13 +27,11 @@
     </parent>
 
     <groupId>io.confluent.ksql</groupId>
-    <artifactId>cp-ksql-server</artifactId>
-    <name>KSQL Server Docker image</name>
+    <artifactId>cp-ksqldb-examples</artifactId>
+    <name>KSQL examples image</name>
 
     <properties>
         <docker.skip-build>false</docker.skip-build>
-        <docker.skip-test>false</docker.skip-test>
-        <docker.test-tag>5.3.x-latest</docker.test-tag>
     </properties>
 
     <dependencies>
@@ -41,35 +39,11 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.hamcrest</groupId>
-                    <artifactId>hamcrest-core</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>io.confluent.ksql</groupId>
-            <artifactId>cp-ksql-cli</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>io.confluent</groupId>
-            <artifactId>monitoring-interceptors</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>ksqldb-rest-app</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-	<dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>ksqldb-functional-tests</artifactId>
+            <artifactId>ksqldb-examples</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -93,7 +67,7 @@
 
         <dependency>
             <groupId>io.confluent</groupId>
-            <artifactId>confluent-ksql-security-plugin</artifactId>
+            <artifactId>monitoring-interceptors</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
@@ -112,6 +86,17 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
@@ -126,16 +111,25 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.6</version>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <phase>none</phase>
+                        <id>package</id>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                        <configuration>
+                            <buildArgs>
+                                <KSQL_EXAMPLES_ARTIFACT_ID>ksqldb-examples</KSQL_EXAMPLES_ARTIFACT_ID>
+                            </buildArgs>
+                            <repository>${docker.registry}confluentinc/ksqldb-examples</repository>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
-    </build>
+</build>
 </project>
