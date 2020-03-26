@@ -34,4 +34,4 @@ export KSQL_JMX_OPTS="$KSQL_JMX_OPTS -Djava.rmi.server.hostname=$KSQL_JMX_HOSTNA
 fi
 
 echo "===> Launching ${COMPONENT} ... "
-exec "${COMPONENT}"-start /etc/"${COMPONENT}"/"${COMPONENT}".properties
+exec ksql-server-start /etc/"${COMPONENT}"/"${COMPONENT}".properties
