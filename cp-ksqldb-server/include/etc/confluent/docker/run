@@ -23,7 +23,7 @@ echo "===> User"
 id
 
 echo "===> Configuring ..."
-. /etc/confluent/docker/configure
+/etc/confluent/docker/configure
 
 echo "===> Running preflight checks ... "
 /etc/confluent/docker/ensure
