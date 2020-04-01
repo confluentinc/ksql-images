@@ -42,7 +42,7 @@ then
 fi
 
 # KSQL_CONNECT_GROUP_ID is a required configuration for running embedded connect
-if ! [[ -z "${KSQL_CONNECT_GROUP_ID}" ]]; then
+if ! [[ -z "${KSQL_CONNECT_GROUP_ID:=}" ]]; then
   dub ensure KSQL_CONNECT_BOOTSTRAP_SERVERS
   dub ensure KSQL_CONNECT_GROUP_ID
   dub ensure KSQL_CONNECT_CONFIG_STORAGE_TOPIC
