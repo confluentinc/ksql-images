@@ -30,8 +30,8 @@ ADD --chown=appuser:appuser target/${ARTIFACT_ID}-${PROJECT_VERSION}-package/sha
 ADD --chown=appuser:appuser target/dependency/ksqldb-console-scripts-${PROJECT_VERSION}/* /usr/bin/
 ADD --chown=appuser:appuser target/dependency/ksqldb-etc-${PROJECT_VERSION}/* /etc/ksqldb/
 
-COPY --chown=appuser:appuser target/dependency/ksqldb-etc-${PROJECT_VERSION}/* /etc/confluent/docker
-COPY --chown=appuser:appuser include/etc/confluent/docker /etc/confluent/docker
+COPY --chown=appuser:appuser target/dependency/ksqldb-etc-${PROJECT_VERSION}/* /etc/confluent/docker/
+COPY --chown=appuser:appuser include/etc/confluent/docker/* /etc/confluent/docker/
 
 RUN mkdir -p /etc/${COMPONENT} /etc/${COMPONENT}/secrets /usr/logs \
   && chown appuser:appuser -R /etc/${COMPONENT} /usr/logs
