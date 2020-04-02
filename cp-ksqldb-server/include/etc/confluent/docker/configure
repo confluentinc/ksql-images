@@ -28,5 +28,18 @@ then
   fi
 fi
 
-dub template "/etc/confluent/docker/ksql-server.properties.template" "/etc/${COMPONENT}/${COMPONENT}.properties"
+# KSQL_CONNECT_GROUP_ID is a required configuration for running embedded connect,
+# so we can proxy it to check whether or not to start an embedded connect worker
+if ! [[ -z "${KSQL_CONNECT_GROUP_ID:=}" ]]; then
+  echo "===> Enabling Embedded Connect"
+  export KSQL_KSQL_CONNECT_WORKER_CONFIG="/etc/${COMPONENT}/connect.properties"
+
+  # Default to 8083, which matches the mesos-overrides. This is here in case we extend the containers to remove the mesos overrides.
+  if [ -z "${KSQL_CONNECT_REST_PORT:=}" ]; then
+    export KSQL_CONNECT_REST_PORT=8083
+  fi
+fi
+
+dub template "/etc/confluent/docker/ksqldb-server.properties.template" "/etc/${COMPONENT}/${COMPONENT}.properties"
+dub template "/etc/confluent/docker/connect.properties.template" "/etc/${COMPONENT}/connect.properties"
 dub template "/etc/confluent/docker/log4j.properties.template" "/etc/${COMPONENT}/log4j.properties"

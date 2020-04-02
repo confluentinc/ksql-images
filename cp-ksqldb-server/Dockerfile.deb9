@@ -22,7 +22,8 @@ ADD target/${ARTIFACT_ID}-${PROJECT_VERSION}-package/share/doc/* /usr/share/doc/
 ADD target/dependency/ksqldb-console-scripts-${PROJECT_VERSION}/* /usr/bin/
 ADD target/dependency/ksqldb-etc-${PROJECT_VERSION}/* /etc/ksqldb/
 
-COPY include/etc/confluent/docker /etc/confluent/docker
+COPY target/dependency/ksqldb-etc-${PROJECT_VERSION}/* /etc/confluent/docker/
+COPY include/etc/confluent/docker/* /etc/confluent/docker/
 
 RUN mkdir -p /etc/${COMPONENT} /etc/${COMPONENT}/secrets
 
