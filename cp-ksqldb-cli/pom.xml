@@ -36,6 +36,12 @@
     </properties>
 
     <dependencies>
+        <!-- including rest-utils explicitly to pin jersey deps to 2.30 -->
+        <dependency>
+            <groupId>io.confluent</groupId>
+            <artifactId>rest-utils</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>ksqldb-cli</artifactId>
