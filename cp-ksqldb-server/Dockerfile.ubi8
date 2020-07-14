@@ -36,11 +36,6 @@ COPY --chown=appuser:appuser include/etc/confluent/docker/* /etc/confluent/docke
 RUN mkdir -p /etc/${COMPONENT} /etc/${COMPONENT}/secrets /usr/logs \
   && chown appuser:appuser -R /etc/${COMPONENT} /usr/logs
 
-RUN echo "===> Installing confluent-hub..." \
-  && wget http://client.hub.confluent.io/confluent-hub-client-latest.tar.gz \
-  && tar xf confluent-hub-client-latest.tar.gz \
-  && rm confluent-hub-client-latest.tar.gz
-
 RUN chmod +x /etc/confluent/docker/run
 RUN chmod +x /etc/confluent/docker/configure
 RUN chmod +x /etc/confluent/docker/launch
