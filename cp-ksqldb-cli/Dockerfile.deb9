@@ -24,11 +24,6 @@ COPY include/etc/confluent/docker /etc/confluent/docker
 
 RUN mkdir -p /etc/${COMPONENT} /etc/${COMPONENT}/secrets /var/log/${COMPONENT}
 
-RUN echo "===> Installing confluent-hub..." \
-  && wget http://client.hub.confluent.io/confluent-hub-client-latest.tar.gz \
-  && tar xf confluent-hub-client-latest.tar.gz \
-  && rm confluent-hub-client-latest.tar.gz
-
 RUN bash /etc/confluent/docker/configure
 ENV KSQL_LOG4J_OPTS=-Dlog4j.configuration=file:/etc/${COMPONENT}/log4j.properties
 
