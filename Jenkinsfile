@@ -10,6 +10,7 @@ dockerfile {
     dockerPush = true
     slackChannel = '#ksql-alerts'
     cron = ''
+    usePackages = true
     cpImages = true
     osTypes = ['ubi8']
 }
