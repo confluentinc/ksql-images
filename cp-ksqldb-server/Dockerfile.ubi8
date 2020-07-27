@@ -64,9 +64,9 @@ enabled=1 " > /etc/yum.repos.d/confluent.repo \
     && yum clean all \
     && rm -rf /tmp/* \
     && mkdir -p /usr/share/confluent-hub-components \
-    && chown appuser:appuser -R /usr/share/confluent-hub-components
-
-ENV CONNECT_PLUGIN_PATH=/usr/share/java/,/usr/share/confluent-hub-components/
+    && chown appuser:appuser -R /usr/share/confluent-hub-components \ 
+    && mkdir -p /var/lib/kafka-streams \
+    && chown appuser:appuser -R /var/lib/kafka-streams
 
 RUN chmod +x /etc/confluent/docker/run
 RUN chmod +x /etc/confluent/docker/configure
