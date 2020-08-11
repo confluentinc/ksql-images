@@ -59,6 +59,11 @@ enabled=1 " > /etc/yum.repos.d/confluent.repo \
     && yum install -y confluent-security-${CONFLUENT_VERSION} \
     && echo "===> Installing Confluent Hub client ..." \
     && yum install -y confluent-hub-client-${CONFLUENT_VERSION} \
+    && echo "===> Installing Confluent Telemetry package ..." \
+    # We are installing confluent-telemetry package explicitly because
+    # KSQL's deb/rpm packages cannot directly depend on
+    # confluent-telemetry package as KSQL is Open Source.
+    && yum install -y confluent-telemetry-${CONFLUENT_VERSION} \
     && echo "===> Cleaning up ..."  \
     && yum clean all \
     && rm -rf /tmp/* \
