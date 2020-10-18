@@ -19,7 +19,7 @@ USER root
 
 ADD --chown=appuser:appuser target/${ARTIFACT_ID}-${PROJECT_VERSION}-package/share/java/${ARTIFACT_ID}/* /usr/share/java/${KSQL_EXAMPLES_ARTIFACT_ID}/
 ADD --chown=appuser:appuser target/${ARTIFACT_ID}-${PROJECT_VERSION}-package/share/doc/* /usr/share/doc/${KSQL_EXAMPLES_ARTIFACT_ID}/
-ADD --chown=appuser:appuser target/dependency/ksqldb-console-scripts-${PROJECT_VERSION}/* /usr/bin/
-ADD --chown=appuser:appuser target/dependency/ksqldb-etc-${PROJECT_VERSION}/* /etc/ksqldb/
+ADD --chown=appuser:appuser target/dependency/ksqldb-console-scripts-*/* /usr/bin/
+ADD --chown=appuser:appuser target/dependency/ksqldb-etc-*/* /etc/ksqldb/
 
 USER appuser
