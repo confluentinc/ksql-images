@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>io.confluent</groupId>
         <artifactId>common-docker</artifactId>
-        <version>5.3.7-SNAPSHOT</version>
+        <version>5.3.5</version>
     </parent>
 
     <groupId>io.confluent.ksql</groupId>
@@ -15,7 +13,7 @@
     <packaging>pom</packaging>
     <name>KSQL Docker Images</name>
     <description>Build files for Confluent's KSQL Docker images</description>
-    <version>5.3.7-SNAPSHOT</version>
+    <version>5.3.5</version>
 
     <modules>
         <module>cp-ksql-cli</module>
