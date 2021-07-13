@@ -77,6 +77,12 @@
         </dependency>
 
         <dependency>
+          <groupId>io.confluent.ksql</groupId>
+          <artifactId>ksqldb-tools</artifactId>
+          <version>${io.confluent.ksql.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>ksqldb-console-scripts</artifactId>
             <version>${io.confluent.ksql.version}</version>
