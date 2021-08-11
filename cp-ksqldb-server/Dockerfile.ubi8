@@ -18,6 +18,7 @@ LABEL version=$GIT_COMMIT
 LABEL release=$PROJECT_VERSION
 LABEL name=$ARTIFACT_ID
 LABEL summary="Confluent KSQL is the streaming SQL engine that enables real-time data processing against Apache Kafka®."
+LABEL description="Confluent KSQL is the streaming SQL engine that enables real-time data processing against Apache Kafka®."
 LABEL io.confluent.docker.git.id=$GIT_COMMIT
 ARG BUILD_NUMBER=-1
 LABEL io.confluent.docker.build.number=$BUILD_NUMBER
