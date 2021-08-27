@@ -22,6 +22,19 @@
         <module>cp-ksql-server</module>
         <module>cp-ksql-examples</module>
     </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.13</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>1.21</version>
+        </dependency>
+    </dependencies>
     
     <properties>
         <component.name>ksql</component.name>
