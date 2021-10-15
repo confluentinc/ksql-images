@@ -41,7 +41,7 @@ RUN echo "===> Installing Confluent Hub client ..." \
     && yum install -y confluent-hub-client-${CONFLUENT_VERSION} \
     && echo "===> Cleaning up ..."  \
     && yum clean all \
-    && rm -rf /tmp/* \
+    && rm -rf /tmp/* /etc/yum.repos.d/confluent.repo \
     && mkdir -p /usr/share/confluent-hub-components \
     && chown appuser:appuser -R /usr/share/confluent-hub-components
 

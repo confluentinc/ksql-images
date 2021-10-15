@@ -52,7 +52,7 @@ RUN echo "===> Installing Confluent security plugins ..." \
     && yum install -y confluent-telemetry-${CONFLUENT_VERSION} \
     && echo "===> Cleaning up ..."  \
     && yum clean all \
-    && rm -rf /tmp/* \
+    && rm -rf /tmp/* /etc/yum.repos.d/confluent.repo \
     && mkdir -p /usr/share/confluent-hub-components \
     && chown appuser:appuser -R /usr/share/confluent-hub-components \ 
     && mkdir -p /var/lib/kafka-streams \
