@@ -10,4 +10,5 @@ dockerfile {
     nodeLabel = 'docker-debian-jdk8-compose'
     dockerPush = true
     slackChannel = '#ksqldb-warn'
+    disableConcurrentBuilds = true
 }
