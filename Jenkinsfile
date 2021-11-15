@@ -13,4 +13,5 @@ dockerfile {
     cron = ''
     cpImages = true
     osTypes = ['ubi8']
+    disableConcurrentBuilds = true
 }
