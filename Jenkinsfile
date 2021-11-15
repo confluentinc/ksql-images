@@ -11,7 +11,7 @@ dockerfile {
     slackChannel = '#ksqldb-warn'
     cron = ''
     cpImages = true
-    osTypes = ['ubi8']
+    osTypes = ['deb8', 'ubi8']
     disableConcurrentBuilds = true
 }
 
