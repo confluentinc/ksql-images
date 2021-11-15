@@ -13,5 +13,6 @@ dockerfile {
     usePackages = true
     cpImages = true
     osTypes = ['ubi8']
+    disableConcurrentBuilds = true
 }
 
