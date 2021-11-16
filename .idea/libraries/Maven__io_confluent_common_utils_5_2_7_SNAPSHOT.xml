@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: io.confluent:common-utils:5.2.7-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/io/confluent/common-utils/5.2.7-SNAPSHOT/common-utils-5.2.7-20211115.173557-17.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/io/confluent/common-utils/5.2.7-SNAPSHOT/common-utils-5.2.7-20211115.173557-17-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/io/confluent/common-utils/5.2.7-SNAPSHOT/common-utils-5.2.7-20211115.173557-17-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="cp-ksql-examples" />
+        <module name="cp-ksql-cli" />
+        <module name="cp-ksql-server" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="cp-ksql-cli" target="8" />
+      <module name="cp-ksql-examples" target="8" />
+      <module name="cp-ksql-server" target="8" />
+      <module name="cp-ksqldb-cli" target="1.5" />
+      <module name="cp-ksqldb-examples" target="1.5" />
+      <module name="cp-ksqldb-server" target="1.5" />
+      <module name="ksql-images-parent" target="8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

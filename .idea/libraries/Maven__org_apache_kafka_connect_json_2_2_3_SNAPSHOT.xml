@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.apache.kafka:connect-json:2.2.3-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/kafka/connect-json/2.2.3-SNAPSHOT/connect-json-2.2.3-20211116.002123-688.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/kafka/connect-json/2.2.3-SNAPSHOT/connect-json-2.2.3-20211116.002123-688-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/kafka/connect-json/2.2.3-SNAPSHOT/connect-json-2.2.3-20211116.002123-688-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
