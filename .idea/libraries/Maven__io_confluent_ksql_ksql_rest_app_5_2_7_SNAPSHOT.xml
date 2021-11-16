@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: io.confluent.ksql:ksql-rest-app:5.2.7-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/io/confluent/ksql/ksql-rest-app/5.2.7-SNAPSHOT/ksql-rest-app-5.2.7-20211115.225440-43.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/io/confluent/ksql/ksql-rest-app/5.2.7-SNAPSHOT/ksql-rest-app-5.2.7-20211115.225440-43-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/io/confluent/ksql/ksql-rest-app/5.2.7-SNAPSHOT/ksql-rest-app-5.2.7-20211115.225440-43-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

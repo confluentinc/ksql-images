@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/cp-ksql-cli/cp-ksql-cli.iml" filepath="$PROJECT_DIR$/cp-ksql-cli/cp-ksql-cli.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cp-ksql-examples/cp-ksql-examples.iml" filepath="$PROJECT_DIR$/cp-ksql-examples/cp-ksql-examples.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cp-ksql-server/cp-ksql-server.iml" filepath="$PROJECT_DIR$/cp-ksql-server/cp-ksql-server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ksql-images-parent.iml" filepath="$PROJECT_DIR$/ksql-images-parent.iml" />
+    </modules>
+  </component>
+</project>

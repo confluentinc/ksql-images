@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: io.confluent.support:support-metrics-common:5.2.7-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/io/confluent/support/support-metrics-common/5.2.7-SNAPSHOT/support-metrics-common-5.2.7-20211115.174456-24.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/io/confluent/support/support-metrics-common/5.2.7-SNAPSHOT/support-metrics-common-5.2.7-20211115.174456-24-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/io/confluent/support/support-metrics-common/5.2.7-SNAPSHOT/support-metrics-common-5.2.7-20211115.174456-24-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
