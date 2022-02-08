@@ -31,7 +31,8 @@ ADD --chown=appuser:appuser target/dependency/ksqldb-etc-${PROJECT_VERSION}/* /e
 COPY --chown=appuser:appuser include/etc/confluent/docker /etc/confluent/docker
 
 RUN mkdir -p /etc/${COMPONENT} /etc/${COMPONENT}/secrets /var/log/${COMPONENT} /usr/logs \
-  && chown appuser:appuser -R /etc/${COMPONENT} /var/log/${COMPONENT} /usr/logs
+  && chown appuser:root -R /etc/${COMPONENT} /var/log/${COMPONENT} /usr/logs \
+  && chmod ug+w -R /etc/${COMPONENT} /var/log/${COMPONENT} /usr/logs
 
 USER appuser
 
