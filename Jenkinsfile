@@ -7,6 +7,7 @@ dockerfile {
     mvnPhase = 'package integration-test'
     mvnSkipDeploy = true
     nodeLabel = 'docker-debian-jdk8-compose'
+    usePackages = true
     dockerPush = true
     slackChannel = '#ksqldb-warn'
     cron = ''
