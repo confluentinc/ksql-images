@@ -21,3 +21,9 @@ log4j.logger.processing=ERROR, kafka_appender
 log4j.logger.{{logger}}={{loglevel}}, stdout
 {% endfor %}
 {% endif %}
+
+# allow users to set whatever LOG4J configurations they want
+{% set kr_props = env_to_props('LOG4J_', '') -%}
+{% for name, value in kr_props.items() -%}
+{{name}}={{value}}
+{% endfor -%}
