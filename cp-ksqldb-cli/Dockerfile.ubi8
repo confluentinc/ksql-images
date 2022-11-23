@@ -60,6 +60,8 @@ enabled=1 " > /etc/yum.repos.d/confluent.repo \
     && rm -rf /tmp/* /etc/yum.repos.d/confluent.repo \
     && mkdir -p /usr/share/confluent-hub-components \
     && chown appuser:appuser -R /usr/share/confluent-hub-components
+    
+RUN yum install -y jq
 
 USER appuser
 
