@@ -9,7 +9,7 @@ dockerfile {
     nodeLabel = 'docker-debian-jdk8-compose'
     usePackages = true
     dockerPush = true
-    slackChannel = '#ksqldb-quality-oncall'
+    slackChannel = '#ksqldb-warn'
     cron = ''
     usePackages = true
     cpImages = true
