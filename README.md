@@ -26,3 +26,7 @@ To build SNAPSHOT images, configure `.m2/settings.xml` for SNAPSHOT dependencies
 ```
 mvn clean package -Pdocker -DskipTests # Build local images
 ```
+
+## License
+
+Usage of these images is subject to the license terms of the software contained within. Please refer to Confluent's Docker images documentation [reference](https://docs.confluent.io/platform/current/installation/docker/image-reference.html) for further information. The software to extend and build the custom Docker images is available under the Apache 2.0 License.
