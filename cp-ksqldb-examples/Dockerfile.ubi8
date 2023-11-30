@@ -17,9 +17,9 @@ LABEL summary="Confluent KSQL is the streaming SQL engine that enables real-time
 
 USER root
 
-ADD --chown=appuser:appuser target/${ARTIFACT_ID}-${PROJECT_VERSION}-package/share/java/${ARTIFACT_ID}/* /usr/share/java/${KSQL_EXAMPLES_ARTIFACT_ID}/
-ADD --chown=appuser:appuser target/${ARTIFACT_ID}-${PROJECT_VERSION}-package/share/doc/* /usr/share/doc/${KSQL_EXAMPLES_ARTIFACT_ID}/
-ADD --chown=appuser:appuser target/dependency/ksqldb-console-scripts-*/* /usr/bin/
-ADD --chown=appuser:appuser target/dependency/ksqldb-etc-*/* /etc/ksqldb/
+COPY --chown=appuser:appuser target/${ARTIFACT_ID}-${PROJECT_VERSION}-package/share/java/${ARTIFACT_ID}/* /usr/share/java/${KSQL_EXAMPLES_ARTIFACT_ID}/
+COPY --chown=appuser:appuser target/${ARTIFACT_ID}-${PROJECT_VERSION}-package/share/doc/* /usr/share/doc/${KSQL_EXAMPLES_ARTIFACT_ID}/
+COPY --chown=appuser:appuser target/dependency/ksqldb-console-scripts-*/* /usr/bin/
+COPY --chown=appuser:appuser target/dependency/ksqldb-etc-*/* /etc/ksqldb/
 
 USER appuser
