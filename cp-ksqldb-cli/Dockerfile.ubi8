@@ -27,10 +27,10 @@ ARG CONFLUENT_PLATFORM_LABEL
 
 USER root
 
-ADD --chown=appuser:appuser target/${ARTIFACT_ID}-${PROJECT_VERSION}-package/share/java/${ARTIFACT_ID}/* /usr/share/java/${COMPONENT}/
-ADD --chown=appuser:appuser target/${ARTIFACT_ID}-${PROJECT_VERSION}-package/share/doc/* /usr/share/doc/${ARTIFACT_ID}/
-ADD --chown=appuser:appuser target/dependency/ksqldb-console-scripts-*/* /usr/bin/
-ADD --chown=appuser:appuser target/dependency/ksqldb-etc-*/* /etc/ksqldb/
+COPY --chown=appuser:appuser target/${ARTIFACT_ID}-${PROJECT_VERSION}-package/share/java/${ARTIFACT_ID}/* /usr/share/java/${COMPONENT}/
+COPY --chown=appuser:appuser target/${ARTIFACT_ID}-${PROJECT_VERSION}-package/share/doc/* /usr/share/doc/${ARTIFACT_ID}/
+COPY --chown=appuser:appuser target/dependency/ksqldb-console-scripts-*/* /usr/bin/
+COPY --chown=appuser:appuser target/dependency/ksqldb-etc-*/* /etc/ksqldb/
 
 COPY --chown=appuser:appuser include/etc/confluent/docker /etc/confluent/docker
 
