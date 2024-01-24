@@ -118,7 +118,21 @@
             <version>1.21</version>
         </dependency>
     </dependencies>
-    
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.spotify</groupId>
+                    <artifactId>dockerfile-maven-plugin</artifactId>
+                    <configuration>
+                        <writeTestMetadata>false</writeTestMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
     <properties>
         <netty-tcnative-version>2.0.61.Final</netty-tcnative-version>
         <!-- We normally get this from common, but Vertx is built against this -->
