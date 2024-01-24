@@ -135,7 +135,6 @@
                                 <KSQL_EXAMPLES_ARTIFACT_ID>ksqldb-examples</KSQL_EXAMPLES_ARTIFACT_ID>
                             </buildArgs>
                             <repository>${docker.registry}confluentinc/ksqldb-examples</repository>
-                            <writeTestMetadata>false</writeTestMetadata>
                         </configuration>
                     </execution>
                 </executions>
