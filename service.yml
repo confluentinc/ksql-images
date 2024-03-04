@@ -1,0 +1,26 @@
+name: ksql-images
+lang: unknown
+lang_version: unknown
+git:
+  enable: true
+semaphore: 
+  enable: true
+  pipeline_type: cp-dockerfile
+  execution_time_limit: {"hours": 8}
+  docker_repos: [
+    'confluentinc/cp-ksqldb-server',
+    'confluentinc/cp-ksqldb-cli',
+    'confluentinc/ksqldb-examples'
+  ]
+  maven_phase: 'package integration-test'
+  maven_skip_deploy: true
+  build_arm: true
+  nano_version: true
+  os_types: ["ubi8"]
+  # Need to confirm below properties work or not
+  docker_pull_deps: ['confluentinc/cp-base-new']
+  docker_registry: '519856050701.dkr.ecr.us-west-2.amazonaws.com/'
+  node_label: 'docker-debian-jdk8-compose'
+  use_packages: true
+  docker_push: true
+  slack_channel: '#ksqldb-quality-oncall'
