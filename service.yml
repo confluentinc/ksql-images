@@ -17,7 +17,6 @@ semaphore:
   build_arm: true
   nano_version: true
   os_types: ["ubi8"]
-  # Need to confirm below properties work or not
   docker_pull_deps: ['confluentinc/cp-base-new']
   docker_registry: '519856050701.dkr.ecr.us-west-2.amazonaws.com/'
   node_label: 'docker-debian-jdk8-compose'
