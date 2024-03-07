@@ -18,3 +18,4 @@ semaphore:
   nano_version: true
   os_types: ["ubi8"]
   pip_install_package: 'tox==3.28.0'
+  use_packages: true
