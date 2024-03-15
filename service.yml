@@ -4,7 +4,7 @@ lang_version: 3.7.3
 git:
   enable: true
 semaphore: 
-  enable: true
+  enable: false
   pipeline_type: cp-dockerfile
   execution_time_limit: {"hours": 8}
   docker_repos: [
