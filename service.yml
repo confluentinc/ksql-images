@@ -1,6 +1,6 @@
 name: ksql-images
-lang: unknown
-lang_version: unknown
+lang: python
+lang_version: 3.7.3
 git:
   enable: true
 semaphore: 
@@ -17,11 +17,7 @@ semaphore:
   build_arm: true
   nano_version: true
   os_types: ["ubi8"]
-  # Need to confirm below properties work or not
-  docker_pull_deps: ['confluentinc/cp-base-new']
-  docker_registry: '519856050701.dkr.ecr.us-west-2.amazonaws.com/'
-  node_label: 'docker-debian-jdk8-compose'
+  pip_install_package: 'tox==3.28.0'
   use_packages: true
-  docker_push: true
-  slack_channel: '#ksqldb-quality-oncall'
+  cp_images: true
   
