@@ -1,6 +1,6 @@
 # Docker images for KSQL
 
-This repo provides build files for [KSQL](https://www.confluent.io/product/ksql/) Docker images.
+This repo provides build files for [KSQL](https://www.confluent.io/product/ksql/) Docker images..
 
 ## Properties
 
