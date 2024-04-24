@@ -19,4 +19,5 @@ semaphore:
   pip_install_package: 'tox==3.28.0'
   use_packages: true
   cp_images: true
+  sign_images: true
   
