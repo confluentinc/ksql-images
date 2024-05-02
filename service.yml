@@ -21,3 +21,4 @@ semaphore:
   use_packages: true
   cp_images: true
   sign_images: true
+  push_latest: true
