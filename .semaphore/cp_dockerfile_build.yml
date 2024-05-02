@@ -142,6 +142,9 @@ blocks:
             - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$PACKAGE_TAG
             - docker push $PROD_IMAGE_NAME:$PACKAGE_TAG
             - sign-images $PROD_IMAGE_NAME:$PACKAGE_TAG
+            - export LATEST_PUSH_TAG=$LATEST_TAG$OS_TAG$AMD_ARCH
+            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
+            - docker push $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
   - name: Deploy AMD confluentinc/cp-ksqldb-cli
     dependencies: ["Build, Test, & Scan AMD"]
     run:
@@ -166,6 +169,9 @@ blocks:
             - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$PACKAGE_TAG
             - docker push $PROD_IMAGE_NAME:$PACKAGE_TAG
             - sign-images $PROD_IMAGE_NAME:$PACKAGE_TAG
+            - export LATEST_PUSH_TAG=$LATEST_TAG$OS_TAG$AMD_ARCH
+            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
+            - docker push $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
   - name: Deploy AMD confluentinc/ksqldb-examples
     dependencies: ["Build, Test, & Scan AMD"]
     run:
@@ -190,6 +196,9 @@ blocks:
             - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$PACKAGE_TAG
             - docker push $PROD_IMAGE_NAME:$PACKAGE_TAG
             - sign-images $PROD_IMAGE_NAME:$PACKAGE_TAG
+            - export LATEST_PUSH_TAG=$LATEST_TAG$OS_TAG$AMD_ARCH
+            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
+            - docker push $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
   - name: Create Manifest and Maven Deploy
     dependencies: ["Deploy AMD confluentinc/cp-ksqldb-server", "Deploy AMD confluentinc/cp-ksqldb-cli", "Deploy AMD confluentinc/ksqldb-examples"]
     run:
