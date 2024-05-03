@@ -79,7 +79,6 @@ global_job_config:
           echo "This job is not a isBetaJob, isPreviewJob, isHotfixJob, or isRcJob (What we know how to handle) - and we don't know how to handle it"
         fi
       - export DOCKER_DEV_REGISTRY="519856050701.dkr.ecr.us-west-2.amazonaws.com/docker/dev/"
-      - export DOCKER_TEST_REGISTRY="519856050701.dkr.ecr.us-west-2.amazonaws.com/docker/dev/"
       - export DOCKER_PROD_REGISTRY="519856050701.dkr.ecr.us-west-2.amazonaws.com/docker/prod/"
       - export DOCKER_UPSTREAM_REGISTRY=$DOCKER_PROD_REGISTRY
       - export LATEST_TAG=$BRANCH_TAG-latest
