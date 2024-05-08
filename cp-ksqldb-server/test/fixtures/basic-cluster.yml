@@ -48,7 +48,7 @@ services:
 
   ksqldb-server:
     hostname: ksqldb-server
-    image: "${DOCKER_TEST_REGISTRY}confluentinc/cp-ksqldb-server:${DOCKER_TAG}"
+    image: "${DOCKER_REGISTRY}confluentinc/cp-ksqldb-server:${DOCKER_TAG}"
     depends_on:
       - kafka
       - schema-registry
@@ -61,7 +61,7 @@ services:
 
   ksqldb-cli:
     hostname: ksqldb-cli 
-    image: "${DOCKER_TEST_REGISTRY}confluentinc/cp-ksqldb-cli:${DOCKER_TAG}"
+    image: "${DOCKER_REGISTRY}confluentinc/cp-ksqldb-cli:${DOCKER_TAG}"
     depends_on:
       - ksqldb-server
     entrypoint:
