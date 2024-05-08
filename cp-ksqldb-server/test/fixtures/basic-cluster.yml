@@ -67,4 +67,3 @@ services:
     entrypoint:
         - "/bin/sleep"
         - "1800"
-
