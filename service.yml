@@ -1,0 +1,24 @@
+name: ksql-images
+lang: python
+lang_version: 3.7.3
+git:
+  enable: true
+semaphore: 
+  enable: true
+  pipeline_type: cp-dockerfile
+  execution_time_limit: {"hours": 8}
+  docker_repos: [
+    'confluentinc/cp-ksqldb-server',
+    'confluentinc/cp-ksqldb-cli',
+    'confluentinc/ksqldb-examples'
+  ]
+  maven_phase: 'package integration-test'
+  maven_skip_deploy: true
+  build_arm: true
+  nano_version: true
+  os_types: ["ubi8"]
+  pip_install_package: 'tox==3.28.0'
+  use_packages: true
+  cp_images: true
+  sign_images: true
+  push_latest: true
