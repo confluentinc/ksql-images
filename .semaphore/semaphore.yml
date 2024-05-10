@@ -157,4 +157,4 @@ after_pipeline:
           - sem-version java 11
           - artifact pull workflow target-AMD
           - artifact pull workflow target-ARM
-          - emit-sonarqube-data --run_only_sonar_scan
+          - emit-sonarqube-data --run_only_sonar_sca
