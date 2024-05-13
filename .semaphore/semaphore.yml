@@ -25,6 +25,7 @@ global_job_config:
     commands:
       - checkout
       - sem-version java 8
+      - sem-version python 3.7
       - . vault-setup
       - . cache-maven restore
       - pip install tox==3.28.0
@@ -156,4 +157,4 @@ after_pipeline:
           - sem-version java 11
           - artifact pull workflow target-AMD
           - artifact pull workflow target-ARM
-          - emit-sonarqube-data --run_only_sonar_scan
+          - emit-sonarqube-data --run_only_sonar_sca
