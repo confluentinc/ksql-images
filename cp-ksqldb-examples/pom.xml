@@ -23,7 +23,7 @@
     <parent>
         <groupId>io.confluent.ksql</groupId>
         <artifactId>ksql-images-parent</artifactId>
-        <version>7.1.13-0</version>
+        <version>7.1.13-47</version>
     </parent>
 
     <groupId>io.confluent.ksql</groupId>
@@ -32,8 +32,8 @@
 
     <properties>
         <docker.skip-build>false</docker.skip-build>
-        <io.confluent.blueway.version>${confluent.version.range}</io.confluent.blueway.version>
-        <io.confluent.ksql.version>${confluent.version.range}</io.confluent.ksql.version>
+        <io.confluent.blueway.version>7.1.13-108</io.confluent.blueway.version>
+        <io.confluent.ksql.version>7.1.13-23</io.confluent.ksql.version>
     </properties>
 
     <dependencies>
