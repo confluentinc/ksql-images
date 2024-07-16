@@ -385,4 +385,3 @@ after_pipeline:
           - artifact pull workflow target-AMD
           - artifact pull workflow target-ARM
           - emit-sonarqube-data --run_only_sonar_scan
-
