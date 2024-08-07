@@ -3,6 +3,10 @@ lang: python
 lang_version: 3.7
 git:
   enable: true
+code_artifact:
+  enable: true
+  package_paths:
+    - maven-snapshots/maven/io.confluent.ksql/ksql-images-parent
 semaphore: 
   enable: true
   pipeline_type: cp-dockerfile
