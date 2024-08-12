@@ -1,9 +1,13 @@
 name: ksql-images
 lang: python
-lang_version: 3.7
+lang_version: 3.9
 git:
   enable: true
-semaphore: 
+code_artifact:
+  enable: true
+  package_paths:
+    - maven-snapshots/maven/io.confluent.ksql/ksql-images-parent
+semaphore:
   enable: true
   pipeline_type: cp-dockerfile
   execution_time_limit: {"hours": 8}
