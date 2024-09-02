@@ -7,7 +7,10 @@ code_artifact:
   enable: true
   package_paths:
     - maven-snapshots/maven/io.confluent.ksql/ksql-images-parent
-semaphore: 
+    - maven-snapshots/maven/io.confluent.ksql/cp-ksqldb-cli
+    - maven-snapshots/maven/io.confluent.ksql/cp-ksqldb-server
+    - maven-snapshots/maven/io.confluent.ksql/cp-ksqldb-examples
+semaphore:
   enable: true
   pipeline_type: cp-dockerfile
   execution_time_limit: {"hours": 8}
