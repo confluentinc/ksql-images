@@ -131,7 +131,7 @@ blocks:
   - name: Deploy AMD confluentinc/cp-ksqldb-server
     dependencies: ["Build, Test, & Scan AMD"]
     run:
-      when: "branch = 'master' or branch =~ '^[0-9]+\\.[0-9]+\\.x$' or branch =~ '^[0-9]+\\.[0-9]+\\.[0-9]+(-cp[0-9]+)?-rc[0-9]+$'"
+      when: "branch = 'master' or branch =~ '^[0-9]+\\.[0-9]+\\.x$' or branch =~ '^[0-9]+\\.[0-9]+\\.[0-9]+(-cp[0-9]+)?(-rc[0-9]+)?$'"
     task:
       jobs:
         - name: Deploy AMD confluentinc/cp-ksqldb-server ubi8
@@ -158,7 +158,7 @@ blocks:
   - name: Deploy AMD confluentinc/cp-ksqldb-cli
     dependencies: ["Build, Test, & Scan AMD"]
     run:
-      when: "branch = 'master' or branch =~ '^[0-9]+\\.[0-9]+\\.x$' or branch =~ '^[0-9]+\\.[0-9]+\\.[0-9]+(-cp[0-9]+)?-rc[0-9]+$'"
+      when: "branch = 'master' or branch =~ '^[0-9]+\\.[0-9]+\\.x$' or branch =~ '^[0-9]+\\.[0-9]+\\.[0-9]+(-cp[0-9]+)?(-rc[0-9]+)?$'"
     task:
       jobs:
         - name: Deploy AMD confluentinc/cp-ksqldb-cli ubi8
@@ -185,7 +185,7 @@ blocks:
   - name: Deploy AMD confluentinc/ksqldb-examples
     dependencies: ["Build, Test, & Scan AMD"]
     run:
-      when: "branch = 'master' or branch =~ '^[0-9]+\\.[0-9]+\\.x$' or branch =~ '^[0-9]+\\.[0-9]+\\.[0-9]+(-cp[0-9]+)?-rc[0-9]+$'"
+      when: "branch = 'master' or branch =~ '^[0-9]+\\.[0-9]+\\.x$' or branch =~ '^[0-9]+\\.[0-9]+\\.[0-9]+(-cp[0-9]+)?(-rc[0-9]+)?$'"
     task:
       jobs:
         - name: Deploy AMD confluentinc/ksqldb-examples ubi8
@@ -241,7 +241,7 @@ blocks:
   - name: Deploy ARM confluentinc/cp-ksqldb-server
     dependencies: ["Build & Test ARM"]
     run:
-      when: "branch = 'master' or branch =~ '^[0-9]+\\.[0-9]+\\.x$' or branch =~ '^[0-9]+\\.[0-9]+\\.[0-9]+(-cp[0-9]+)?-rc[0-9]+$'"
+      when: "branch = 'master' or branch =~ '^[0-9]+\\.[0-9]+\\.x$' or branch =~ '^[0-9]+\\.[0-9]+\\.[0-9]+(-cp[0-9]+)?(-rc[0-9]+)?$'"
     task:
       agent:
         machine:
@@ -271,7 +271,7 @@ blocks:
   - name: Deploy ARM confluentinc/cp-ksqldb-cli
     dependencies: ["Build & Test ARM"]
     run:
-      when: "branch = 'master' or branch =~ '^[0-9]+\\.[0-9]+\\.x$' or branch =~ '^[0-9]+\\.[0-9]+\\.[0-9]+(-cp[0-9]+)?-rc[0-9]+$'"
+      when: "branch = 'master' or branch =~ '^[0-9]+\\.[0-9]+\\.x$' or branch =~ '^[0-9]+\\.[0-9]+\\.[0-9]+(-cp[0-9]+)?(-rc[0-9]+)?$'"
     task:
       agent:
         machine:
@@ -301,7 +301,7 @@ blocks:
   - name: Deploy ARM confluentinc/ksqldb-examples
     dependencies: ["Build & Test ARM"]
     run:
-      when: "branch = 'master' or branch =~ '^[0-9]+\\.[0-9]+\\.x$' or branch =~ '^[0-9]+\\.[0-9]+\\.[0-9]+(-cp[0-9]+)?-rc[0-9]+$'"
+      when: "branch = 'master' or branch =~ '^[0-9]+\\.[0-9]+\\.x$' or branch =~ '^[0-9]+\\.[0-9]+\\.[0-9]+(-cp[0-9]+)?(-rc[0-9]+)?$'"
     task:
       agent:
         machine:
@@ -332,7 +332,7 @@ blocks:
     dependencies: ["Deploy AMD confluentinc/cp-ksqldb-server", "Deploy AMD confluentinc/cp-ksqldb-cli", "Deploy AMD confluentinc/ksqldb-examples", "Deploy ARM confluentinc/cp-ksqldb-server", "Deploy ARM
           confluentinc/cp-ksqldb-cli", "Deploy ARM confluentinc/ksqldb-examples"]
     run:
-      when: "branch = 'master' or branch =~ '^[0-9]+\\.[0-9]+\\.x$' or branch =~ '^[0-9]+\\.[0-9]+\\.[0-9]+(-cp[0-9]+)?-rc[0-9]+$'"
+      when: "branch = 'master' or branch =~ '^[0-9]+\\.[0-9]+\\.x$' or branch =~ '^[0-9]+\\.[0-9]+\\.[0-9]+(-cp[0-9]+)?(-rc[0-9]+)?$'"
     task:
       jobs:
         - name: Create Manifest and Maven Deploy
