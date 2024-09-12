@@ -7,7 +7,7 @@
     <parent>
         <groupId>io.confluent</groupId>
         <artifactId>common-docker</artifactId>
-        <version>[7.0.16-0, 7.0.17-0)</version>
+        <version>7.0.16-54</version>
     </parent>
 
     <groupId>io.confluent.ksql</groupId>
@@ -15,7 +15,7 @@
     <packaging>pom</packaging>
     <name>KSQL Docker Images</name>
     <description>Build files for Confluent's KSQL Docker images</description>
-    <version>7.0.16-0</version>
+    <version>7.0.16-17</version>
 
     <modules>
         <module>cp-ksqldb-cli</module>
@@ -130,6 +130,6 @@
         <netty.version>4.1.108.Final</netty.version>
         <netty-codec-http2-version>4.1.108.Final</netty-codec-http2-version>
         <component.name>ksqldb</component.name>
-        <io.confluent.ksql-images.version>7.0.16-0</io.confluent.ksql-images.version>
+        <io.confluent.ksql-images.version>7.0.16-17</io.confluent.ksql-images.version>
     </properties>
 </project>
