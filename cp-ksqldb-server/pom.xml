@@ -40,6 +40,17 @@
 
     <dependencies>
         <dependency>
+            <groupId>io.confluent.ksql</groupId>
+            <artifactId>ksql-images-parent</artifactId>
+            <version>7.8.0-0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.confluent</groupId>
+                    <artifactId>cc-role-definitions</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
@@ -55,6 +66,12 @@
             <groupId>io.confluent.ksql</groupId>
             <artifactId>cp-ksqldb-cli</artifactId>
             <version>${io.confluent.ksql-images.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.confluent</groupId>
+                    <artifactId>cc-role-definitions</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -67,18 +84,36 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>ksqldb-rest-app</artifactId>
             <version>${io.confluent.ksql.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.confluent</groupId>
+                    <artifactId>cc-role-definitions</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>ksqldb-functional-tests</artifactId>
             <version>${io.confluent.ksql.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.confluent</groupId>
+                    <artifactId>cc-role-definitions</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
           <groupId>io.confluent.ksql</groupId>
           <artifactId>ksqldb-tools</artifactId>
           <version>${io.confluent.ksql.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.confluent</groupId>
+                    <artifactId>cc-role-definitions</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -97,6 +132,12 @@
             <classifier>resources</classifier>
             <type>zip</type>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.confluent</groupId>
+                    <artifactId>cc-role-definitions</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- https://mvnrepository.com/artifact/jakarta.el/jakarta.el-api -->
         <dependency>
