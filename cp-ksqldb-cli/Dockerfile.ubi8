@@ -55,6 +55,11 @@ gpgkey=${CONFLUENT_PACKAGES_REPO}/archive.key \n\
 enabled=1 " > /etc/yum.repos.d/confluent.repo \
     && echo "===> Installing Confluent Hub client ..." \
     && yum install -y confluent-hub-client-${CONFLUENT_VERSION} \
+    && echo "===> Install ksqldb in a temp directory" \
+    && yum install -y confluent-ksqldb-${CONFLUENT_VERSION} \
+    && echo "===> (Hack) Copying cc-role-definitions from confluent-ksqldb package" \
+    && cp /usr/share/java/cc-role-definitions/cc-role-definitions*.jar /usr/share/java/${COMPONENT}/ \
+    && chown appuser:appuser /usr/share/java/${COMPONENT}/cc-role-definitions*.jar \
     && echo "===> Cleaning up ..."  \
     && yum clean all \
     && rm -rf /tmp/* /etc/yum.repos.d/confluent.repo \
