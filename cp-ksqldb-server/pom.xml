@@ -40,17 +40,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.confluent.ksql</groupId>
-            <artifactId>ksql-images-parent</artifactId>
-            <version>7.8.0-0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>io.confluent</groupId>
-                    <artifactId>cc-role-definitions</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
