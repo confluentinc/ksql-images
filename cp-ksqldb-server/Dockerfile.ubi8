@@ -57,7 +57,8 @@ baseurl=${CONFLUENT_PACKAGES_REPO}/ \n\
 gpgcheck=1 \n\
 gpgkey=${CONFLUENT_PACKAGES_REPO}/archive.key \n\
 enabled=1 " > /etc/yum.repos.d/confluent.repo \
-    && echo "===> Installing Confluent security plugins ..." \
+
+RUN echo "===> Installing Confluent security plugins ..." \
     && yum install -y confluent-security-${CONFLUENT_VERSION} \
     && echo "===> Installing Confluent Hub client ..." \
     && yum install -y confluent-hub-client-${CONFLUENT_VERSION} \
@@ -65,7 +66,22 @@ enabled=1 " > /etc/yum.repos.d/confluent.repo \
     # We are installing confluent-telemetry package explicitly because
     # KSQL's deb/rpm packages cannot directly depend on
     # confluent-telemetry package as KSQL is Open Source.
-    && yum install -y confluent-telemetry-${CONFLUENT_VERSION} \
+    && yum install -y confluent-telemetry-${CONFLUENT_VERSION}
+
+RUN echo "===> HACK to make cc-role-definitions available in docker image..." \
+    && yum install -y yum-utils \
+    && yum install -y cpio \
+    && cd /tmp \
+    && yumdownloader confluent-ksqldb --resolve \
+    && CONFLUENT_KSQLDB_RPM=$(ls /tmp/confluent-ksqldb-*.rpm) \
+    && echo "===> Extracting the rpm ${CONFLUENT_KSQLDB_RPM} to get the cc-role-definitions jar" \
+    && mkdir /tmp/extracted-ksqldb \
+    && cd /tmp/extracted-ksqldb \
+    && rpm2cpio ${CONFLUENT_KSQLDB_RPM} | cpio -idmv \
+    && cp /tmp/extracted-ksqldb/usr/share/java/ksqldb/cc-role-definitions*.jar /usr/share/java/${COMPONENT}/ \
+    && echo "====> Removing the tmp files" \
+    && rm -rf /tmp/extracted-ksqldb ${CONFLUENT_KSQLDB_RPM} \
+    && chown appuser:appuser /usr/share/java/${COMPONENT}/cc-role-definitions*.jar \
     && echo "===> Cleaning up ..."  \
     && yum clean all \
     && rm -rf /tmp/* /etc/yum.repos.d/confluent.repo \
