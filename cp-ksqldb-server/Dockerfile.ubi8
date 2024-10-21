@@ -86,7 +86,7 @@ RUN echo "===> HACK to make cc-role-definitions available in docker image..." \
     && yum clean all \
     && rm -rf /tmp/* /etc/yum.repos.d/confluent.repo \
     && mkdir -p /usr/share/confluent-hub-components \
-    && chown appuser:appuser -R /usr/share/confluent-hub-components \ 
+    && chown appuser:appuser -R /usr/share/confluent-hub-components \
     && mkdir -p /var/lib/kafka-streams \
     && chown appuser:appuser -R /var/lib/kafka-streams
 
