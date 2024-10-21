@@ -66,14 +66,12 @@ RUN echo "===> HACK to make cc-role-definitions available in docker image..." \
     && echo "===> Extracting the rpm ${CONFLUENT_KSQLDB_RPM} to get the cc-role-definitions jar" \
     && mkdir /tmp/extracted-ksqldb \
     && cd /tmp/extracted-ksqldb \
-    && rpm2cpio ${CONFLUENT_KSQLDB_RPM} | cpio -idmv
-
-RUN cp /tmp/extracted-ksqldb/usr/share/java/ksqldb/cc-role-definitions*.jar /usr/share/java/${COMPONENT}/ \
+    && rpm2cpio ${CONFLUENT_KSQLDB_RPM} | cpio -idmv \
+    && cp /tmp/extracted-ksqldb/usr/share/java/ksqldb/cc-role-definitions*.jar /usr/share/java/${COMPONENT}/ \
     && echo "====> Removing the tmp files" \
     && rm -rf /tmp/extracted-ksqldb ${CONFLUENT_KSQLDB_RPM} \
-    && chown appuser:appuser /usr/share/java/${COMPONENT}/cc-role-definitions*.jar
-
-RUN echo "===> Cleaning up ..."  \
+    && chown appuser:appuser /usr/share/java/${COMPONENT}/cc-role-definitions*.jar \
+    && echo "===> Cleaning up ..."  \
     && yum clean all \
     && rm -rf /tmp/* /etc/yum.repos.d/confluent.repo \
     && mkdir -p /usr/share/confluent-hub-components \
