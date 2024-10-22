@@ -47,6 +47,12 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>ksqldb-cli</artifactId>
             <version>${io.confluent.ksql.version}</version>
+          <exclusions>
+            <exclusion>
+              <groupId>io.confluent</groupId>
+              <artifactId>cc-role-definitions</artifactId>
+            </exclusion>
+          </exclusions>
         </dependency>
 
         <dependency>
