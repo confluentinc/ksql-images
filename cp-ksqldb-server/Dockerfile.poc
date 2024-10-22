@@ -34,7 +34,6 @@ RUN microdnf --nodocs install yum \
     && yum --nodocs update -y \
     && yum --nodocs install -y --setopt=install_weak_deps=False  \
     wget \
-    python39 \
     "zulu11-ca-jre-headless${ZULU_OPENJDK_VERSION}"
 
 RUN mkdir -p ${RPM_PACKAGES_DIR} \
@@ -51,7 +50,6 @@ RUN rpm --import ${RPM_PACKAGES_DIR}/archive.key \
         && rpm --install ${RPM_PACKAGES_DIR}/confluent-telemetry-${CP_FULL_VERSION}.noarch.rpm
 
 COPY --from=cp-base-new /usr/share/java/cp-base-new /usr/share/java/cp-base-new
-COPY --from=cp-base-lite /usr/bin/ub /usr/bin/ub
 COPY --from=build_package_dedupe /build/package_dedupe /usr/bin
 
 COPY --chown=1001:1001 target/${ARTIFACT_ID}-${PROJECT_VERSION}-package/share/java/${ARTIFACT_ID}/* /usr/share/java/${COMPONENT}/
@@ -60,7 +58,7 @@ RUN cd /usr/share/java \
       && rm -rf confluent-security/schema* confluent-security/connect confluent-security/kafka-rest \
       && package_dedupe $(pwd)
 
-RUN yum remove python39 wget -y \
+RUN yum remove wget -y \
         && yum clean all \
         && yum autoremove -y
 
@@ -89,6 +87,7 @@ COPY --from=ksqldb-server-ubi-minimal /usr/lib64/libz.so.1* \
 COPY --from=ksqldb-server-ubi-minimal /etc/rpm /etc/rpm
 
 COPY --from=ksqldb-server-ubi-minimal ${RPM_PACKAGES_DIR}/* ${RPM_PACKAGES_DIR}/
+COPY --from=cp-base-lite /usr/bin/ub /usr/bin/ub
 
 RUN rpm --import ${RPM_PACKAGES_DIR}/archive.key \
         && rpm --install ${RPM_PACKAGES_DIR}/confluent-common-${CP_FULL_VERSION}.noarch.rpm \
