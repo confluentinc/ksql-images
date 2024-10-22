@@ -2,7 +2,7 @@ ARG DOCKER_UPSTREAM_REGISTRY
 ARG DOCKER_UPSTREAM_TAG
 ARG GOLANG_VERSION=1.22.7-bullseye
 
-FROM docker.io/golang:${GOLANG_VERSION} AS build-package_dedupe
+FROM docker.io/golang:${GOLANG_VERSION} AS build_package_dedupe
 WORKDIR /build
 RUN useradd --no-log-init --create-home --shell /bin/bash appuser
 COPY --chown=appuser:appuser package_dedupe/package_dedupe.go ./
@@ -52,7 +52,7 @@ RUN rpm --import ${RPM_PACKAGES_DIR}/archive.key \
 
 COPY --from=cp-base-new /usr/share/java/cp-base-new /usr/share/java/cp-base-new
 COPY --from=cp-base-lite /usr/bin/ub /usr/bin/ub
-COPY --from=build-package_dedupe /build/pacakge_dedupe /usr/bin
+COPY --from=build_package_dedupe /build/package_dedupe /usr/bin
 
 COPY --chown=1001:1001 target/${ARTIFACT_ID}-${PROJECT_VERSION}-package/share/java/${ARTIFACT_ID}/* /usr/share/java/${COMPONENT}/
 
