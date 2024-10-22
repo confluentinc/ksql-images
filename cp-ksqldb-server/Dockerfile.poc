@@ -1,0 +1,129 @@
+ARG DOCKER_UPSTREAM_REGISTRY
+ARG DOCKER_UPSTREAM_TAG
+ARG GOLANG_VERSION=1.22.7-bullseye
+
+FROM docker.io/golang:${GOLANG_VERSION} AS build_package_dedupe
+WORKDIR /build
+RUN useradd --no-log-init --create-home --shell /bin/bash appuser
+COPY --chown=appuser:appuser package_dedupe/package_dedupe.go ./
+RUN go build -ldflags="-w -s" ./package_dedupe.go
+
+FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-lite:${DOCKER_UPSTREAM_TAG} as cp-base-lite
+
+FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-new:${DOCKER_UPSTREAM_TAG} as cp-base-new
+
+FROM registry.access.redhat.com/ubi8/ubi-minimal as ksqldb-server-ubi-minimal
+
+ARG CP_MAJOR_MINOR_VERSION="7.4"
+ARG CP_FULL_VERSION="7.4.5-1"
+ARG RPM_PACKAGES_DIR="/root/rpms"
+
+ENV COMPONENT=ksqldb-server
+ENV KSQL_CLASSPATH=/usr/share/java/${COMPONENT}/*
+
+ARG PROJECT_VERSION
+ARG ARTIFACT_ID
+ARG GIT_COMMIT
+
+ARG CONFLUENT_VERSION
+ARG CONFLUENT_PACKAGES_REPO
+ARG CONFLUENT_PLATFORM_LABEL
+
+RUN microdnf --nodocs install yum \
+    && yum --nodocs -y install https://cdn.azul.com/zulu/bin/zulu-repo-1.0.0-1.noarch.rpm \
+    && yum --nodocs update -y \
+    && yum --nodocs install -y --setopt=install_weak_deps=False  \
+    wget \
+    python39 \
+    "zulu11-ca-jre-headless${ZULU_OPENJDK_VERSION}"
+
+RUN mkdir -p ${RPM_PACKAGES_DIR} \
+        && wget -O ${RPM_PACKAGES_DIR}/archive.key https://packages.confluent.io/rpm/${CP_MAJOR_MINOR_VERSION}/archive.key \
+        && wget -O ${RPM_PACKAGES_DIR}/confluent-common-${CP_FULL_VERSION}.noarch.rpm  https://packages.confluent.io/rpm/${CP_MAJOR_MINOR_VERSION}/confluent-common-${CP_FULL_VERSION}.noarch.rpm \
+        && wget -O ${RPM_PACKAGES_DIR}/confluent-security-${CP_FULL_VERSION}.noarch.rpm  https://packages.confluent.io/rpm/${CP_MAJOR_MINOR_VERSION}/confluent-security-${CP_FULL_VERSION}.noarch.rpm \
+        && wget -O ${RPM_PACKAGES_DIR}/confluent-hub-client-${CP_FULL_VERSION}.noarch.rpm  https://packages.confluent.io/rpm/${CP_MAJOR_MINOR_VERSION}/confluent-hub-client-${CP_FULL_VERSION}.noarch.rpm \
+        && wget -O ${RPM_PACKAGES_DIR}/confluent-telemetry-${CP_FULL_VERSION}.noarch.rpm  https://packages.confluent.io/rpm/${CP_MAJOR_MINOR_VERSION}/confluent-telemetry-${CP_FULL_VERSION}.noarch.rpm
+
+RUN rpm --import ${RPM_PACKAGES_DIR}/archive.key \
+        && rpm --install ${RPM_PACKAGES_DIR}/confluent-common-${CP_FULL_VERSION}.noarch.rpm \
+        && rpm --install ${RPM_PACKAGES_DIR}/confluent-security-${CP_FULL_VERSION}.noarch.rpm \
+        && rpm --install ${RPM_PACKAGES_DIR}/confluent-hub-client-${CP_FULL_VERSION}.noarch.rpm \
+        && rpm --install ${RPM_PACKAGES_DIR}/confluent-telemetry-${CP_FULL_VERSION}.noarch.rpm
+
+COPY --from=cp-base-new /usr/share/java/cp-base-new /usr/share/java/cp-base-new
+COPY --from=cp-base-lite /usr/bin/ub /usr/bin/ub
+COPY --from=build_package_dedupe /build/package_dedupe /usr/bin
+
+COPY --chown=1001:1001 target/${ARTIFACT_ID}-${PROJECT_VERSION}-package/share/java/${ARTIFACT_ID}/* /usr/share/java/${COMPONENT}/
+
+RUN cd /usr/share/java \
+      && rm -rf confluent-security/schema* confluent-security/connect confluent-security/kafka-rest \
+      && package_dedupe $(pwd)
+
+RUN yum remove python39 wget -y \
+        && yum clean all \
+        && yum autoremove -y
+
+RUN microdnf clean all
+
+FROM registry.access.redhat.com/ubi8/ubi-micro as ksqldb-server-ubi-micro-intermediate
+
+ARG CP_MAJOR_MINOR_VERSION="7.4"
+ARG CP_FULL_VERSION="7.4.5-1"
+ARG RPM_PACKAGES_DIR="/root/rpms"
+
+USER root
+
+COPY --from=ksqldb-server-ubi-minimal /usr/lib/jvm /usr/lib/jvm
+COPY --from=ksqldb-server-ubi-minimal /usr/lib/rpm /usr/lib/rpm
+COPY --from=ksqldb-server-ubi-minimal /usr/bin/rpm* /usr/bin/
+# libz.so is required by java
+COPY --from=ksqldb-server-ubi-minimal /usr/lib64/libz.so.1* \
+                                /usr/lib64/librpm.so.8* \
+                                /usr/lib64/librpmio.so.8* \
+                                /usr/lib64/libdb-5.*.so \
+                                /usr/lib64/ libsqlite3.so.0* \
+                                /usr/lib64/
+
+# Optionally, you can copy other necessary files for rpm functionality
+COPY --from=ksqldb-server-ubi-minimal /etc/rpm /etc/rpm
+
+COPY --from=ksqldb-server-ubi-minimal ${RPM_PACKAGES_DIR}/* ${RPM_PACKAGES_DIR}/
+
+RUN rpm --import ${RPM_PACKAGES_DIR}/archive.key \
+        && rpm --install ${RPM_PACKAGES_DIR}/confluent-common-${CP_FULL_VERSION}.noarch.rpm \
+        && rpm --install ${RPM_PACKAGES_DIR}/confluent-security-${CP_FULL_VERSION}.noarch.rpm \
+        && rpm --install ${RPM_PACKAGES_DIR}/confluent-hub-client-${CP_FULL_VERSION}.noarch.rpm \
+        && rpm --install ${RPM_PACKAGES_DIR}/confluent-telemetry-${CP_FULL_VERSION}.noarch.rpm
+
+RUN rm -rf /usr/bin/rpm* /usr/lib/rpm /usr/lib64/librpm.so.8* \
+        /usr/lib64/librpmio.so.8* \
+        /usr/lib64/libdb-5.*.so \
+        /usr/lib64/libsqlite3.so.0* \
+        ${RPM_PACKAGES_DIR}
+
+RUN rm -rf /usr/share/java/* /usr/lib64/python3*
+
+COPY --from=ksqldb-server-ubi-minimal /usr/share/java /usr/share/java
+
+RUN ln -s /usr/lib/jvm/java-11-zulu-openjdk/bin/java /usr/bin/java
+
+
+FROM registry.access.redhat.com/ubi8/ubi-micro as ksqldb-server-final
+
+ENV COMPONENT=ksqldb-server
+ENV KSQL_CLASSPATH=/usr/share/java/${COMPONENT}/*
+ENV PATH="${PATH}:/usr/lib/jvm/java-11-zulu-openjdk:/usr/bin"
+
+COPY --chown=1001:1001 target/dependency/ksqldb-console-scripts-*/* /usr/bin/
+COPY --chown=1001:1001 target/dependency/ksqldb-etc-*/* /etc/ksqldb/
+COPY --chown=1001:1001 target/dependency/ksqldb-etc-*/* /etc/confluent/docker/
+COPY --chown=1001:1001 include/etc/confluent/docker/* /etc/confluent/docker/
+
+RUN mkdir -p /etc/${COMPONENT} /etc/${COMPONENT}/secrets /usr/logs \
+  && chown 1001:root -R /etc/${COMPONENT} /usr/logs \
+  && chmod ug+w -R /etc/${COMPONENT} /usr/logs
+
+COPY --from=ksqldb-server-ubi-micro-intermediate / /
+
+USER 1001
