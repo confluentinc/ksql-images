@@ -2,13 +2,15 @@ ARG DOCKER_UPSTREAM_REGISTRY
 ARG DOCKER_UPSTREAM_TAG
 ARG GOLANG_VERSION=1.22.7-bullseye
 
-FROM golang:${GOLANG_VERSION} AS build-package_dedupe
+FROM docker.io/golang:${GOLANG_VERSION} AS build-package_dedupe
 WORKDIR /build
 RUN useradd --no-log-init --create-home --shell /bin/bash appuser
 COPY --chown=appuser:appuser package_dedupe/package_dedupe.go ./
-RUN go build -ldflags="-w -s" ./pacakge_dedupe.go
+RUN go build -ldflags="-w -s" ./package_dedupe.go
 
 FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-lite:${DOCKER_UPSTREAM_TAG} as cp-base-lite
+
+FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-new:${DOCKER_UPSTREAM_TAG} as cp-base-new
 
 FROM registry.access.redhat.com/ubi8/ubi-minimal as ksqldb-server-ubi-minimal
 
