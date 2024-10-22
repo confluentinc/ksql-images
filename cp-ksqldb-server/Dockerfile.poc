@@ -58,7 +58,7 @@ COPY --chown=1001:1001 target/${ARTIFACT_ID}-${PROJECT_VERSION}-package/share/ja
 
 RUN cd /usr/share/java \
       && rm -rf confluent-security/schema* confluent-security/connect confluent-security/kafka-rest \
-      && package_dedupe
+      && package_dedupe $(pwd)
 
 RUN yum remove python39 wget -y \
         && yum clean all \
