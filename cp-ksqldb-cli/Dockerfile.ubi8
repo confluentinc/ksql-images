@@ -5,6 +5,7 @@ FROM registry.access.redhat.com/ubi8/ubi-minimal:8.10-1086
 
 ENV COMPONENT=ksqldb-cli
 ENV KSQL_CLASSPATH=/usr/share/java/${COMPONENT}/*
+ENV BUILD_PACKAGES="shadow-utils"
 
 ARG PROJECT_VERSION
 ARG ARTIFACT_ID
@@ -61,6 +62,7 @@ enabled=1 " > /etc/yum.repos.d/confluent.repo \
     && mkdir -p /usr/share/confluent-hub-components \
     && chown appuser:appuser -R /usr/share/confluent-hub-components
 
+RUN useradd -ms /bin/bash appuser
 USER appuser
 
 RUN bash /etc/confluent/docker/configure
