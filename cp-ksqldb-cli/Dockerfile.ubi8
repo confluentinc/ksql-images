@@ -27,6 +27,10 @@ ARG CONFLUENT_PLATFORM_LABEL
 
 USER root
 
+RUN echo "===> Installing shadow-utils ..." \
+  && microdnf install shadow-utils \
+  && useradd -ms /bin/bash appuser
+
 COPY --chown=appuser:appuser target/${ARTIFACT_ID}-${PROJECT_VERSION}-package/share/java/${ARTIFACT_ID}/* /usr/share/java/${COMPONENT}/
 COPY --chown=appuser:appuser target/${ARTIFACT_ID}-${PROJECT_VERSION}-package/share/doc/* /usr/share/doc/${ARTIFACT_ID}/
 COPY --chown=appuser:appuser target/dependency/ksqldb-console-scripts-*/* /usr/bin/
@@ -54,9 +58,7 @@ gpgcheck=1 \n\
 gpgkey=${CONFLUENT_PACKAGES_REPO}/archive.key \n\
 enabled=1 " > /etc/yum.repos.d/confluent.repo \
     && echo "===> Installing yum ..." \
-    && microdnf install yum \
-    && echo "===> Installing shadow-utils ..." \
-    && yum install -y shadow-utils \
+    && microdnf install -y yum \
     && echo "===> Installing Confluent Hub client ..." \
     && yum install -y confluent-hub-client-${CONFLUENT_VERSION} \
     && echo "===> Cleaning up ..."  \
@@ -65,7 +67,6 @@ enabled=1 " > /etc/yum.repos.d/confluent.repo \
     && mkdir -p /usr/share/confluent-hub-components \
     && chown appuser:appuser -R /usr/share/confluent-hub-components
 
-RUN useradd -ms /bin/bash appuser
 USER appuser
 
 RUN bash /etc/confluent/docker/configure
