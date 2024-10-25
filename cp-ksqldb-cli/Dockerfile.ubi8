@@ -5,7 +5,6 @@ FROM registry.access.redhat.com/ubi8/ubi-minimal:8.10-1086
 
 ENV COMPONENT=ksqldb-cli
 ENV KSQL_CLASSPATH=/usr/share/java/${COMPONENT}/*
-ENV BUILD_PACKAGES="shadow-utils"
 
 ARG PROJECT_VERSION
 ARG ARTIFACT_ID
@@ -54,6 +53,10 @@ baseurl=${CONFLUENT_PACKAGES_REPO}/ \n\
 gpgcheck=1 \n\
 gpgkey=${CONFLUENT_PACKAGES_REPO}/archive.key \n\
 enabled=1 " > /etc/yum.repos.d/confluent.repo \
+    && echo "===> Installing yum ..." \
+    && microdnf install yum \
+    && echo "===> Installing shadow-utils ..." \
+    && yum install -y shadow-utils \
     && echo "===> Installing Confluent Hub client ..." \
     && yum install -y confluent-hub-client-${CONFLUENT_VERSION} \
     && echo "===> Cleaning up ..."  \
