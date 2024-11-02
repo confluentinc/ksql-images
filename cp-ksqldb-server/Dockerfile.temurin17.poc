@@ -112,7 +112,7 @@ RUN rm -rf /usr/share/java/* /usr/lib64/python3*
 
 COPY --from=ksqldb-server-ubi-minimal /usr/share/java /usr/share/java
 
-RUN ln -s /usr/lib/jvm/java-11-zulu-openjdk/bin/java /usr/bin/java
+RUN ln -s /usr/lib/jvm/temurin-17-jre/bin/java /usr/bin/java
 
 
 FROM registry.access.redhat.com/ubi8/ubi-micro as ksqldb-server-final
