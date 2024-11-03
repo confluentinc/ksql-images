@@ -14,8 +14,6 @@ FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-new:${DOCKER_UPSTREAM_TAG} 
 
 FROM registry.access.redhat.com/ubi8/ubi-minimal as ksqldb-server-ubi-minimal
 
-ARG CP_MAJOR_MINOR_VERSION="7.4"
-ARG CP_FULL_VERSION="7.4.5-1"
 ARG RPM_PACKAGES_DIR="/root/rpms"
 
 ENV COMPONENT=ksqldb-server
@@ -40,21 +38,26 @@ gpgkey=https://packages.adoptium.net/artifactory/api/gpg/key/public \n\
 RUN microdnf --nodocs install yum \
     && yum --nodocs update -y \
     && yum --nodocs install -y --setopt=install_weak_deps=False  \
-    wget \
+    wget yum-utils \
     "temurin-17-jre"
 
-RUN mkdir -p ${RPM_PACKAGES_DIR} \
-        && wget -O ${RPM_PACKAGES_DIR}/archive.key https://packages.confluent.io/rpm/${CP_MAJOR_MINOR_VERSION}/archive.key \
-        && wget -O ${RPM_PACKAGES_DIR}/confluent-common-${CP_FULL_VERSION}.noarch.rpm  https://packages.confluent.io/rpm/${CP_MAJOR_MINOR_VERSION}/confluent-common-${CP_FULL_VERSION}.noarch.rpm \
-        && wget -O ${RPM_PACKAGES_DIR}/confluent-security-${CP_FULL_VERSION}.noarch.rpm  https://packages.confluent.io/rpm/${CP_MAJOR_MINOR_VERSION}/confluent-security-${CP_FULL_VERSION}.noarch.rpm \
-        && wget -O ${RPM_PACKAGES_DIR}/confluent-hub-client-${CP_FULL_VERSION}.noarch.rpm  https://packages.confluent.io/rpm/${CP_MAJOR_MINOR_VERSION}/confluent-hub-client-${CP_FULL_VERSION}.noarch.rpm \
-        && wget -O ${RPM_PACKAGES_DIR}/confluent-telemetry-${CP_FULL_VERSION}.noarch.rpm  https://packages.confluent.io/rpm/${CP_MAJOR_MINOR_VERSION}/confluent-telemetry-${CP_FULL_VERSION}.noarch.rpm
+# Download all the RPM packages
+RUN printf "[Confluent] \n\
+    name=Confluent repository \n\
+    baseurl=${CONFLUENT_PACKAGES_REPO}/ \n\
+    gpgcheck=1 \n\
+    gpgkey=${CONFLUENT_PACKAGES_REPO}/archive.key \n\
+    enabled=1 " > /etc/yum.repos.d/confluent.repo \
+    && mkdir -p ${RPM_PACKAGES_DIR} \
+        && wget -O ${RPM_PACKAGES_DIR}/archive.key ${CONFLUENT_PACKAGES_REPO}/archive.key \
+        && wget ${CONFLUENT_PACKAGES_REPO}/archive.key \
+        && yumdownloader confluent-security confluent-hub-client confluent-telemetry --resolve
 
 RUN rpm --import ${RPM_PACKAGES_DIR}/archive.key \
-        && rpm --install ${RPM_PACKAGES_DIR}/confluent-common-${CP_FULL_VERSION}.noarch.rpm \
-        && rpm --install ${RPM_PACKAGES_DIR}/confluent-security-${CP_FULL_VERSION}.noarch.rpm \
-        && rpm --install ${RPM_PACKAGES_DIR}/confluent-hub-client-${CP_FULL_VERSION}.noarch.rpm \
-        && rpm --install ${RPM_PACKAGES_DIR}/confluent-telemetry-${CP_FULL_VERSION}.noarch.rpm
+        && rpm --install ${RPM_PACKAGES_DIR}/confluent-common-*.noarch.rpm \
+        && rpm --install ${RPM_PACKAGES_DIR}/confluent-security-*.noarch.rpm \
+        && rpm --install ${RPM_PACKAGES_DIR}/confluent-hub-client-*.noarch.rpm \
+        && rpm --install ${RPM_PACKAGES_DIR}/confluent-telemetry-*.noarch.rpm
 
 COPY --from=cp-base-new /usr/share/java/cp-base-new /usr/share/java/cp-base-new
 COPY --from=build_package_dedupe /build/package_dedupe /usr/bin
@@ -73,8 +76,6 @@ RUN microdnf clean all
 
 FROM registry.access.redhat.com/ubi8/ubi-micro as ksqldb-server-ubi-micro-intermediate
 
-ARG CP_MAJOR_MINOR_VERSION="7.4"
-ARG CP_FULL_VERSION="7.4.5-1"
 ARG RPM_PACKAGES_DIR="/root/rpms"
 
 USER root
@@ -97,10 +98,10 @@ COPY --from=ksqldb-server-ubi-minimal ${RPM_PACKAGES_DIR}/* ${RPM_PACKAGES_DIR}/
 COPY --from=cp-base-lite /usr/bin/ub /usr/bin/ub
 
 RUN rpm --import ${RPM_PACKAGES_DIR}/archive.key \
-        && rpm --install ${RPM_PACKAGES_DIR}/confluent-common-${CP_FULL_VERSION}.noarch.rpm \
-        && rpm --install ${RPM_PACKAGES_DIR}/confluent-security-${CP_FULL_VERSION}.noarch.rpm \
-        && rpm --install ${RPM_PACKAGES_DIR}/confluent-hub-client-${CP_FULL_VERSION}.noarch.rpm \
-        && rpm --install ${RPM_PACKAGES_DIR}/confluent-telemetry-${CP_FULL_VERSION}.noarch.rpm
+        && rpm --install ${RPM_PACKAGES_DIR}/confluent-common-*.noarch.rpm \
+        && rpm --install ${RPM_PACKAGES_DIR}/confluent-security-*.noarch.rpm \
+        && rpm --install ${RPM_PACKAGES_DIR}/confluent-hub-client-*.noarch.rpm \
+        && rpm --install ${RPM_PACKAGES_DIR}/confluent-telemetry-*.noarch.rpm
 
 RUN rm -rf /usr/bin/rpm* /usr/lib/rpm /usr/lib64/librpm.so.8* \
         /usr/lib64/librpmio.so.8* \
