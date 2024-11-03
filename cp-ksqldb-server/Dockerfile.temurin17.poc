@@ -43,11 +43,12 @@ RUN microdnf --nodocs install yum \
 
 # Download all the RPM packages
 RUN printf "[Confluent] \n\
-    name=Confluent repository \n\
-    baseurl=${CONFLUENT_PACKAGES_REPO}/ \n\
-    gpgcheck=1 \n\
-    gpgkey=${CONFLUENT_PACKAGES_REPO}/archive.key \n\
-    enabled=1 " > /etc/yum.repos.d/confluent.repo \
+name=Confluent repository \n\
+baseurl=${CONFLUENT_PACKAGES_REPO}/ \n\
+gpgcheck=1 \n\
+gpgkey=${CONFLUENT_PACKAGES_REPO}/archive.key \n\
+enabled=1 " > /etc/yum.repos.d/confluent.repo \
+    && yum makecache --refresh  \
     && mkdir -p ${RPM_PACKAGES_DIR} \
         && wget -O ${RPM_PACKAGES_DIR}/archive.key ${CONFLUENT_PACKAGES_REPO}/archive.key \
         && wget ${CONFLUENT_PACKAGES_REPO}/archive.key \
