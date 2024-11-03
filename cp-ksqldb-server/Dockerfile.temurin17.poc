@@ -50,7 +50,7 @@ gpgkey=${CONFLUENT_PACKAGES_REPO}/archive.key \n\
 enabled=1 " > /etc/yum.repos.d/confluent.repo \
     && yum makecache --refresh  \
     && mkdir -p ${RPM_PACKAGES_DIR} \
-        && wget -O ${RPM_PACKAGES_DIR}/archive.key ${CONFLUENT_PACKAGES_REPO}/archive.key \
+        && cd ${RPM_PACKAGES_DIR}  \
         && wget ${CONFLUENT_PACKAGES_REPO}/archive.key \
         && yumdownloader confluent-security confluent-hub-client confluent-telemetry --resolve
 
