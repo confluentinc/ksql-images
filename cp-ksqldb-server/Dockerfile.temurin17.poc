@@ -52,7 +52,7 @@ enabled=1 " > /etc/yum.repos.d/confluent.repo \
     && mkdir -p ${RPM_PACKAGES_DIR} \
         && cd ${RPM_PACKAGES_DIR}  \
         && wget ${CONFLUENT_PACKAGES_REPO}/archive.key \
-        && yumdownloader confluent-security confluent-hub-client confluent-telemetry --resolve
+        && yumdownloader confluent-security confluent-hub-client confluent-telemetry curl --resolve
 
 RUN rpm --import ${RPM_PACKAGES_DIR}/archive.key \
         && rpm --install ${RPM_PACKAGES_DIR}/confluent-common-*.noarch.rpm \
@@ -102,7 +102,8 @@ RUN rpm --import ${RPM_PACKAGES_DIR}/archive.key \
         && rpm --install ${RPM_PACKAGES_DIR}/confluent-common-*.noarch.rpm \
         && rpm --install ${RPM_PACKAGES_DIR}/confluent-security-*.noarch.rpm \
         && rpm --install ${RPM_PACKAGES_DIR}/confluent-hub-client-*.noarch.rpm \
-        && rpm --install ${RPM_PACKAGES_DIR}/confluent-telemetry-*.noarch.rpm
+        && rpm --install ${RPM_PACKAGES_DIR}/confluent-telemetry-*.noarch.rpm \
+        && rpm --install ${RPM_PACKAGES_DIR}/curl-*.rpm
 
 RUN rm -rf /usr/bin/rpm* /usr/lib/rpm /usr/lib64/librpm.so.8* \
         /usr/lib64/librpmio.so.8* \
