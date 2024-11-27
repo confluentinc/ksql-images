@@ -52,7 +52,7 @@ enabled=1 " > /etc/yum.repos.d/confluent.repo \
     && mkdir -p ${RPM_PACKAGES_DIR} \
         && cd ${RPM_PACKAGES_DIR}  \
         && wget ${CONFLUENT_PACKAGES_REPO}/archive.key \
-        && yumdownloader confluent-security confluent-hub-client confluent-telemetry curl --resolve
+        && yumdownloader confluent-security confluent-hub-client confluent-telemetry --resolve
 
 RUN rpm --import ${RPM_PACKAGES_DIR}/archive.key \
         && rpm --install ${RPM_PACKAGES_DIR}/confluent-common-*.noarch.rpm \
@@ -69,13 +69,16 @@ RUN cd /usr/share/java \
       && rm -rf confluent-security/schema* confluent-security/connect confluent-security/kafka-rest \
       && package_dedupe $(pwd)
 
+RUN cd ${RPM_PACKAGES_DIR} &&  \
+      yumdownloader openssl-libs libcurl curl --resolve
+
 RUN yum remove wget -y \
         && yum clean all \
         && yum autoremove -y
 
 RUN microdnf clean all
 
-FROM registry.access.redhat.com/ubi8/ubi-micro as ksqldb-server-ubi-micro-intermediate
+FROM registry.access.redhat.com/ubi8/ubi-micro AS ksqldb-server-ubi-micro-intermediate
 
 ARG RPM_PACKAGES_DIR="/root/rpms"
 
@@ -84,8 +87,13 @@ USER root
 COPY --from=ksqldb-server-ubi-minimal /usr/lib/jvm /usr/lib/jvm
 COPY --from=ksqldb-server-ubi-minimal /usr/lib/rpm /usr/lib/rpm
 COPY --from=ksqldb-server-ubi-minimal /usr/bin/rpm* /usr/bin/
-# libz.so is required by java
+# libz.so is required by java,
+# libcrypto.s0, libssl.so.1.1 and libcurl.so for installing curl
+# rest are required for rpm package
 COPY --from=ksqldb-server-ubi-minimal /usr/lib64/libz.so.1* \
+                                /usr/lib64/libcrypto.so* \
+                                /usr/lib64/libssl.so* \
+                                /usr/lib64/libcurl.so* \
                                 /usr/lib64/librpm.so.8* \
                                 /usr/lib64/librpmio.so.8* \
                                 /usr/lib64/libdb-5.*.so \
@@ -98,12 +106,19 @@ COPY --from=ksqldb-server-ubi-minimal /etc/rpm /etc/rpm
 COPY --from=ksqldb-server-ubi-minimal ${RPM_PACKAGES_DIR}/* ${RPM_PACKAGES_DIR}/
 COPY --from=cp-base-lite /usr/bin/ub /usr/bin/ub
 
-RUN rpm --import ${RPM_PACKAGES_DIR}/archive.key \
-        && rpm --install ${RPM_PACKAGES_DIR}/confluent-common-*.noarch.rpm \
-        && rpm --install ${RPM_PACKAGES_DIR}/confluent-security-*.noarch.rpm \
-        && rpm --install ${RPM_PACKAGES_DIR}/confluent-hub-client-*.noarch.rpm \
-        && rpm --install ${RPM_PACKAGES_DIR}/confluent-telemetry-*.noarch.rpm \
-        && rpm --install ${RPM_PACKAGES_DIR}/curl-*.rpm
+
+WORKDIR ${RPM_PACKAGES_DIR}
+
+# openssl-pkcs11*.rpm openssl-1*.rpm
+RUN rpm --install openssl-libs-*.rpm  \
+        libcurl-*.rpm \
+        curl-*.rpm
+
+RUN rpm --import archive.key \
+        && rpm --install confluent-common-*.noarch.rpm \
+              confluent-security-*.noarch.rpm \
+              confluent-hub-client-*.noarch.rpm \
+              confluent-telemetry-*.noarch.rpm \
 
 RUN rm -rf /usr/bin/rpm* /usr/lib/rpm /usr/lib64/librpm.so.8* \
         /usr/lib64/librpmio.so.8* \
@@ -118,7 +133,7 @@ COPY --from=ksqldb-server-ubi-minimal /usr/share/java /usr/share/java
 RUN ln -s /usr/lib/jvm/temurin-17-jre/bin/java /usr/bin/java
 
 
-FROM registry.access.redhat.com/ubi8/ubi-micro as ksqldb-server-final
+FROM confluentinc/cp-base-java17 as ksqldb-server-final
 
 ENV COMPONENT=ksqldb-server
 ENV KSQL_CLASSPATH=/usr/share/java/${COMPONENT}/*
