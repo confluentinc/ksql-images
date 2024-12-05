@@ -1,16 +1,17 @@
 import os
 import time
 import unittest
+import subprocess
 
 import confluent.docker_utils as utils
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 FIXTURES_DIR = os.path.join(CURRENT_DIR, "fixtures")
 KAFKA_READY = (
-    "bash -c 'cub kafka-ready {brokers} 40 -z $KAFKA_ZOOKEEPER_CONNECT " +
+    "bash -c 'ub kafka-ready {brokers} 40 -z $KAFKA_ZOOKEEPER_CONNECT " +
     "&& echo PASS || echo FAIL'")
-ZK_READY = "bash -c 'cub zk-ready {servers} 40 && echo PASS || echo FAIL'"
-SR_READY = "bash -c 'cub sr-ready {host} {port} 20 && echo PASS || echo FAIL'"
+ZK_READY = "bash -c 'ub zk-ready {servers} 40 && echo PASS || echo FAIL'"
+SR_READY = "bash -c 'ub sr-ready {host} {port} 20 && echo PASS || echo FAIL'"
 
 
 def check_cluster_ready(cluster):
@@ -50,9 +51,13 @@ class KsqlClient(object):
         self.server_hostname = server_container.name
         self.port = port
 
+    # def request(self, uri):
+    #     cmd = 'curl http://%s:%d%s' % (self.server_hostname, self.port, uri)
+    #     return run_cmd(self.client_container, cmd)
+
     def request(self, uri):
-        cmd = 'curl http://%s:%d%s' % (self.server_hostname, self.port, uri)
-        return run_cmd(self.client_container, cmd)
+        cmd = 'curl http://localhost:%d%s' % (self.server_hostname, self.port, uri)
+        return subprocess.run(cmd, env=os.environ, check=True, capture_output=True, shell=True, text=True)
 
     def info(self):
         return self.request('/info').decode()
@@ -67,7 +72,6 @@ def retry(op, timeout=600):
             pass
         time.sleep(1)
     return op()
-
 
 class KsqlServerTest(unittest.TestCase):
     @classmethod
