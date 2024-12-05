@@ -137,19 +137,20 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>disable-inherited-exec</id>
+                        <id>create-licenses-for-docker</id>
                         <phase>none</phase>
+                        <inherited>false</inherited> <!-- Prevent inheritance -->
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.4.1</version> <!-- Use the latest stable version -->
-                <configuration>
-                    <skip>${exec.skip}</skip> <!-- Add skip flag -->
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.codehaus.mojo</groupId>-->
+<!--                <artifactId>exec-maven-plugin</artifactId>-->
+<!--                <version>3.4.1</version> &lt;!&ndash; Use the latest stable version &ndash;&gt;-->
+<!--                <configuration>-->
+<!--                    <skip>true</skip> &lt;!&ndash; Add skip flag &ndash;&gt;-->
+<!--                </configuration>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 
