@@ -1,6 +1,7 @@
 import os
 import time
 import unittest
+import subprocess
 
 import confluent.docker_utils as utils
 
@@ -50,9 +51,13 @@ class KsqlClient(object):
         self.server_hostname = server_container.name
         self.port = port
 
+    # def request(self, uri):
+    #     cmd = 'curl http://%s:%d%s' % (self.server_hostname, self.port, uri)
+    #     return run_cmd(self.client_container, cmd)
+
     def request(self, uri):
-        cmd = 'curl http://%s:%d%s' % (self.server_hostname, self.port, uri)
-        return run_cmd(self.client_container, cmd)
+        cmd = 'curl http://localhost:%d%s' % (self.server_hostname, self.port, uri)
+        return subprocess.run(cmd, env=os.environ, check=True, capture_output=True, shell=True, text=True)
 
     def info(self):
         return self.request('/info').decode()
@@ -67,7 +72,6 @@ def retry(op, timeout=600):
             pass
         time.sleep(1)
     return op()
-
 
 class KsqlServerTest(unittest.TestCase):
     @classmethod
