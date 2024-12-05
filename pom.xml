@@ -20,7 +20,7 @@
     <modules>
         <module>cp-ksqldb-cli</module>
         <module>cp-ksqldb-server</module>
-        <module>cp-ksqldb-examples</module>
+<!--        <module>cp-ksqldb-examples</module>-->
     </modules>
 
     <dependencyManagement>
@@ -131,6 +131,26 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>disable-inherited-exec</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.4.1</version> <!-- Use the latest stable version -->
+                <configuration>
+                    <skip>${exec.skip}</skip> <!-- Add skip flag -->
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 
     <properties>
