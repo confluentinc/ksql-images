@@ -1,6 +1,8 @@
 ARG DOCKER_UPSTREAM_REGISTRY
 ARG DOCKER_UPSTREAM_TAG
 
+FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-new:${DOCKER_UPSTREAM_TAG} as cp-base-new
+
 FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-lite:${DOCKER_UPSTREAM_TAG}
 
 EXPOSE 8088
@@ -72,6 +74,8 @@ RUN chmod +x /etc/confluent/docker/run
 RUN chmod +x /etc/confluent/docker/configure
 RUN chmod +x /etc/confluent/docker/launch
 RUN chmod +x /etc/confluent/docker/ensure
+
+COPY --from=cp-base-new --chown=appuser:appuser /usr/share/java/cp-base-new /usr/share/java/cp-base-new
 
 USER appuser
 
