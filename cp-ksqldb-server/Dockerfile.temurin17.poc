@@ -61,6 +61,7 @@ RUN rpm --import ${RPM_PACKAGES_DIR}/archive.key \
         && rpm --install ${RPM_PACKAGES_DIR}/confluent-telemetry-*.noarch.rpm
 
 COPY --from=cp-base-new /usr/share/java/cp-base-new /usr/share/java/cp-base-new
+COPY --from=cp-base-lite /usr/share/java/cp-base-lite /usr/share/java/cp-base-lite
 COPY --from=build_package_dedupe /build/package_dedupe /usr/bin
 
 COPY --chown=1001:1001 target/${ARTIFACT_ID}-${PROJECT_VERSION}-package/share/java/${ARTIFACT_ID}/* /usr/share/java/${COMPONENT}/
