@@ -107,7 +107,7 @@ RUN rpm --import archive.key \
         && rpm --install confluent-common-*.noarch.rpm \
               confluent-security-*.noarch.rpm \
               confluent-hub-client-*.noarch.rpm \
-              confluent-telemetry-*.noarch.rpm \
+              confluent-telemetry-*.noarch.rpm
 
 RUN rm -rf /usr/bin/rpm* /usr/lib/rpm /usr/lib64/librpm.so.8* \
         /usr/lib64/librpmio.so.8* \
