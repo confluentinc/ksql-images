@@ -122,7 +122,7 @@ COPY --from=ksqldb-server-ubi-minimal /usr/share/java /usr/share/java
 RUN ln -s /usr/lib/jvm/temurin-17-jre/bin/java /usr/bin/java
 
 
-FROM confluentinc/cp-base-java17 as ksqldb-server-final
+FROM registry.access.redhat.com/ubi8/ubi-micro as ksqldb-server-final
 
 ENV COMPONENT=ksqldb-server
 ENV KSQL_CLASSPATH=/usr/share/java/${COMPONENT}/*
