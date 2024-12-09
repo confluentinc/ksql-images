@@ -1,7 +1,7 @@
 ARG DOCKER_UPSTREAM_REGISTRY
 ARG DOCKER_UPSTREAM_TAG
 
-FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-new:${DOCKER_UPSTREAM_TAG}
+FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-lite:${DOCKER_UPSTREAM_TAG}
 
 EXPOSE 8088
 
@@ -67,28 +67,6 @@ RUN echo "===> Installing Confluent security plugins ..." \
     # KSQL's deb/rpm packages cannot directly depend on
     # confluent-telemetry package as KSQL is Open Source.
     && yum install -y confluent-telemetry-${CONFLUENT_VERSION}
-
-RUN echo "===> HACK to make cc-role-definitions available in docker image..." \
-    && yum install -y yum-utils \
-    && yum install -y cpio \
-    && cd /tmp \
-    && yumdownloader confluent-ksqldb --resolve \
-    && CONFLUENT_KSQLDB_RPM=$(ls /tmp/confluent-ksqldb-*.rpm) \
-    && echo "===> Extracting the rpm ${CONFLUENT_KSQLDB_RPM} to get the cc-role-definitions jar" \
-    && mkdir /tmp/extracted-ksqldb \
-    && cd /tmp/extracted-ksqldb \
-    && rpm2cpio ${CONFLUENT_KSQLDB_RPM} | cpio -idmv \
-    && cp /tmp/extracted-ksqldb/usr/share/java/ksqldb/cc-role-definitions*.jar /usr/share/java/${COMPONENT}/ \
-    && echo "====> Removing the tmp files" \
-    && rm -rf /tmp/extracted-ksqldb ${CONFLUENT_KSQLDB_RPM} \
-    && chown appuser:appuser /usr/share/java/${COMPONENT}/cc-role-definitions*.jar \
-    && echo "===> Cleaning up ..."  \
-    && yum clean all \
-    && rm -rf /tmp/* /etc/yum.repos.d/confluent.repo \
-    && mkdir -p /usr/share/confluent-hub-components \
-    && chown appuser:appuser -R /usr/share/confluent-hub-components \
-    && mkdir -p /var/lib/kafka-streams \
-    && chown appuser:appuser -R /var/lib/kafka-streams
 
 RUN chmod +x /etc/confluent/docker/run
 RUN chmod +x /etc/confluent/docker/configure
