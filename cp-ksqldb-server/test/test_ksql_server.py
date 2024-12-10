@@ -1,21 +1,22 @@
+import confluent.docker_utils as utils
+import logging
 import os
+import sys
 import time
 import unittest
 import subprocess
-import logging
 
-import confluent.docker_utils as utils
-
-logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
+# Route logs to stdout
+logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s", stream=sys.stdout)
 logger = logging.getLogger(__name__)
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 FIXTURES_DIR = os.path.join(CURRENT_DIR, "fixtures")
 KAFKA_READY = (
-    "bash -c 'ub kafka-ready {brokers} 40 -z $KAFKA_ZOOKEEPER_CONNECT " +
+        "bash -c 'cub kafka-ready {brokers} 40 -z $KAFKA_ZOOKEEPER_CONNECT " +
     "&& echo PASS || echo FAIL'")
-ZK_READY = "bash -c 'ub zk-ready {servers} 40 && echo PASS || echo FAIL'"
-SR_READY = "bash -c 'ub sr-ready {host} {port} 20 && echo PASS || echo FAIL'"
+ZK_READY = "bash -c 'cub zk-ready {servers} 40 && echo PASS || echo FAIL'"
+SR_READY = "bash -c 'cub sr-ready {host} {port} 20 && echo PASS || echo FAIL'"
 
 
 def check_cluster_ready(cluster):
@@ -57,15 +58,16 @@ class KsqlClient(object):
 
     # def request(self, uri):
     #     cmd = 'curl http://%s:%d%s' % (self.server_hostname, self.port, uri)
-    #     return run_cmd(self.client_container, cmd)
+    #     logger.info(f"running curl command {cmd}")
+    #     return run_cmd(self.client_container, cmd).decode()
 
     def request(self, uri):
         cmd = 'curl http://localhost:%s%s' % (self.port, uri)
-        print(f'checking url {cmd}')
+        logger.info(f"running curl command {cmd}")
         return subprocess.run(cmd, env=os.environ, check=True, capture_output=True, shell=True, text=True)
 
     def info(self):
-        return self.request('/info').decode()
+        return self.request('/info')
 
 
 def retry(op, timeout=600):
@@ -81,7 +83,7 @@ def retry(op, timeout=600):
 class KsqlServerTest(unittest.TestCase):
     @classmethod
     def setup_class(cls):
-        print('setup of tests, creating ksql test cluster using docker compose')
+        logger.info('setup of tests, creating ksql test cluster using docker compose')
         cls.cluster = utils.TestCluster(
             "ksql-server-test", FIXTURES_DIR, "basic-cluster.yml")
         cls.cluster.start()
@@ -92,14 +94,15 @@ class KsqlServerTest(unittest.TestCase):
                     return
             assert check_cluster_ready(cls.cluster)
         except:
-            cls.cluster.shutdown()
+            # cls.cluster.shutdown()
             raise
 
     @classmethod
     def teardown_class(cls):
-        cls.cluster.shutdown()
+        pass
+        # cls.cluster.shutdown()
 
     def test_server_start(self):
-        print('running tests')
+        logger.info('running tests')
         client = KsqlClient(self.cluster, 'ksqldb-cli', 'ksqldb-server', 8088)
-        retry(client.info)
+        retry(client.info, timeout=20)

@@ -41,6 +41,6 @@ if ! [[ -z "${KSQL_CONNECT_GROUP_ID:=}" ]]; then
   fi
 fi
 
-ub render-properties "/etc/confluent/docker/ksqldb-server-propertiesSpec.json" "/etc/${COMPONENT}/${COMPONENT}.properties"
-ub render-properties "/etc/confluent/docker/connect-propertiesSpec.json" "/etc/${COMPONENT}/connect.properties"
-ub render-template "/etc/confluent/docker/log4j.properties.template" "/etc/${COMPONENT}/log4j.properties"
+ub render-properties "/etc/confluent/docker/ksqldb-server-propertiesSpec.json" > "/etc/${COMPONENT}/${COMPONENT}.properties"
+ub render-properties "/etc/confluent/docker/connect-propertiesSpec.json" > "/etc/${COMPONENT}/connect.properties"
+ub render-template "/etc/confluent/docker/log4j.properties.template" > "/etc/${COMPONENT}/log4j.properties"
