@@ -1,0 +1,60 @@
+FROM registry.access.redhat.com/ubi8/ubi-minimal AS ksqldb-server-ubi-minimal
+
+ARG RPM_PACKAGES_DIR="/root/rpms"
+
+ENV COMPONENT=ksqldb-server
+ENV KSQL_CLASSPATH=/usr/share/java/${COMPONENT}/*
+
+ARG PROJECT_VERSION
+ARG ARTIFACT_ID
+ARG GIT_COMMIT
+
+ARG CONFLUENT_VERSION
+ARG CONFLUENT_PACKAGES_REPO
+ARG CONFLUENT_PLATFORM_LABEL
+
+RUN microdnf --nodocs install yum \
+    && yum --nodocs update -y \
+    && yum --nodocs install -y --setopt=install_weak_deps=False  \
+    wget yum-utils
+
+RUN mkdir -p ${RPM_PACKAGES_DIR} && \
+    cd ${RPM_PACKAGES_DIR} &&  \
+      yumdownloader ca-certificates crypto-policies openssl-libs libcurl curl  --resolve
+
+RUN yum remove wget -y \
+        && yum clean all \
+        && yum autoremove -y
+
+
+FROM registry.access.redhat.com/ubi8/ubi-micro
+
+ARG RPM_PACKAGES_DIR="/root/rpms"
+
+COPY --from=ksqldb-server-ubi-minimal /usr/lib/rpm /usr/lib/rpm
+COPY --from=ksqldb-server-ubi-minimal /usr/bin/rpm* /usr/bin/
+
+#COPY --from=ksqldb-server-ubi-minimal /usr/lib64/libz.so.1* \
+#                                /usr/lib64/libcrypto.so* \
+#                                /usr/lib64/libssl.so* \
+#                                /usr/lib64/libcurl.so* \
+#                                /usr/lib64/librpm.so.8* \
+#                                /usr/lib64/librpmio.so.8* \
+#                                /usr/lib64/libdb-5.*.so \
+#                                /usr/lib64/ libsqlite3.so.0* \
+#                                /usr/lib64/
+
+COPY --from=ksqldb-server-ubi-minimal /usr/lib64/* /usr/lib64/
+
+COPY --from=ksqldb-server-ubi-minimal /etc/rpm /etc/rpm
+
+COPY --from=ksqldb-server-ubi-minimal ${RPM_PACKAGES_DIR}/* ${RPM_PACKAGES_DIR}/
+
+WORKDIR ${RPM_PACKAGES_DIR}
+
+# openssl-pkcs11*.rpm openssl-1*.rpm
+RUN rpm --install ca-certificates*.rpm crypto-policies*.rpm openssl-libs-*.rpm  \
+        libcurl-*.rpm \
+        curl-*.rpm
+
+# docker build -t curl-ubi-micro -f Dockerfile.curl.micro .
