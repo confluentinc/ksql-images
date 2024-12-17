@@ -126,7 +126,7 @@ FROM registry.access.redhat.com/ubi8/ubi-micro as ksqldb-server-final
 
 ENV COMPONENT=ksqldb-server
 ENV KSQL_CLASSPATH=/usr/share/java/${COMPONENT}/*
-ENV PATH="${PATH}:/usr/lib/jvm/java-11-zulu-openjdk:/usr/bin"
+ENV PATH="${PATH}:/usr/lib/jvm/temurin-17-jre:/usr/bin"
 
 COPY --chown=1001:1001 target/dependency/ksqldb-console-scripts-*/* /usr/bin/
 COPY --chown=1001:1001 target/dependency/ksqldb-etc-*/* /etc/ksqldb/
