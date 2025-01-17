@@ -61,15 +61,16 @@ global_job_config:
             export PLATFORM_LABEL=""
         fi
       - export PACKAGING_BUILD_ARGS=" -DCONFLUENT_VERSION=$CONFLUENT_VERSION  -DCONFLUENT_PLATFORM_LABEL=$PLATFORM_LABEL -DCONFLUENT_DEB_VERSION=$CONFLUENT_DEB_VERSION  -DALLOW_UNSIGNED=$ALLOW_UNSIGNED"
+      - export MAVEN_PACKAGES_URL="https://s3.us-west-2.amazonaws.com/dev-confluent-packages-maven-654654529379-us-west-2/maven" # This is default set for PR builds not having a packaging build number
       - >-
-        export MAVEN_PACKAGES_URL="https://s3.us-west-2.amazonaws.com/dev-confluent-packages-maven-654654529379-us-west-2/maven" # This is default set for PR builds not having a packaging build number
         if [[ $IS_RC ]]; then
           export MAVEN_PACKAGES_URL="https://s3.us-west-2.amazonaws.com/staging-confluent-packages-maven-654654529379-us-west-2/v$BRANCH_NAME/maven"
         fi
+      - >-
         if [[ $PACKAGES_MAVEN_URL ]]; then
           export MAVEN_PACKAGES_URL=$PACKAGES_MAVEN_URL # If not empty, use the provided URL
         fi
-        . vault-sem-get-secret maven-settings-cp-dockerfile
+      -  . vault-sem-get-secret maven-settings-cp-dockerfile
       - export DOCKER_DEV_REGISTRY="519856050701.dkr.ecr.us-west-2.amazonaws.com/docker/dev/"
       - export DOCKER_PROD_REGISTRY="519856050701.dkr.ecr.us-west-2.amazonaws.com/docker/prod/"
       - export DOCKER_UPSTREAM_REGISTRY=$DOCKER_PROD_REGISTRY
