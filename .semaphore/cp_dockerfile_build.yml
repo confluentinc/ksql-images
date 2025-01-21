@@ -80,6 +80,7 @@ global_job_config:
       - export DOCKER_DEV_TAG="dev-$BRANCH_TAG-$BUILD_NUMBER"
       - export AMD_ARCH=.amd64
       - export ARM_ARCH=.arm64
+      - . assume-iam-role arn:aws:iam::891377121322:role/packaging-repo
 blocks:
   - name: Validation
     dependencies: []
