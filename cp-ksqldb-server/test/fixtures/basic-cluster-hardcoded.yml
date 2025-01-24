@@ -4,7 +4,7 @@ version: '2'
 services:
   zookeeper:
     hostname: zookeeper
-    image: "${DOCKER_TEST_REGISTRY}confluentinc/cp-zookeeper:${DOCKER_TEST_TAG}"
+    image: "519856050701.dkr.ecr.us-west-2.amazonaws.com/docker/prod/confluentinc/cp-zookeeper:7.8.x-latest-ubi8"
     environment:
       ZOOKEEPER_CLIENT_PORT: 32181
       ZOOKEEPER_TICK_TIME: 2000
@@ -13,7 +13,7 @@ services:
 
   kafka:
     hostname: kafka
-    image: "${DOCKER_TEST_REGISTRY}confluentinc/cp-enterprise-kafka:${DOCKER_TEST_TAG}"
+    image: "519856050701.dkr.ecr.us-west-2.amazonaws.com/docker/prod/confluentinc/cp-enterprise-kafka:7.8.x-latest-ubi8"
     depends_on:
       - zookeeper
     environment:
@@ -35,7 +35,7 @@ services:
 
   schema-registry:
     hostname: schema-registry 
-    image: "${DOCKER_TEST_REGISTRY}confluentinc/cp-schema-registry:${DOCKER_TEST_TAG}"
+    image: "519856050701.dkr.ecr.us-west-2.amazonaws.com/docker/prod/confluentinc/cp-schema-registry:7.8.x-latest-ubi8"
     depends_on:
       - zookeeper
       - kafka
@@ -48,7 +48,8 @@ services:
 
   ksqldb-server:
     hostname: ksqldb-server
-    image: "${DOCKER_REGISTRY}confluentinc/cp-ksqldb-server:${DOCKER_TAG}"
+    image: "519856050701.dkr.ecr.us-west-2.amazonaws.com/docker/dev/confluentinc/cp-ksqldb-server:dev-7.8.x-06acfeac-ubi8.arm64"
+#    image: "519856050701.dkr.ecr.us-west-2.amazonaws.com/docker/prod/confluentinc/cp-ksqldb-server:7.8.x-latest-ubi8"
     depends_on:
       - kafka
       - schema-registry
@@ -63,7 +64,7 @@ services:
 
   ksqldb-cli:
     hostname: ksqldb-cli 
-    image: "${DOCKER_REGISTRY}confluentinc/cp-ksqldb-cli:${DOCKER_TAG}"
+    image: "519856050701.dkr.ecr.us-west-2.amazonaws.com/docker/prod/confluentinc/cp-ksqldb-cli:7.8.x-latest-ubi8"
     depends_on:
       - ksqldb-server
     entrypoint:

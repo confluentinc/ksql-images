@@ -23,7 +23,7 @@
     <parent>
         <groupId>io.confluent.ksql</groupId>
         <artifactId>ksql-images-parent</artifactId>
-        <version>7.8.1-0</version>
+        <version>7.8.0-0</version>
     </parent>
 
     <groupId>io.confluent.ksql</groupId>
@@ -31,6 +31,8 @@
     <name>KSQL Server Docker image</name>
 
     <properties>
+        <docker.file>Dockerfile.temurin17.minimal.poc</docker.file>
+<!--        <docker.file>Dockerfile.temurin17.poc</docker.file>-->
         <docker.skip-build>false</docker.skip-build>
         <docker.skip-test>false</docker.skip-test>
         <io.confluent.blueway.version>${confluent.version.range}</io.confluent.blueway.version>
