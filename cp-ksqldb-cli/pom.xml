@@ -26,7 +26,6 @@
         <version>7.5.8-0</version>
     </parent>
 
-    <groupId>io.confluent.ksql</groupId>
     <artifactId>cp-ksqldb-cli</artifactId>
     <name>KSQL Server CLI image</name>
 
@@ -37,60 +36,6 @@
     </properties>
 
     <dependencies>
-        <!-- including rest-utils explicitly to pin jersey deps to 2.30 -->
-        <dependency>
-            <groupId>io.confluent</groupId>
-            <artifactId>rest-utils</artifactId>
-            <version>${io.confluent.rest-utils.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>ksqldb-cli</artifactId>
-            <version>${io.confluent.ksql.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>ksqldb-functional-tests</artifactId>
-            <version>${io.confluent.ksql.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-clients</artifactId>
-            <version>${kafka.version}</version>
-            <classifier>test</classifier>
-            <scope>compile</scope>
-        </dependency>
-
-         <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-streams-test-utils</artifactId>
-            <version>${kafka.version}</version>
-        </dependency>
-
-         <dependency>
-            <groupId>io.confluent.ksql</groupId>
-            <artifactId>ksqldb-metastore</artifactId>
-            <version>${io.confluent.ksql.version}</version>
-            <type>test-jar</type>
-        </dependency>
-
-         <dependency>
-            <groupId>io.confluent.ksql</groupId>
-            <artifactId>ksqldb-engine</artifactId>
-            <version>${io.confluent.ksql.version}</version>
-            <type>test-jar</type>
-        </dependency>
-
-         <dependency>
-            <groupId>io.confluent.ksql</groupId>
-            <artifactId>ksqldb-common</artifactId>
-            <version>${io.confluent.ksql.version}</version>
-            <type>test-jar</type>
-        </dependency>
-
-
          <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
@@ -103,84 +48,6 @@
             <artifactId>junit</artifactId>
             <version>4.13.1</version>
             <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>ksqldb-functional-tests</artifactId>
-            <version>${io.confluent.ksql.version}</version>
-        </dependency>
-
-        <dependency>
-          <groupId>${project.groupId}</groupId>
-          <artifactId>ksqldb-functional-tests</artifactId>
-          <version>${io.confluent.ksql.version}</version>
-        </dependency>
-
-        <dependency>
-          <groupId>org.apache.kafka</groupId>
-          <artifactId>kafka-clients</artifactId>
-          <version>${kafka.version}</version>
-          <classifier>test</classifier>
-          <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-          <groupId>org.apache.kafka</groupId>
-          <artifactId>kafka-streams-test-utils</artifactId>
-          <version>${kafka.version}</version>
-        </dependency>
-
-        <dependency>
-          <groupId>io.confluent.ksql</groupId>
-          <artifactId>ksqldb-metastore</artifactId>
-          <version>${io.confluent.ksql.version}</version>
-          <type>test-jar</type>
-        </dependency>
-
-        <dependency>
-          <groupId>io.confluent.ksql</groupId>
-          <artifactId>ksqldb-engine</artifactId>
-          <version>${io.confluent.ksql.version}</version>
-          <type>test-jar</type>
-        </dependency>
-
-        <dependency>
-          <groupId>io.confluent.ksql</groupId>
-          <artifactId>ksqldb-common</artifactId>
-          <version>${io.confluent.ksql.version}</version>
-          <type>test-jar</type>
-        </dependency>
-
-        <dependency>
-          <groupId>io.confluent.ksql</groupId>
-          <artifactId>ksqldb-tools</artifactId>
-          <version>${io.confluent.ksql.version}</version>
-        </dependency>
-
-        <dependency>
-          <groupId>org.hamcrest</groupId>
-          <artifactId>hamcrest-all</artifactId>
-          <version>1.3</version>
-          <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>ksqldb-console-scripts</artifactId>
-            <version>${io.confluent.ksql.version}</version>
-            <classifier>resources</classifier>
-            <type>zip</type>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>ksqldb-etc</artifactId>
-            <version>${io.confluent.ksql.version}</version>
-            <classifier>resources</classifier>
-            <type>zip</type>
-            <scope>provided</scope>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/jakarta.el/jakarta.el-api -->
