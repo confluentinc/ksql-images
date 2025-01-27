@@ -26,7 +26,6 @@
         <version>8.0.0-0</version>
     </parent>
 
-    <groupId>io.confluent.ksql</groupId>
     <artifactId>cp-ksqldb-server</artifactId>
     <name>KSQL Server Docker image</name>
 
