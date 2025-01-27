@@ -26,7 +26,6 @@
         <version>7.9.0-0</version>
     </parent>
 
-    <groupId>io.confluent.ksql</groupId>
     <artifactId>cp-ksqldb-server</artifactId>
     <name>KSQL Server Docker image</name>
 
@@ -34,7 +33,6 @@
         <docker.file>Dockerfile.ubi9-minimal.poc</docker.file>
         <docker.skip-build>false</docker.skip-build>
         <docker.skip-test>false</docker.skip-test>
-        <io.confluent.blueway.version>${confluent.version.range}</io.confluent.blueway.version>
         <io.confluent.confluent-security-plugins.version>${confluent.version.range}</io.confluent.confluent-security-plugins.version>
         <io.confluent.ksql.version>${confluent.version.range}</io.confluent.ksql.version>
     </properties>
@@ -48,84 +46,6 @@
                 <exclusion>
                     <groupId>org.hamcrest</groupId>
                     <artifactId>hamcrest-core</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>io.confluent.ksql</groupId>
-            <artifactId>cp-ksqldb-cli</artifactId>
-            <version>${io.confluent.ksql-images.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>io.confluent</groupId>
-                    <artifactId>cc-role-definitions</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>io.confluent</groupId>
-            <artifactId>monitoring-interceptors</artifactId>
-            <version>${io.confluent.blueway.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>ksqldb-rest-app</artifactId>
-            <version>${io.confluent.ksql.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>io.confluent</groupId>
-                    <artifactId>cc-role-definitions</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>ksqldb-functional-tests</artifactId>
-            <version>${io.confluent.ksql.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>io.confluent</groupId>
-                    <artifactId>cc-role-definitions</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-          <groupId>io.confluent.ksql</groupId>
-          <artifactId>ksqldb-tools</artifactId>
-          <version>${io.confluent.ksql.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>io.confluent</groupId>
-                    <artifactId>cc-role-definitions</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>ksqldb-console-scripts</artifactId>
-            <version>${io.confluent.ksql.version}</version>
-            <classifier>resources</classifier>
-            <type>zip</type>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>ksqldb-etc</artifactId>
-            <version>${io.confluent.ksql.version}</version>
-            <classifier>resources</classifier>
-            <type>zip</type>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>io.confluent</groupId>
-                    <artifactId>cc-role-definitions</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
