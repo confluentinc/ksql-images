@@ -1,4 +1,4 @@
-log4j.rootLogger={{ env["KSQL_LOG4J_ROOT_LOGLEVEL"] | default('INFO') }}, stdout
+log4j.rootLogger={{ getEnv "KAFKA_LOG4J_ROOT_LOGLEVEL" "INFO" }}, stdout
 
 log4j.appender.stdout=org.apache.log4j.ConsoleAppender
 log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
