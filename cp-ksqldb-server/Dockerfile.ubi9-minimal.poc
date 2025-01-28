@@ -42,7 +42,7 @@ USER root
 
 RUN rpm --import https://www.azul.com/files/0xB1998361219BD9C9.txt \
     && dnf --nodocs -y install https://cdn.azul.com/zulu/bin/zulu-repo-1.0.0-1.noarch.rpm \
-    && dnf install --installroot /microdir -y zulu17-ca-jre-headless
+    && dnf install --installroot /microdir -y tar zulu17-ca-jre-headless
 
 RUN mkdir -p /microdir/etc/confluent/docker /microdir/usr/logs \
     && useradd --no-log-init --create-home --shell /bin/bash appuser \
@@ -101,4 +101,4 @@ COPY --from=intermediate /microdir /
 
 USER 1001
 
-#CMD ["/etc/confluent/docker/run"]
+CMD ["/etc/confluent/docker/run"]
