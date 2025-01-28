@@ -40,25 +40,11 @@ ARG CONFLUENT_PLATFORM_LABEL
 
 USER root
 
-# If temurin-jdk installation is failing
-#RUN rpm --import https://www.azul.com/files/0xB1998361219BD9C9.txt \
-#    && dnf --nodocs -y install https://cdn.azul.com/zulu/bin/zulu-repo-1.0.0-1.noarch.rpm \
-#    && dnf install --installroot /microdir -y zulu17-ca-jre-headless
-
-#RUN printf "[temurin-jdk] \n\
-#name=temurin-jdk \n\
-#baseurl=https://packages.adoptium.net/artifactory/rpm/rhel/\$releasever/\$basearch \n\
-#enabled=1 \n\
-#gpgcheck=1 \n\
-#gpgkey=https://packages.adoptium.net/artifactory/api/gpg/key/public \n\
-#" > /etc/yum.repos.d/adoptium.repo
-
-# dnf install --installroot /microdir -y temurin-17-jre
-
 RUN rpm --import https://www.azul.com/files/0xB1998361219BD9C9.txt \
     && dnf --nodocs -y install https://cdn.azul.com/zulu/bin/zulu-repo-1.0.0-1.noarch.rpm \
-    && dnf install --installroot /microdir -y zulu17-ca-jre-headless\
-    && mkdir -p /microdir/etc/confluent/docker /microdir/usr/logs \
+    && dnf install --installroot /microdir -y zulu17-ca-jre-headless
+
+RUN mkdir -p /microdir/etc/confluent/docker /microdir/usr/logs \
     && useradd --no-log-init --create-home --shell /bin/bash appuser \
     && chown appuser:appuser -R /microdir/etc/confluent/ /microdir/usr/logs
 
@@ -108,9 +94,11 @@ FROM registry.access.redhat.com/ubi9/ubi-micro
 
 ENV COMPONENT=ksqldb-server
 ENV KSQL_CLASSPATH=/usr/share/java/${COMPONENT}/*
+ENV JAVA_HOME=/usr/lib/jvm/java-17-zulu-openjdk-ca
+ENV PATH="/usr/lib/jvm/java-17-zulu-openjdk-ca/bin:${PATH}"
 
 COPY --from=intermediate /microdir /
 
 USER 1001
 
-CMD ["/etc/confluent/docker/run"]
+#CMD ["/etc/confluent/docker/run"]
