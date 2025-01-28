@@ -1,0 +1,7 @@
+{
+  "prefixes": {
+    "KSQL_CONNECT": false
+  },
+  "defaults": {
+  }
+}

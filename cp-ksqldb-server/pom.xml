@@ -30,6 +30,7 @@
     <name>KSQL Server Docker image</name>
 
     <properties>
+        <docker.file>Dockerfile.ubi9-minimal.poc</docker.file>
         <docker.skip-build>false</docker.skip-build>
         <docker.skip-test>false</docker.skip-test>
         <io.confluent.confluent-security-plugins.version>${confluent.version.range}</io.confluent.confluent-security-plugins.version>

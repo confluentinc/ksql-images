@@ -1,0 +1,116 @@
+ARG DOCKER_UPSTREAM_REGISTRY
+ARG DOCKER_UPSTREAM_TAG
+
+FROM docker.io/golang AS build_package_dedupe
+WORKDIR /build
+RUN useradd --no-log-init --create-home --shell /bin/bash appuser
+COPY --chown=appuser:appuser package_dedupe/package_dedupe.go ./
+RUN go build -ldflags="-w -s" ./package_dedupe.go
+
+FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-new:${DOCKER_UPSTREAM_TAG} as cp-base-new
+
+FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-lite:${DOCKER_UPSTREAM_TAG} as cp-base-lite
+
+FROM registry.access.redhat.com/ubi9/ubi as intermediate
+
+EXPOSE 8088
+
+ENV COMPONENT=ksqldb-server
+ENV KSQL_CLASSPATH=/usr/share/java/${COMPONENT}/*
+
+ARG PROJECT_VERSION
+ARG ARTIFACT_ID
+ARG GIT_COMMIT
+
+LABEL maintainer="partner-support@confluent.io"
+LABEL vendor="Confluent"
+LABEL version=$GIT_COMMIT
+LABEL release=$PROJECT_VERSION
+LABEL name=$ARTIFACT_ID
+LABEL summary="Confluent KSQL is the streaming SQL engine that enables real-time data processing against Apache Kafka®."
+LABEL description="Confluent KSQL is the streaming SQL engine that enables real-time data processing against Apache Kafka®."
+LABEL io.confluent.docker.git.id=$GIT_COMMIT
+ARG BUILD_NUMBER=-1
+LABEL io.confluent.docker.build.number=$BUILD_NUMBER
+LABEL io.confluent.docker=true
+
+ARG CONFLUENT_VERSION
+ARG CONFLUENT_PACKAGES_REPO
+ARG CONFLUENT_PLATFORM_LABEL
+
+USER root
+
+# If temurin-jdk installation is failing
+#RUN rpm --import https://www.azul.com/files/0xB1998361219BD9C9.txt \
+#    && dnf --nodocs -y install https://cdn.azul.com/zulu/bin/zulu-repo-1.0.0-1.noarch.rpm \
+#    && dnf install --installroot /microdir -y zulu17-ca-jre-headless
+
+#RUN printf "[temurin-jdk] \n\
+#name=temurin-jdk \n\
+#baseurl=https://packages.adoptium.net/artifactory/rpm/rhel/\$releasever/\$basearch \n\
+#enabled=1 \n\
+#gpgcheck=1 \n\
+#gpgkey=https://packages.adoptium.net/artifactory/api/gpg/key/public \n\
+#" > /etc/yum.repos.d/adoptium.repo
+
+# dnf install --installroot /microdir -y temurin-17-jre
+
+RUN rpm --import https://www.azul.com/files/0xB1998361219BD9C9.txt \
+    && dnf --nodocs -y install https://cdn.azul.com/zulu/bin/zulu-repo-1.0.0-1.noarch.rpm \
+    && dnf install --installroot /microdir -y zulu17-ca-jre-headless\
+    && mkdir -p /microdir/etc/confluent/docker /microdir/usr/logs \
+    && useradd --no-log-init --create-home --shell /bin/bash appuser \
+    && chown appuser:appuser -R /microdir/etc/confluent/ /microdir/usr/logs
+
+
+RUN echo "===> Adding confluent repository...${CONFLUENT_PACKAGES_REPO}" \
+    && rpm --import ${CONFLUENT_PACKAGES_REPO}/archive.key \
+    && printf "[Confluent] \n\
+name=Confluent repository \n\
+baseurl=${CONFLUENT_PACKAGES_REPO}/ \n\
+gpgcheck=1 \n\
+gpgkey=${CONFLUENT_PACKAGES_REPO}/archive.key \n\
+enabled=1 " > /microdir/etc/yum.repos.d/confluent.repo \
+
+RUN echo "===> Installing Confluent security plugins ..." \
+    && dnf install --installroot /microdir -y confluent-security-${CONFLUENT_VERSION} \
+    && echo "===> Installing Confluent Hub client ..." \
+    && dnf install --installroot /microdir -y confluent-hub-client-${CONFLUENT_VERSION} \
+    && echo "===> Installing Confluent Telemetry package ..." \
+    # We are installing confluent-telemetry package explicitly because
+    # KSQL's deb/rpm packages cannot directly depend on
+    # confluent-telemetry package as KSQL is Open Source.
+    && dnf install --installroot /microdir -y confluent-telemetry-${CONFLUENT_VERSION} \
+    && echo "====> Installing ksqldb" \
+    && dnf install --installroot /microdir -y confluent-ksqldb-${CONFLUENT_VERSION}
+
+COPY --chown=appuser:appuser include/etc/confluent/docker/* /microdir/etc/confluent/docker/
+
+RUN mkdir -p /microdir/etc/${COMPONENT} /microdir/etc/${COMPONENT}/secrets /microdir/usr/logs \
+  && chown appuser:root -R /microdir/etc/${COMPONENT} /microdir/usr/logs \
+  && chmod ug+w -R /microdir/etc/${COMPONENT} /microdir/usr/logs
+
+RUN chmod +x /microdir/etc/confluent/docker/run
+RUN chmod +x /microdir/etc/confluent/docker/configure
+RUN chmod +x /microdir/etc/confluent/docker/launch
+RUN chmod +x /microdir/etc/confluent/docker/ensure
+
+COPY --from=cp-base-new --chown=appuser:appuser /usr/share/java/cp-base-new /microdir/usr/share/java/cp-base-new
+COPY --from=cp-base-lite /usr/bin/ub /microdir/usr/bin/ub
+COPY --from=build_package_dedupe /build/package_dedupe /usr/bin/
+
+# && rm -rf confluent-security/schema* confluent-security/connect confluent-security/kafka-rest \
+RUN cd /microdir/usr/share/java \
+      && package_dedupe $(pwd)
+
+
+FROM registry.access.redhat.com/ubi9/ubi-micro
+
+ENV COMPONENT=ksqldb-server
+ENV KSQL_CLASSPATH=/usr/share/java/${COMPONENT}/*
+
+COPY --from=intermediate /microdir /
+
+USER 1001
+
+CMD ["/etc/confluent/docker/run"]
