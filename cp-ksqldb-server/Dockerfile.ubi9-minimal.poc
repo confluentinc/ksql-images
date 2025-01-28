@@ -45,16 +45,19 @@ USER root
 #    && dnf --nodocs -y install https://cdn.azul.com/zulu/bin/zulu-repo-1.0.0-1.noarch.rpm \
 #    && dnf install --installroot /microdir -y zulu17-ca-jre-headless
 
-RUN printf "[temurin-jdk] \n\
-name=temurin-jdk \n\
-baseurl=https://packages.adoptium.net/artifactory/rpm/rhel/\$releasever/\$basearch \n\
-enabled=1 \n\
-gpgcheck=1 \n\
-gpgkey=https://packages.adoptium.net/artifactory/api/gpg/key/public \n\
-" > /etc/yum.repos.d/adoptium.repo
+#RUN printf "[temurin-jdk] \n\
+#name=temurin-jdk \n\
+#baseurl=https://packages.adoptium.net/artifactory/rpm/rhel/\$releasever/\$basearch \n\
+#enabled=1 \n\
+#gpgcheck=1 \n\
+#gpgkey=https://packages.adoptium.net/artifactory/api/gpg/key/public \n\
+#" > /etc/yum.repos.d/adoptium.repo
 
+# dnf install --installroot /microdir -y temurin-17-jre
 
-RUN dnf install --installroot /microdir -y temurin-17-jre \
+RUN rpm --import https://www.azul.com/files/0xB1998361219BD9C9.txt \
+    && dnf --nodocs -y install https://cdn.azul.com/zulu/bin/zulu-repo-1.0.0-1.noarch.rpm \
+    && dnf install --installroot /microdir -y zulu17-ca-jre-headless\
     && mkdir -p /microdir/etc/confluent/docker /microdir/usr/logs \
     && useradd --no-log-init --create-home --shell /bin/bash appuser \
     && chown appuser:appuser -R /microdir/etc/confluent/ /microdir/usr/logs
