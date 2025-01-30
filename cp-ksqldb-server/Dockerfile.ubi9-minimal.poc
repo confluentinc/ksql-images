@@ -48,18 +48,10 @@ gpgcheck=1 \n\
 gpgkey=https://packages.adoptium.net/artifactory/api/gpg/key/public \n\
 " > /etc/yum.repos.d/adoptium.repo
 
-RUN microdnf install -y temurin-17-jre \
+RUN microdnf install -y temurin-17-jre openssl \
     && mkdir -p /etc/confluent/docker /usr/logs \
     && useradd --no-log-init --create-home --shell /bin/bash appuser \
     && chown appuser:appuser -R /etc/confluent/ /usr/logs
-
-COPY --chown=appuser:appuser target/${ARTIFACT_ID}-${PROJECT_VERSION}-package/share/java/${ARTIFACT_ID}/* /usr/share/java/${COMPONENT}/
-COPY --chown=appuser:appuser target/${ARTIFACT_ID}-${PROJECT_VERSION}-package/share/doc/* /usr/share/doc/${ARTIFACT_ID}/
-COPY --chown=appuser:appuser target/dependency/ksqldb-console-scripts-*/* /usr/bin/
-COPY --chown=appuser:appuser target/dependency/ksqldb-etc-*/* /etc/ksqldb/
-
-COPY --chown=appuser:appuser target/dependency/ksqldb-etc-*/* /etc/confluent/docker/
-COPY --chown=appuser:appuser include/etc/confluent/docker/* /etc/confluent/docker/
 
 RUN mkdir -p /etc/${COMPONENT} /etc/${COMPONENT}/secrets /usr/logs \
   && chown appuser:root -R /etc/${COMPONENT} /usr/logs \
@@ -82,7 +74,12 @@ RUN echo "===> Installing Confluent security plugins ..." \
     # We are installing confluent-telemetry package explicitly because
     # KSQL's deb/rpm packages cannot directly depend on
     # confluent-telemetry package as KSQL is Open Source.
-    && microdnf install -y confluent-telemetry-${CONFLUENT_VERSION}
+    && microdnf install -y confluent-telemetry-${CONFLUENT_VERSION} \
+    && echo "====> Installing ksqldb" \
+    && microdnf install -y confluent-ksqldb-${CONFLUENT_VERSION}
+
+COPY --chown=appuser:appuser include/etc/confluent/docker/* /etc/confluent/docker/
+
 
 RUN chmod +x /etc/confluent/docker/run
 RUN chmod +x /etc/confluent/docker/configure
