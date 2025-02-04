@@ -1,0 +1,12 @@
+ARG ARCH_TYPE
+
+FROM 519856050701.dkr.ecr.us-west-2.amazonaws.com/docker/dev/confluentinc/cp-base-java:dev-master-d2b7afc3-ubi8${ARCH_TYPE}
+
+EXPOSE 8088
+
+ENV COMPONENT=ksqldb-server
+ENV KSQL_CLASSPATH=/usr/share/java/${COMPONENT}/*
+
+ARG PROJECT_VERSION
+ARG ARTIFACT_ID
+ARG GIT_COMMIT

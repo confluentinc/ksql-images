@@ -25,43 +25,43 @@ ARG CONFLUENT_VERSION
 ARG CONFLUENT_PACKAGES_REPO
 ARG CONFLUENT_PLATFORM_LABEL
 
-USER root
+#USER root
+#
+#COPY --chown=appuser:appuser include/etc/confluent/docker /etc/confluent/docker
+#
+#RUN mkdir -p /etc/${COMPONENT} /etc/${COMPONENT}/secrets /var/log/${COMPONENT} /usr/logs \
+#  && chown appuser:root -R /etc/${COMPONENT} /var/log/${COMPONENT} /usr/logs \
+#  && chmod ug+w -R /etc/${COMPONENT} /var/log/${COMPONENT} /usr/logs
+#
+#RUN echo "===> Adding confluent repository...${CONFLUENT_PACKAGES_REPO}" \
+#    && rpm --import ${CONFLUENT_PACKAGES_REPO}/archive.key \
+#    && printf "[Confluent.dist] \n\
+#name=Confluent repository (dist) \n\
+#baseurl=${CONFLUENT_PACKAGES_REPO}/\$releasever \n\
+#gpgcheck=1 \n\
+#gpgkey=${CONFLUENT_PACKAGES_REPO}/archive.key \n\
+#enabled=1 \n\
+#\n\
+#[Confluent] \n\
+#name=Confluent repository \n\
+#baseurl=${CONFLUENT_PACKAGES_REPO}/ \n\
+#gpgcheck=1 \n\
+#gpgkey=${CONFLUENT_PACKAGES_REPO}/archive.key \n\
+#enabled=1 " > /etc/yum.repos.d/confluent.repo
+#
+#RUN echo "===> Installing Confluent Hub client ${CONFLUENT_VERSION}..." \
+#    && yum install -y confluent-hub-client-${CONFLUENT_VERSION} confluent-ksqldb-${CONFLUENT_VERSION}
+#
+#RUN echo "===> Cleaning up ..."  \
+#    && yum clean all \
+#    && rm -rf /tmp/* /etc/yum.repos.d/confluent.repo \
+#    && mkdir -p /usr/share/confluent-hub-components \
+#    && chown appuser:appuser -R /usr/share/confluent-hub-components
+#
+#USER appuser
 
-COPY --chown=appuser:appuser include/etc/confluent/docker /etc/confluent/docker
-
-RUN mkdir -p /etc/${COMPONENT} /etc/${COMPONENT}/secrets /var/log/${COMPONENT} /usr/logs \
-  && chown appuser:root -R /etc/${COMPONENT} /var/log/${COMPONENT} /usr/logs \
-  && chmod ug+w -R /etc/${COMPONENT} /var/log/${COMPONENT} /usr/logs
-
-RUN echo "===> Adding confluent repository...${CONFLUENT_PACKAGES_REPO}" \
-    && rpm --import ${CONFLUENT_PACKAGES_REPO}/archive.key \
-    && printf "[Confluent.dist] \n\
-name=Confluent repository (dist) \n\
-baseurl=${CONFLUENT_PACKAGES_REPO}/\$releasever \n\
-gpgcheck=1 \n\
-gpgkey=${CONFLUENT_PACKAGES_REPO}/archive.key \n\
-enabled=1 \n\
-\n\
-[Confluent] \n\
-name=Confluent repository \n\
-baseurl=${CONFLUENT_PACKAGES_REPO}/ \n\
-gpgcheck=1 \n\
-gpgkey=${CONFLUENT_PACKAGES_REPO}/archive.key \n\
-enabled=1 " > /etc/yum.repos.d/confluent.repo
-
-RUN echo "===> Installing Confluent Hub client ${CONFLUENT_VERSION}..." \
-    && yum install -y confluent-hub-client-${CONFLUENT_VERSION} confluent-ksqldb-${CONFLUENT_VERSION}
-
-RUN echo "===> Cleaning up ..."  \
-    && yum clean all \
-    && rm -rf /tmp/* /etc/yum.repos.d/confluent.repo \
-    && mkdir -p /usr/share/confluent-hub-components \
-    && chown appuser:appuser -R /usr/share/confluent-hub-components
-
-USER appuser
-
-RUN bash /etc/confluent/docker/configure
-ENV KSQL_LOG4J_OPTS=-Dlog4j.configuration=file:/etc/${COMPONENT}/log4j.properties
+#RUN bash /etc/confluent/docker/configure
+#ENV KSQL_LOG4J_OPTS=-Dlog4j.configuration=file:/etc/${COMPONENT}/log4j.properties
 
 ENTRYPOINT ["ksql"]
 CMD ["http://localhost:8088"]
