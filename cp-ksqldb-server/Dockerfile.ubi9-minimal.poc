@@ -48,7 +48,7 @@ gpgcheck=1 \n\
 gpgkey=https://packages.adoptium.net/artifactory/api/gpg/key/public \n\
 " > /etc/yum.repos.d/adoptium.repo
 
-RUN microdnf install -y temurin-17-jre openssl \
+RUN microdnf install -y temurin-17-jre \
     && mkdir -p /etc/confluent/docker /usr/logs \
     && useradd --no-log-init --create-home --shell /bin/bash appuser \
     && chown appuser:appuser -R /etc/confluent/ /usr/logs
