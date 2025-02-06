@@ -1,0 +1,45 @@
+FROM 519856050701.dkr.ecr.us-west-2.amazonaws.com/docker/prod/confluentinc/cp-base-java:master-latest-ubi8 as intermediate
+
+RUN echo "===> Adding confluent repository...${CONFLUENT_PACKAGES_REPO}" \
+    && rpm --import ${CONFLUENT_PACKAGES_REPO}/archive.key \
+    && printf "[Confluent] \n\
+name=Confluent repository \n\
+baseurl=${CONFLUENT_PACKAGES_REPO}/ \n\
+gpgcheck=1 \n\
+gpgkey=${CONFLUENT_PACKAGES_REPO}/archive.key \n\
+enabled=1 " > /etc/yum.repos.d/confluent.repo \
+
+RUN echo "===> Installing Confluent security plugins ..." \
+    && microdnf install -y confluent-security-${CONFLUENT_VERSION} \
+    && echo "===> Installing Confluent Hub client ..." \
+    && microdnf install -y confluent-hub-client-${CONFLUENT_VERSION} \
+    && echo "===> Installing Confluent Telemetry package ..." \
+    # We are installing confluent-telemetry package explicitly because
+    # KSQL's deb/rpm packages cannot directly depend on
+    # confluent-telemetry package as KSQL is Open Source.
+    && microdnf install -y confluent-telemetry-${CONFLUENT_VERSION} \
+    && echo "====> Installing ksqldb" \
+    && microdnf install -y confluent-ksqldb-${CONFLUENT_VERSION}
+
+COPY --chown=appuser:appuser include/etc/confluent/docker/* /etc/confluent/docker/
+
+RUN cd /usr/share/java \
+      && package_dedupe $(pwd)
+
+RUN chmod +x /etc/confluent/docker/run
+RUN chmod +x /etc/confluent/docker/configure
+RUN chmod +x /etc/confluent/docker/launch
+RUN chmod +x /etc/confluent/docker/ensure
+
+FROM 519856050701.dkr.ecr.us-west-2.amazonaws.com/docker/prod/confluentinc/cp-base-java:master-latest-ubi8
+
+EXPOSE 8088
+
+ENV COMPONENT=ksqldb-server
+ENV KSQL_CLASSPATH=/usr/share/java/${COMPONENT}/*
+
+COPY --from=intermediate / /
+
+# This needs to be moved to cp-base-java itself for backward compatibility
+RUN ln -s /usr/share/java/cp-base-java /usr/share/java/cp-base-new
+
