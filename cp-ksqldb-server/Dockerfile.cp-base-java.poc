@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi9/ubi-minimal as intermediate
+FROM 519856050701.dkr.ecr.us-west-2.amazonaws.com/docker/prod/confluentinc/cp-base-java:master-latest-ubi8 as intermediate
 
 RUN echo "===> Adding confluent repository...${CONFLUENT_PACKAGES_REPO}" \
     && rpm --import ${CONFLUENT_PACKAGES_REPO}/archive.key \
