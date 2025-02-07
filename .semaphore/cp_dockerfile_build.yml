@@ -321,6 +321,7 @@ blocks:
             - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
             - docker push $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
   - name: Create Manifest and Maven Deploy
+    dependencies: []
     task:
       jobs:
         - name: Create Manifest and Maven Deploy
