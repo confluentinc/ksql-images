@@ -95,9 +95,6 @@ blocks:
     dependencies: ["Validation"]
     skip:
       when: branch = 'clear-maven-cache'
-    run:
-      # don't run the tests on non-functional changes...
-      when: "change_in('/', {exclude: ['/.deployed-versions/', '.github/']})"
     task:
       jobs:
         - name: Build, Test, & Scan ubi8
@@ -209,9 +206,6 @@ blocks:
     dependencies: ["Validation"]
     skip:
       when: branch = 'clear-maven-cache'
-    run:
-      # don't run the tests on non-functional changes...
-      when: "change_in('/', {exclude: ['/.deployed-versions/', '.github/']})"
     task:
       agent:
         machine:
