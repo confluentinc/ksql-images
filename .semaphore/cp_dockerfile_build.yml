@@ -93,6 +93,8 @@ blocks:
             - . sem-pint -c
   - name: Build, Test, & Scan AMD
     dependencies: ["Validation"]
+    skip:
+      when: branch = 'clear-maven-cache'
     run:
       # don't run the tests on non-functional changes...
       when: "change_in('/', {exclude: ['/.deployed-versions/', '.github/']})"
@@ -205,6 +207,8 @@ blocks:
             - docker push $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
   - name: Build & Test ARM
     dependencies: ["Validation"]
+    skip:
+      when: branch = 'clear-maven-cache'
     run:
       # don't run the tests on non-functional changes...
       when: "change_in('/', {exclude: ['/.deployed-versions/', '.github/']})"
