@@ -52,7 +52,7 @@ RUN echo "===> Installing Confluent security plugins ..." \
 COPY --chown=appuser:appuser include/etc/confluent/docker/* /etc/confluent/docker/
 
 RUN cd /usr/share/java \
-      && /usr/bin/package_dedupe/package_dedupe $(pwd)
+      && package_dedupe $(pwd)
 
 RUN chmod +x /etc/confluent/docker/run
 RUN chmod +x /etc/confluent/docker/configure
