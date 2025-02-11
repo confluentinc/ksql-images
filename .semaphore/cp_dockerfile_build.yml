@@ -332,14 +332,14 @@ blocks:
         - name: Create Manifest and Maven Deploy
           commands:
             - export DOCKER_PROD_IMAGE_NAME=$DOCKER_PROD_REGISTRY${DOCKER_REPOS// / $DOCKER_PROD_REGISTRY}
-            - ci-tools ci-update-version
-            - ci-tools ci-push-tag
             - |-
               if [[ ! $IS_RELEASE && ! $IS_PREVIEW ]]; then
                 #use semaphore default maven config to deploy jars to codeartifact
                 cp /tmp/temp_settings.xml ~/.m2/settings.xml
                 #clear maven repository cache coming from previous blocks
                 rm -rf ~/.m2/repository
+                ci-tools ci-update-version
+                ci-tools ci-push-tag
                 mvn -Dmaven.wagon.http.retryHandler.count=3 --batch-mode -P jenkins,docker -DaltDeploymentRepository=confluent-codeartifact-internal::default::https://confluent-519856050701.d.codeartifact.us-west-2.amazonaws.com/maven/maven-snapshots/ -DrepositoryId=confluent-codeartifact-internal deploy -DskipTests -Ddocker.skip-build=true -Ddocker.skip-test=true 
               fi
             # Create manifest
