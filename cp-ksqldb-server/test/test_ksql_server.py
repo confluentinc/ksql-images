@@ -51,7 +51,7 @@ def run_cmd(container, cmd):
 class KsqlClient(object):
     def __init__(self, cluster, client, server, port):
         self.cluster = cluster
-        self.client_container = self.cluster.get_container(client)
+        # self.client_container = self.cluster.get_container(client)
         server_container = self.cluster.get_container(server)
         self.server_hostname = server_container.name
         self.port = port
