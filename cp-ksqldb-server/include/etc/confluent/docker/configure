@@ -43,5 +43,5 @@ fi
 echo "===> Preparing KSQL Server properties"
 dub template "/etc/ksqldb/ksqldb-server.properties.template" "/etc/${COMPONENT}/${COMPONENT}.properties"
 dub template "/etc/ksqldb/connect.properties.template" "/etc/${COMPONENT}/connect.properties"
-dub template "/etc/confluent/docker/log4j.properties.template" "/etc/${COMPONENT}/log4j.properties"
-echo "===> Prepared KSQL Server properties - /etc/${COMPONENT}/${COMPONENT}.properties, /etc/${COMPONENT}/connect.properties, /etc/${COMPONENT}/log4j.properties"
+dub template "/etc/confluent/docker/log4j2.yaml.template" "/etc/${COMPONENT}/log4j2.yaml"
+echo "===> Prepared KSQL Server properties - /etc/${COMPONENT}/${COMPONENT}.properties, /etc/${COMPONENT}/connect.properties, /etc/${COMPONENT}/log4j2.yaml"

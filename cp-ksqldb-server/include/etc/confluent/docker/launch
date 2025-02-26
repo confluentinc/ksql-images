@@ -21,7 +21,7 @@ fi
 
 # Ensure that KSQL picks up the correct log4j properties file
 if [ -z "$KSQL_LOG4J_OPTS" ]; then
-  export KSQL_LOG4J_OPTS="-Dlog4j.configuration=file:/etc/${COMPONENT}/log4j.properties"
+  export KSQL_LOG4J_OPTS="-Dlog4j2.configurationFile=file:/etc/${COMPONENT}/log4j2.yaml"
 fi
 
 # The JMX client needs to be able to connect to java.rmi.server.hostname.
