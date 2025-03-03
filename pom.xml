@@ -134,7 +134,7 @@
     </build>
 
     <properties>
-        <netty-tcnative-version>2.0.65.Final</netty-tcnative-version>
+        <netty-tcnative-version>2.0.70.Final</netty-tcnative-version>
         <!-- We normally get this from common, but Vertx is built against this -->
         <!-- Note: `netty` depends on `tcnative` and if we bump `netty`
              we might need to bump `tcnative`, too.
