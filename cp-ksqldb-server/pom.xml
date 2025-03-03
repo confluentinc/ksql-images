@@ -32,7 +32,6 @@
     <properties>
         <docker.skip-build>false</docker.skip-build>
         <docker.skip-test>false</docker.skip-test>
-        <io.confluent.blueway.version>${confluent.version.range}</io.confluent.blueway.version>
         <io.confluent.confluent-security-plugins.version>${confluent.version.range}</io.confluent.confluent-security-plugins.version>
         <io.confluent.ksql.version>${confluent.version.range}</io.confluent.ksql.version>
     </properties>
@@ -49,7 +48,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
         <!-- https://mvnrepository.com/artifact/jakarta.el/jakarta.el-api -->
         <dependency>
             <groupId>jakarta.el</groupId>
