@@ -14,11 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+set -x
+
 . /etc/confluent/docker/bash-config
 
-dub ensure-atleast-one KSQL_BOOTSTRAP_SERVERS KSQL_KSQL_STREAMS_BOOTSTRAP_SERVERS
+ub ensure KSQL_BOOTSTRAP_SERVERS || ub ensure KSQL_KSQL_STREAMS_BOOTSTRAP_SERVERS
 
-dub path /etc/"${COMPONENT}"/ writable
+ub path /etc/"${COMPONENT}"/ writable
 
 if [[ -n "${KSQL_JMX_OPTS-}" ]]
 then
@@ -41,7 +43,8 @@ if ! [[ -z "${KSQL_CONNECT_GROUP_ID:=}" ]]; then
 fi
 
 echo "===> Preparing KSQL Server properties"
-dub template "/etc/ksqldb/ksqldb-server.properties.template" "/etc/${COMPONENT}/${COMPONENT}.properties"
-dub template "/etc/ksqldb/connect.properties.template" "/etc/${COMPONENT}/connect.properties"
-dub template "/etc/confluent/docker/log4j.properties.template" "/etc/${COMPONENT}/log4j.properties"
+echo "component value is ${COMPONENT}"
+ub render-properties "/etc/confluent/docker/ksqldb-server-propertiesSpec.json" > "/etc/${COMPONENT}/${COMPONENT}.properties"
+ub render-properties "/etc/confluent/docker/connect-propertiesSpec.json" > "/etc/${COMPONENT}/connect.properties"
+#ub render-template "/etc/confluent/docker/log4j.properties.template" > "/etc/${COMPONENT}/log4j.properties"
 echo "===> Prepared KSQL Server properties - /etc/${COMPONENT}/${COMPONENT}.properties, /etc/${COMPONENT}/connect.properties, /etc/${COMPONENT}/log4j.properties"

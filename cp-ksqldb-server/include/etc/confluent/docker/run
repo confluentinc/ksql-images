@@ -14,6 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+set -x
+
+env | grep -i "ksql"
+env | grep -i "kafka"
+env | grep -i "connect"
+
 . /etc/confluent/docker/bash-config
 
 echo "===> User"
