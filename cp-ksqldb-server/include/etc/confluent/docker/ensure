@@ -14,6 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+set -x
+
 . /etc/confluent/docker/bash-config
 
 echo "===> Check if Kafka is healthy ..."
@@ -28,14 +30,14 @@ fi
 
 if [[ -n "${KSQL_SECURITY_PROTOCOL-}" ]] && [[ $KSQL_SECURITY_PROTOCOL != "PLAINTEXT" ]]
 then
-    cub kafka-ready \
+    ub kafka-ready \
         "${KSQL_CUB_KAFKA_MIN_BROKERS:-1}" \
         "${KSQL_CUB_KAFKA_TIMEOUT:-180}" \
         -b "${BOOTSTRAP_SERVER_CONFIG}" \
         --config /etc/"${COMPONENT}"/"${COMPONENT}".properties
 elif [[ -n "${BOOTSTRAP_SERVER_CONFIG-}" ]]
 then
-    cub kafka-ready \
+    ub kafka-ready \
         "${KSQL_CUB_KAFKA_MIN_BROKERS:-1}" \
         "${KSQL_CUB_KAFKA_TIMEOUT:-180}" \
         -b "${BOOTSTRAP_SERVER_CONFIG}"
@@ -43,25 +45,25 @@ fi
 
 # KSQL_CONNECT_GROUP_ID is a required configuration for running embedded connect
 if ! [[ -z "${KSQL_CONNECT_GROUP_ID:=}" ]]; then
-  dub ensure KSQL_CONNECT_BOOTSTRAP_SERVERS
-  dub ensure KSQL_CONNECT_GROUP_ID
-  dub ensure KSQL_CONNECT_CONFIG_STORAGE_TOPIC
-  dub ensure KSQL_CONNECT_OFFSET_STORAGE_TOPIC
-  dub ensure KSQL_CONNECT_STATUS_STORAGE_TOPIC
-  dub ensure KSQL_CONNECT_KEY_CONVERTER
-  dub ensure KSQL_CONNECT_VALUE_CONVERTER
+  ub ensure KSQL_CONNECT_BOOTSTRAP_SERVERS
+  ub ensure KSQL_CONNECT_GROUP_ID
+  ub ensure KSQL_CONNECT_CONFIG_STORAGE_TOPIC
+  ub ensure KSQL_CONNECT_OFFSET_STORAGE_TOPIC
+  ub ensure KSQL_CONNECT_STATUS_STORAGE_TOPIC
+  ub ensure KSQL_CONNECT_KEY_CONVERTER
+  ub ensure KSQL_CONNECT_VALUE_CONVERTER
 
   # This is required to avoid config bugs. You should set this to a value that is
   # resolvable by all containers.
-  dub ensure KSQL_CONNECT_REST_ADVERTISED_HOST_NAME
+  ub ensure KSQL_CONNECT_REST_ADVERTISED_HOST_NAME
 
   if [[ $KSQL_CONNECT_KEY_CONVERTER == "io.confluent.connect.avro.AvroConverter" ]]
   then
-    dub ensure KSQL_CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL
+    ub ensure KSQL_CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL
   fi
 
   if [[ $KSQL_CONNECT_VALUE_CONVERTER == "io.confluent.connect.avro.AvroConverter" ]]
   then
-    dub ensure KSQL_CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL
+    ub ensure KSQL_CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL
   fi
 fi
