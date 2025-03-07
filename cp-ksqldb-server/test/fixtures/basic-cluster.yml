@@ -58,8 +58,6 @@ services:
       KSQL_KSQL_SCHEMA_REGISTRY_URL: http://schema-registry:8081
     labels:
       - io.confluent.docker.testing=true
-    ports:
-      - "8088:8088"
   ksqldb-cli:
     hostname: ksqldb-cli
     image: "${DOCKER_REGISTRY}confluentinc/cp-ksqldb-cli:${DOCKER_TAG}"
