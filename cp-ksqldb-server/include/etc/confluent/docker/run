@@ -15,6 +15,7 @@
 # limitations under the License.
 
 set -x
+set -e
 
 env | grep -i "ksql"
 env | grep -i "kafka"
