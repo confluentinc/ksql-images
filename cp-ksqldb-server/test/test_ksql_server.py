@@ -7,8 +7,8 @@ import confluent.docker_utils as utils
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 FIXTURES_DIR = os.path.join(CURRENT_DIR, "fixtures")
 KAFKA_READY = (
-    "bash -c 'cub kafka-ready {brokers} 40 -z $KAFKA_ZOOKEEPER_CONNECT " +
-    "&& echo PASS || echo FAIL'")
+        "bash -c 'cub kafka-ready {brokers} 40 -z $KAFKA_ZOOKEEPER_CONNECT " +
+        "&& echo PASS || echo FAIL'")
 ZK_READY = "bash -c 'cub zk-ready {servers} 40 && echo PASS || echo FAIL'"
 SR_READY = "bash -c 'cub sr-ready {host} {port} 20 && echo PASS || echo FAIL'"
 
@@ -18,11 +18,11 @@ def check_cluster_ready(cluster):
         ['zookeeper', ZK_READY.format(servers="zookeeper:32181")],
         ['kafka', KAFKA_READY.format(brokers=1)],
         ['schema-registry',
-            SR_READY.format(host="schema-registry", port="8081")]
+         SR_READY.format(host="schema-registry", port="8081")]
     ]
     return all(
         [('PASS' in cluster.run_command_on_service(*args).decode())
-            for args in checks])
+         for args in checks])
 
 
 class RunCommandException(Exception):
