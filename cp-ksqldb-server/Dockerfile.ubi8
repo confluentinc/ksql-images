@@ -1,5 +1,6 @@
 ARG DOCKER_UPSTREAM_REGISTRY
 ARG DOCKER_UPSTREAM_TAG
+ARG UBI_MINIMAL_VERSION
 
 FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-java:${DOCKER_UPSTREAM_TAG} as intermediate
 
@@ -60,7 +61,7 @@ RUN chmod +x /etc/confluent/docker/ensure
 RUN cd /usr/share/java \
       && package_dedupe $(pwd)
 
-FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-java:${DOCKER_UPSTREAM_TAG}
+FROM registry.access.redhat.com/ubi9-minimal:${UBI_MINIMAL_VERSION}
 
 EXPOSE 8088
 
