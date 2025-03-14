@@ -29,15 +29,15 @@ fi
 if [[ -n "${KSQL_SECURITY_PROTOCOL-}" ]] && [[ $KSQL_SECURITY_PROTOCOL != "PLAINTEXT" ]]
 then
     ub kafka-ready \
-        "${KSQL_ub_KAFKA_MIN_BROKERS:-1}" \
-        "${KSQL_ub_KAFKA_TIMEOUT:-180}" \
+        "${KSQL_CUB_KAFKA_MIN_BROKERS:-1}" \
+        "${KSQL_CUB_KAFKA_TIMEOUT:-180}" \
         -b "${BOOTSTRAP_SERVER_CONFIG}" \
         --config /etc/"${COMPONENT}"/"${COMPONENT}".properties
 elif [[ -n "${BOOTSTRAP_SERVER_CONFIG-}" ]]
 then
     ub kafka-ready \
-        "${KSQL_ub_KAFKA_MIN_BROKERS:-1}" \
-        "${KSQL_ub_KAFKA_TIMEOUT:-180}" \
+        "${KSQL_CUB_KAFKA_MIN_BROKERS:-1}" \
+        "${KSQL_CUB_KAFKA_TIMEOUT:-180}" \
         -b "${BOOTSTRAP_SERVER_CONFIG}"
 fi
 
