@@ -1,9 +1,8 @@
 ARG DOCKER_UPSTREAM_REGISTRY
 ARG DOCKER_UPSTREAM_TAG
+ARG UBI_MINIMAL_VERSION
 
-FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-new:${DOCKER_UPSTREAM_TAG}
-
-EXPOSE 8088
+FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-java:${DOCKER_UPSTREAM_TAG} as intermediate
 
 ENV COMPONENT=ksqldb-server
 ENV KSQL_CLASSPATH=/usr/share/java/${COMPONENT}/*
@@ -11,18 +10,6 @@ ENV KSQL_CLASSPATH=/usr/share/java/${COMPONENT}/*
 ARG PROJECT_VERSION
 ARG ARTIFACT_ID
 ARG GIT_COMMIT
-
-LABEL maintainer="partner-support@confluent.io"
-LABEL vendor="Confluent"
-LABEL version=$GIT_COMMIT
-LABEL release=$PROJECT_VERSION
-LABEL name=$ARTIFACT_ID
-LABEL summary="Confluent KSQL is the streaming SQL engine that enables real-time data processing against Apache Kafka®."
-LABEL description="Confluent KSQL is the streaming SQL engine that enables real-time data processing against Apache Kafka®."
-LABEL io.confluent.docker.git.id=$GIT_COMMIT
-ARG BUILD_NUMBER=-1
-LABEL io.confluent.docker.build.number=$BUILD_NUMBER
-LABEL io.confluent.docker=true
 
 ARG CONFLUENT_VERSION
 ARG CONFLUENT_PACKAGES_REPO
@@ -32,14 +19,7 @@ USER root
 
 RUN echo "===> Adding confluent repository...${CONFLUENT_PACKAGES_REPO}" \
     && rpm --import ${CONFLUENT_PACKAGES_REPO}/archive.key \
-    && printf "[Confluent.dist] \n\
-name=Confluent repository (dist) \n\
-baseurl=${CONFLUENT_PACKAGES_REPO}/\$releasever \n\
-gpgcheck=1 \n\
-gpgkey=${CONFLUENT_PACKAGES_REPO}/archive.key \n\
-enabled=1 \n\
-\n\
-[Confluent] \n\
+    && printf "[Confluent] \n\
 name=Confluent repository \n\
 baseurl=${CONFLUENT_PACKAGES_REPO}/ \n\
 gpgcheck=1 \n\
@@ -47,21 +27,22 @@ gpgkey=${CONFLUENT_PACKAGES_REPO}/archive.key \n\
 enabled=1 " > /etc/yum.repos.d/confluent.repo
 
 RUN echo "===> Installing Confluent security plugins ..." \
-    && yum install -y confluent-security-${CONFLUENT_VERSION} \
+    && microdnf install -y confluent-security-${CONFLUENT_VERSION} \
     && echo "===> Installing Confluent Hub client ..." \
-    && yum install -y confluent-hub-client-${CONFLUENT_VERSION} \
+    && microdnf install -y confluent-hub-client-${CONFLUENT_VERSION} \
     && echo "===> Installing Confluent Telemetry package ..." \
     # We are installing confluent-telemetry package explicitly because
     # KSQL's deb/rpm packages cannot directly depend on
     # confluent-telemetry package as KSQL is Open Source.
-    && yum install -y confluent-telemetry-${CONFLUENT_VERSION} \
+    && microdnf install -y confluent-telemetry-${CONFLUENT_VERSION} \
     && echo "====> Installing ksqldb" \
-    && yum install -y confluent-ksqldb-${CONFLUENT_VERSION}
+    && microdnf install -y confluent-ksqldb-${CONFLUENT_VERSION}
 
 RUN echo "===> Cleaning up ..."  \
-    && yum clean all \
-    && rm -rf /tmp/* /etc/yum.repos.d/confluent.repo \
-    && mkdir -p /usr/share/confluent-hub-components \
+    && microdnf clean all \
+    && rm -rf /tmp/* /etc/yum.repos.d/confluent.repo
+
+RUN mkdir -p /usr/share/confluent-hub-components \
     && chown appuser:appuser -R /usr/share/confluent-hub-components \
     && mkdir -p /var/lib/kafka-streams \
     && chown appuser:appuser -R /var/lib/kafka-streams
@@ -77,7 +58,33 @@ RUN chmod +x /etc/confluent/docker/configure
 RUN chmod +x /etc/confluent/docker/launch
 RUN chmod +x /etc/confluent/docker/ensure
 
+RUN cd /usr/share/java \
+      && package_dedupe $(pwd)
+
+FROM registry.access.redhat.com/ubi9-minimal:${UBI_MINIMAL_VERSION}
+
+EXPOSE 8088
+
+ENV COMPONENT=ksqldb-server
+ENV KSQL_CLASSPATH=/usr/share/java/${COMPONENT}/*
+
+LABEL maintainer="partner-support@confluent.io"
+LABEL vendor="Confluent"
+LABEL version=$GIT_COMMIT
+LABEL release=$PROJECT_VERSION
+LABEL name=$ARTIFACT_ID
+LABEL summary="Confluent KSQL is the streaming SQL engine that enables real-time data processing against Apache Kafka®."
+LABEL description="Confluent KSQL is the streaming SQL engine that enables real-time data processing against Apache Kafka®."
+LABEL io.confluent.docker.git.id=$GIT_COMMIT
+LABEL io.confluent.docker.build.number=$BUILD_NUMBER
+LABEL io.confluent.docker=true
+
+ARG BUILD_NUMBER=-1
+
+USER root
+
+COPY --from=intermediate / /
+
 USER appuser
 
 CMD ["/etc/confluent/docker/run"]
-
