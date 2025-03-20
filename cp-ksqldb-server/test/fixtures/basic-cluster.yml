@@ -18,6 +18,7 @@ services:
       KAFKA_LISTENERS: 'PLAINTEXT://kafka:39092,CONTROLLER://kafka:39093,PLAINTEXT_HOST://0.0.0.0:9092'
       KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
       KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
+      CLUSTER_ID: '9-fLubcIRYqQaWkrwEThnQ'
     labels:
       - io.confluent.docker.testing=true
 
