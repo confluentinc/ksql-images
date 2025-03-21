@@ -55,6 +55,7 @@ RUN echo "===> Cleaning up ..."  \
     && mkdir -p /usr/share/confluent-hub-components \
     && chown appuser:appuser -R /usr/share/confluent-hub-components \
     && mkdir -p /var/lib/kafka-streams \
-    && chown appuser:appuser -R /var/lib/kafka-streams
+    && chown appuser:appuser -R /var/lib/kafka-streams \
+    && rm -rf /usr/share/java/confluent-security/schema-registry /usr/share/java/confluent-security/connect /usr/share/java/confluent-security/kafka-rest
 
 USER appuser
