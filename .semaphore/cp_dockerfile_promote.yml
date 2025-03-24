@@ -7,7 +7,7 @@ version: v1.0
 name: build-test-release
 agent:
   machine:
-    type: s1-prod-ubuntu20-04-amd64-1
+    type: s1-prod-ubuntu24-04-amd64-1
 
 fail_fast:
   cancel:
@@ -52,9 +52,9 @@ blocks:
     dependencies: []
     task:
       jobs:
-        - name: Promote confluentinc/cp-ksqldb-server ubi8 AMD
+        - name: Promote confluentinc/cp-ksqldb-server ubi9 AMD
           commands:
-            - export OS_TYPE="ubi8"
+            - export OS_TYPE="ubi9"
             - export DOCKER_REPO="confluentinc/cp-ksqldb-server"
             - if [[ ! "$OS_TYPE" ]]; then export OS_TAG=""; elif [[ "$OS_TYPE" =~ $PROMOTE_OS_TYPE* ]]; then export OS_TAG="-$OS_TYPE"; fi
             - export INTERNAL_IMAGE_TAG="$BRANCH_TAG-$PACKAGING_BUILD_NUMBER$OS_TAG$AMD_ARCH"
@@ -80,9 +80,9 @@ blocks:
                   docker tag $DOCKER_REPO:$PROMOTED_TAG $DOCKER_REPO:latest-$OS_TYPE$AMD_ARCH
                   docker push $DOCKER_REPO:latest-$OS_TYPE$AMD_ARCH
               fi
-        - name: Promote confluentinc/cp-ksqldb-cli ubi8 AMD
+        - name: Promote confluentinc/cp-ksqldb-cli ubi9 AMD
           commands:
-            - export OS_TYPE="ubi8"
+            - export OS_TYPE="ubi9"
             - export DOCKER_REPO="confluentinc/cp-ksqldb-cli"
             - if [[ ! "$OS_TYPE" ]]; then export OS_TAG=""; elif [[ "$OS_TYPE" =~ $PROMOTE_OS_TYPE* ]]; then export OS_TAG="-$OS_TYPE"; fi
             - export INTERNAL_IMAGE_TAG="$BRANCH_TAG-$PACKAGING_BUILD_NUMBER$OS_TAG$AMD_ARCH"
@@ -108,9 +108,9 @@ blocks:
                   docker tag $DOCKER_REPO:$PROMOTED_TAG $DOCKER_REPO:latest-$OS_TYPE$AMD_ARCH
                   docker push $DOCKER_REPO:latest-$OS_TYPE$AMD_ARCH
               fi
-        - name: Promote confluentinc/ksqldb-examples ubi8 AMD
+        - name: Promote confluentinc/ksqldb-examples ubi9 AMD
           commands:
-            - export OS_TYPE="ubi8"
+            - export OS_TYPE="ubi9"
             - export DOCKER_REPO="confluentinc/ksqldb-examples"
             - if [[ ! "$OS_TYPE" ]]; then export OS_TAG=""; elif [[ "$OS_TYPE" =~ $PROMOTE_OS_TYPE* ]]; then export OS_TAG="-$OS_TYPE"; fi
             - export INTERNAL_IMAGE_TAG="$BRANCH_TAG-$PACKAGING_BUILD_NUMBER$OS_TAG$AMD_ARCH"
@@ -140,9 +140,9 @@ blocks:
     dependencies: []
     task:
       jobs:
-        - name: Promote confluentinc/cp-ksqldb-server ubi8 ARM
+        - name: Promote confluentinc/cp-ksqldb-server ubi9 ARM
           commands:
-            - export OS_TYPE="ubi8"
+            - export OS_TYPE="ubi9"
             - export DOCKER_REPO="confluentinc/cp-ksqldb-server"
             - if [[ ! "$OS_TYPE" ]]; then export OS_TAG=""; elif [[ "$OS_TYPE" =~ $PROMOTE_OS_TYPE* ]]; then export OS_TAG="-$OS_TYPE"; fi
             - export INTERNAL_IMAGE_TAG="$BRANCH_TAG-$PACKAGING_BUILD_NUMBER$OS_TAG$ARM_ARCH"
@@ -166,11 +166,11 @@ blocks:
                   docker push $DOCKER_REPO:latest$ARM_ARCH
                   fi
                   docker tag $DOCKER_REPO:$PROMOTED_TAG $DOCKER_REPO:latest-$OS_TYPE$ARM_ARCH
-                  docker push $DOCKER_REPO:latest-$OS_TYPE$ARM_ARCH
+                  docker push $DOCKER_REPO:latest-$OS_TYPE$ARM_ARCH              
               fi
-        - name: Promote confluentinc/cp-ksqldb-cli ubi8 ARM
+        - name: Promote confluentinc/cp-ksqldb-cli ubi9 ARM
           commands:
-            - export OS_TYPE="ubi8"
+            - export OS_TYPE="ubi9"
             - export DOCKER_REPO="confluentinc/cp-ksqldb-cli"
             - if [[ ! "$OS_TYPE" ]]; then export OS_TAG=""; elif [[ "$OS_TYPE" =~ $PROMOTE_OS_TYPE* ]]; then export OS_TAG="-$OS_TYPE"; fi
             - export INTERNAL_IMAGE_TAG="$BRANCH_TAG-$PACKAGING_BUILD_NUMBER$OS_TAG$ARM_ARCH"
@@ -194,11 +194,11 @@ blocks:
                   docker push $DOCKER_REPO:latest$ARM_ARCH
                   fi
                   docker tag $DOCKER_REPO:$PROMOTED_TAG $DOCKER_REPO:latest-$OS_TYPE$ARM_ARCH
-                  docker push $DOCKER_REPO:latest-$OS_TYPE$ARM_ARCH
+                  docker push $DOCKER_REPO:latest-$OS_TYPE$ARM_ARCH              
               fi
-        - name: Promote confluentinc/ksqldb-examples ubi8 ARM
+        - name: Promote confluentinc/ksqldb-examples ubi9 ARM
           commands:
-            - export OS_TYPE="ubi8"
+            - export OS_TYPE="ubi9"
             - export DOCKER_REPO="confluentinc/ksqldb-examples"
             - if [[ ! "$OS_TYPE" ]]; then export OS_TAG=""; elif [[ "$OS_TYPE" =~ $PROMOTE_OS_TYPE* ]]; then export OS_TAG="-$OS_TYPE"; fi
             - export INTERNAL_IMAGE_TAG="$BRANCH_TAG-$PACKAGING_BUILD_NUMBER$OS_TAG$ARM_ARCH"
@@ -222,15 +222,15 @@ blocks:
                   docker push $DOCKER_REPO:latest$ARM_ARCH
                   fi
                   docker tag $DOCKER_REPO:$PROMOTED_TAG $DOCKER_REPO:latest-$OS_TYPE$ARM_ARCH
-                  docker push $DOCKER_REPO:latest-$OS_TYPE$ARM_ARCH
+                  docker push $DOCKER_REPO:latest-$OS_TYPE$ARM_ARCH              
               fi
   - name: Create Manifest
     dependencies: ["Promote AMD", "Promote ARM"]
     task:
       jobs:
-        - name: Create Manifest confluentinc/cp-ksqldb-server ubi8
+        - name: Create Manifest confluentinc/cp-ksqldb-server ubi9
           commands:
-            - export OS_TYPE="ubi8"
+            - export OS_TYPE="ubi9"
             - if [[ ! "$OS_TYPE" ]]; then export OS_TAG=""; elif [[ "$OS_TYPE" =~ $PROMOTE_OS_TYPE* ]]; then export OS_TAG="-$OS_TYPE"; fi
             - export DOCKER_REPO="confluentinc/cp-ksqldb-server"
             - export PROMOTED_TAG="$PROMOTED_TAG_PREFIX$OS_TAG"
@@ -249,11 +249,11 @@ blocks:
                   docker manifest push $DOCKER_REPO:latest
                   fi
                   docker manifest create $DOCKER_REPO:latest-$OS_TYPE $DOCKER_REPO:latest-$OS_TYPE$AMD_ARCH $DOCKER_REPO:latest-$OS_TYPE$ARM_ARCH
-                  docker manifest push $DOCKER_REPO:latest-$OS_TYPE
+                  docker manifest push $DOCKER_REPO:latest-$OS_TYPE              
               fi
-        - name: Create Manifest confluentinc/cp-ksqldb-cli ubi8
+        - name: Create Manifest confluentinc/cp-ksqldb-cli ubi9
           commands:
-            - export OS_TYPE="ubi8"
+            - export OS_TYPE="ubi9"
             - if [[ ! "$OS_TYPE" ]]; then export OS_TAG=""; elif [[ "$OS_TYPE" =~ $PROMOTE_OS_TYPE* ]]; then export OS_TAG="-$OS_TYPE"; fi
             - export DOCKER_REPO="confluentinc/cp-ksqldb-cli"
             - export PROMOTED_TAG="$PROMOTED_TAG_PREFIX$OS_TAG"
@@ -272,11 +272,11 @@ blocks:
                   docker manifest push $DOCKER_REPO:latest
                   fi
                   docker manifest create $DOCKER_REPO:latest-$OS_TYPE $DOCKER_REPO:latest-$OS_TYPE$AMD_ARCH $DOCKER_REPO:latest-$OS_TYPE$ARM_ARCH
-                  docker manifest push $DOCKER_REPO:latest-$OS_TYPE
+                  docker manifest push $DOCKER_REPO:latest-$OS_TYPE              
               fi
-        - name: Create Manifest confluentinc/ksqldb-examples ubi8
+        - name: Create Manifest confluentinc/ksqldb-examples ubi9
           commands:
-            - export OS_TYPE="ubi8"
+            - export OS_TYPE="ubi9"
             - if [[ ! "$OS_TYPE" ]]; then export OS_TAG=""; elif [[ "$OS_TYPE" =~ $PROMOTE_OS_TYPE* ]]; then export OS_TAG="-$OS_TYPE"; fi
             - export DOCKER_REPO="confluentinc/ksqldb-examples"
             - export PROMOTED_TAG="$PROMOTED_TAG_PREFIX$OS_TAG"
@@ -295,5 +295,5 @@ blocks:
                   docker manifest push $DOCKER_REPO:latest
                   fi
                   docker manifest create $DOCKER_REPO:latest-$OS_TYPE $DOCKER_REPO:latest-$OS_TYPE$AMD_ARCH $DOCKER_REPO:latest-$OS_TYPE$ARM_ARCH
-                  docker manifest push $DOCKER_REPO:latest-$OS_TYPE
+                  docker manifest push $DOCKER_REPO:latest-$OS_TYPE              
               fi
