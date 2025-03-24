@@ -16,9 +16,9 @@
 
 . /etc/confluent/docker/bash-config
 
-dub ensure-atleast-one KSQL_BOOTSTRAP_SERVERS KSQL_KSQL_STREAMS_BOOTSTRAP_SERVERS
+ub ensure KSQL_BOOTSTRAP_SERVERS || ub ensure KSQL_KSQL_STREAMS_BOOTSTRAP_SERVERS
 
-dub path /etc/"${COMPONENT}"/ writable
+ub path /etc/"${COMPONENT}"/ writable
 
 if [[ -n "${KSQL_JMX_OPTS-}" ]]
 then
@@ -41,7 +41,7 @@ if ! [[ -z "${KSQL_CONNECT_GROUP_ID:=}" ]]; then
 fi
 
 echo "===> Preparing KSQL Server properties"
-dub template "/etc/ksqldb/ksqldb-server.properties.template" "/etc/${COMPONENT}/${COMPONENT}.properties"
-dub template "/etc/ksqldb/connect.properties.template" "/etc/${COMPONENT}/connect.properties"
-dub template "/etc/confluent/docker/log4j2.yaml.template" "/etc/${COMPONENT}/log4j2.yaml"
+ub render-template "/etc/confluent/docker/ksqldb-server.properties.template" > "/etc/${COMPONENT}/${COMPONENT}.properties"
+ub render-template "/etc/confluent/docker/connect.properties.template" > "/etc/${COMPONENT}/connect.properties"
+ub render-template "/etc/confluent/docker/log4j2.yaml.template" > "/etc/${COMPONENT}/log4j2.yaml"
 echo "===> Prepared KSQL Server properties - /etc/${COMPONENT}/${COMPONENT}.properties, /etc/${COMPONENT}/connect.properties, /etc/${COMPONENT}/log4j2.yaml"
