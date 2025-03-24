@@ -23,7 +23,7 @@ semaphore:
   maven_skip_deploy: true
   build_arm: true
   nano_version: true
-  os_types: ["ubi8"]
+  os_types: ["ubi9"]
   pip_install_package: 'tox==3.28.0'
   use_packages: true
   cp_images: true
