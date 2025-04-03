@@ -61,23 +61,47 @@ global_job_config:
             export PLATFORM_LABEL=""
         fi
       - export PACKAGING_BUILD_ARGS=" -DCONFLUENT_VERSION=$CONFLUENT_VERSION  -DCONFLUENT_PLATFORM_LABEL=$PLATFORM_LABEL -DCONFLUENT_DEB_VERSION=$CONFLUENT_DEB_VERSION  -DALLOW_UNSIGNED=$ALLOW_UNSIGNED"
-      - export MAVEN_PACKAGES_URL="https://s3.us-west-2.amazonaws.com/dev-confluent-packages-maven-654654529379-us-west-2/maven" # This is default set for PR builds not having a packaging build number
       - >-
-        if [[ $IS_RC ]]; then
-          export MAVEN_PACKAGES_URL="https://s3.us-west-2.amazonaws.com/staging-confluent-packages-maven-654654529379-us-west-2/v$BRANCH_NAME/maven"
+        if [[ $IS_RELEASE && $PACKAGING_BUILD_NUMBER ]]; then
+          if [[ $IS_RC ]]; then
+              export MAVEN_PACKAGES_URL="https://s3.us-west-2.amazonaws.com/staging-confluent-packages-maven-654654529379-us-west-2/v$BRANCH_NAME/maven"
+              if [[ $PACKAGES_MAVEN_URL ]]; then
+                  export MAVEN_PACKAGES_URL=$PACKAGES_MAVEN_URL
+              fi
+          fi
+          # Overwrite maven global configuration
+          . vault-sem-get-secret maven-settings-cp-dockerfile
+        else
+          echo "This job is not a isHotfixJob or isRcJob (What we know how to handle) - and we don't know how to handle it"
         fi
-      - >-
-        if [[ $PACKAGES_MAVEN_URL ]]; then
-          export MAVEN_PACKAGES_URL=$PACKAGES_MAVEN_URL # If not empty, use the provided URL
-        fi
-      - cp ~/.m2/settings.xml /tmp/temp_settings.xml
-      -  . vault-sem-get-secret maven-settings-cp-dockerfile
       - export DOCKER_DEV_REGISTRY="519856050701.dkr.ecr.us-west-2.amazonaws.com/docker/dev/"
       - export DOCKER_PROD_REGISTRY="519856050701.dkr.ecr.us-west-2.amazonaws.com/docker/prod/"
       - export DOCKER_UPSTREAM_REGISTRY=$DOCKER_PROD_REGISTRY
       - export LATEST_TAG=$BRANCH_TAG-latest
       - export DOCKER_UPSTREAM_TAG="$LATEST_TAG"
       - export DOCKER_REPOS="confluentinc/cp-ksqldb-server confluentinc/cp-ksqldb-cli confluentinc/ksqldb-examples"
+      - export COMMUNITY_DOCKER_REPOS=""
+      - |
+        if [[ $SKIP_COMMUNITY == "True" ]]; then
+          # Filter out community repos from DOCKER_REPOS
+          DOCKER_REPOS=$(comm -23 <(echo "$DOCKER_REPOS" | tr ' ' '\n' | sort) <(echo "$COMMUNITY_DOCKER_REPOS" | tr ' ' '\n' | sort) | tr '\n' ' ' | xargs)
+          export DOCKER_REPOS
+          echo "DOCKER_REPOS after skipping community images - $DOCKER_REPOS"
+
+          # Set Maven arguments for skipping community modules
+          export MAVEN_EXTRA_ARGS=""
+
+          # Check if current DOCKER_IMAGE is in community repos, skip job execution
+          for skip_repo in $COMMUNITY_DOCKER_REPOS; do
+            if [ "$skip_repo" = "$DOCKER_IMAGE" ]; then
+              echo "Skipping build for $DOCKER_IMAGE as it is in COMMUNITY_DOCKER_REPOS list"
+              export SEMAPHORE_JOB_RESULT=passed
+              return 130
+            fi
+          done
+        else
+          export MAVEN_EXTRA_ARGS=""
+        fi
       - export DOCKER_DEV_TAG="dev-$BRANCH_TAG-$BUILD_NUMBER"
       - export AMD_ARCH=.amd64
       - export ARM_ARCH=.arm64
@@ -108,7 +132,7 @@ blocks:
             - export PACKAGING_BUILD_ARGS="$PACKAGING_BUILD_ARGS -DCONFLUENT_PACKAGES_REPO=$OS_PACKAGES_URL"
             - mvn -Dmaven.wagon.http.retryHandler.count=3 --batch-mode -P jenkins,docker clean package integration-test dependency:analyze validate -U -Ddocker.registry=$DOCKER_DEV_REGISTRY -Ddocker.upstream-registry=$DOCKER_UPSTREAM_REGISTRY
               -DBUILD_NUMBER=$BUILD_NUMBER -DGIT_COMMIT=$GIT_COMMIT -Ddocker.tag=$DOCKER_DEV_TAG$OS_TAG$AMD_ARCH -Ddocker.upstream-tag=$DOCKER_UPSTREAM_TAG$OS_TAG -Darch.type=$AMD_ARCH -Ddocker.os_type=ubi9
-              $PACKAGING_BUILD_ARGS -Ddependency.check.skip=true
+              $PACKAGING_BUILD_ARGS -Ddependency.check.skip=true $MAVEN_EXTRA_ARGS
             - . cache-maven store
             - >-
               for dev_image in $AMD_DOCKER_DEV_FULL_IMAGES;
@@ -129,6 +153,9 @@ blocks:
     task:
       jobs:
         - name: Deploy AMD confluentinc/cp-ksqldb-server ubi9
+          env_vars:
+            - name: DOCKER_IMAGE
+              value: confluentinc/cp-ksqldb-server
           commands:
             - export OS_TAG="-ubi9"
             - export PROD_IMAGE_NAME=${DOCKER_PROD_REGISTRY}confluentinc/cp-ksqldb-server
@@ -156,6 +183,9 @@ blocks:
     task:
       jobs:
         - name: Deploy AMD confluentinc/cp-ksqldb-cli ubi9
+          env_vars:
+            - name: DOCKER_IMAGE
+              value: confluentinc/cp-ksqldb-cli
           commands:
             - export OS_TAG="-ubi9"
             - export PROD_IMAGE_NAME=${DOCKER_PROD_REGISTRY}confluentinc/cp-ksqldb-cli
@@ -183,6 +213,9 @@ blocks:
     task:
       jobs:
         - name: Deploy AMD confluentinc/ksqldb-examples ubi9
+          env_vars:
+            - name: DOCKER_IMAGE
+              value: confluentinc/ksqldb-examples
           commands:
             - export OS_TAG="-ubi9"
             - export PROD_IMAGE_NAME=${DOCKER_PROD_REGISTRY}confluentinc/ksqldb-examples
@@ -223,7 +256,7 @@ blocks:
             - ci-tools ci-update-version
             - mvn -Dmaven.wagon.http.retryHandler.count=3 --batch-mode -P jenkins,docker clean package integration-test dependency:analyze validate -U -Ddocker.registry=$DOCKER_DEV_REGISTRY -Ddocker.upstream-registry=$DOCKER_UPSTREAM_REGISTRY
               -DBUILD_NUMBER=$BUILD_NUMBER -DGIT_COMMIT=$GIT_COMMIT -Ddocker.tag=$DOCKER_DEV_TAG$OS_TAG$ARM_ARCH -Ddocker.upstream-tag=$DOCKER_UPSTREAM_TAG$OS_TAG -Darch.type=$ARM_ARCH -Ddocker.os_type=ubi9
-              $PACKAGING_BUILD_ARGS -Ddependency.check.skip=true
+              $PACKAGING_BUILD_ARGS -Ddependency.check.skip=true $MAVEN_EXTRA_ARGS
             - . cache-maven store
             - for image in $ARM_DOCKER_DEV_FULL_IMAGES; do echo "Pushing $image" && docker push $image; done
       epilogue:
@@ -242,6 +275,9 @@ blocks:
           type: s1-prod-ubuntu24-04-arm64-1
       jobs:
         - name: Deploy ARM confluentinc/cp-ksqldb-server ubi9
+          env_vars:
+            - name: DOCKER_IMAGE
+              value: confluentinc/cp-ksqldb-server
           commands:
             - export OS_TAG="-ubi9"
             - export PROD_IMAGE_NAME=${DOCKER_PROD_REGISTRY}confluentinc/cp-ksqldb-server
@@ -272,6 +308,9 @@ blocks:
           type: s1-prod-ubuntu24-04-arm64-1
       jobs:
         - name: Deploy ARM confluentinc/cp-ksqldb-cli ubi9
+          env_vars:
+            - name: DOCKER_IMAGE
+              value: confluentinc/cp-ksqldb-cli
           commands:
             - export OS_TAG="-ubi9"
             - export PROD_IMAGE_NAME=${DOCKER_PROD_REGISTRY}confluentinc/cp-ksqldb-cli
@@ -302,6 +341,9 @@ blocks:
           type: s1-prod-ubuntu24-04-arm64-1
       jobs:
         - name: Deploy ARM confluentinc/ksqldb-examples ubi9
+          env_vars:
+            - name: DOCKER_IMAGE
+              value: confluentinc/ksqldb-examples
           commands:
             - export OS_TAG="-ubi9"
             - export PROD_IMAGE_NAME=${DOCKER_PROD_REGISTRY}confluentinc/ksqldb-examples
@@ -332,15 +374,11 @@ blocks:
         - name: Create Manifest and Maven Deploy
           commands:
             - export DOCKER_PROD_IMAGE_NAME=$DOCKER_PROD_REGISTRY${DOCKER_REPOS// / $DOCKER_PROD_REGISTRY}
+            - ci-tools ci-update-version
+            - ci-tools ci-push-tag
             - |-
               if [[ ! $IS_RELEASE && ! $IS_PREVIEW ]]; then
-                #use semaphore default maven config to deploy jars to codeartifact
-                cp /tmp/temp_settings.xml ~/.m2/settings.xml
-                #clear maven repository cache coming from previous blocks
-                rm -rf ~/.m2/repository
-                ci-tools ci-update-version
-                ci-tools ci-push-tag
-                mvn -Dmaven.wagon.http.retryHandler.count=3 --batch-mode -P jenkins,docker -DaltDeploymentRepository=confluent-codeartifact-internal::default::https://confluent-519856050701.d.codeartifact.us-west-2.amazonaws.com/maven/maven-snapshots/ -DrepositoryId=confluent-codeartifact-internal deploy -DskipTests -Ddocker.skip-build=true -Ddocker.skip-test=true 
+                mvn -Dmaven.wagon.http.retryHandler.count=3 --batch-mode -P jenkins,docker -DaltDeploymentRepository=confluent-codeartifact-internal::default::https://confluent-519856050701.d.codeartifact.us-west-2.amazonaws.com/maven/maven-snapshots/ -DrepositoryId=confluent-codeartifact-internal deploy -DskipTests -Ddocker.skip-build=true -Ddocker.skip-test=true  $MAVEN_EXTRA_ARGS
               fi
             # Create manifest
             - >-
