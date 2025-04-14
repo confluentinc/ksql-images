@@ -13,7 +13,7 @@
 # specific language governing permissions and limitations under the License.
 #
 
-{{- $kr_props := envToProps "KSQL_" "" nil -}}
+{{- $kr_props := envToProps "KSQL_" "" nil nil nil -}}
 {{ range $k, $v := $kr_props }}
 {{ $k }}={{ $v }}
 {{ end }}
