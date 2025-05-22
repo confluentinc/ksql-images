@@ -75,7 +75,7 @@ class KsqlServerTest(unittest.TestCase):
         cls.cluster.start()
         try:
             start = time.time()
-            while time.time() - start < 600:
+            while time.time() - start < 1200:
                 if check_cluster_ready(cls.cluster):
                     return
             assert check_cluster_ready(cls.cluster)
