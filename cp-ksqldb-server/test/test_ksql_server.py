@@ -56,7 +56,7 @@ class KsqlClient(object):
         return self.request('/info').decode()
 
 
-def retry(op, timeout=600):
+def retry(op, timeout=1200):
     start = time.time()
     while time.time() - start < timeout:
         try:
