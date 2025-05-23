@@ -4,7 +4,7 @@ version: '2'
 services:
   kafka:
     hostname: kafka
-    image: "${DOCKER_TEST_REGISTRY}confluentinc/cp-server:7.9.x-latest-ubi9"
+    image: "${DOCKER_TEST_REGISTRY}confluentinc/cp-server:7.9.x-latest-ubi8"
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:39092,PLAINTEXT_HOST://localhost:9092'
