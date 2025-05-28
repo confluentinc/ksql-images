@@ -101,7 +101,7 @@ global_job_config:
       - git clone git@github.com:confluentinc/confluent-docker-utils.git
       - cd confluent-docker-utils
       - git checkout downgrade_docker
-      - pip install .
+      - pip install -e .
       - cd ..
       - rm -rf confluent-docker-utils
 blocks:
