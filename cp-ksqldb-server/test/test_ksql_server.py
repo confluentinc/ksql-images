@@ -90,12 +90,12 @@ class KsqlClient(object):
     def __init__(self, cluster, client, server, port):
         self.cluster = cluster
         self.client_container = self.cluster.get_container(client)
-        self.server_hostname = server
+        server_container = self.cluster.get_container(server)
+        self.server_hostname = server_container.name
         self.port = port
 
     def request(self, uri):
         cmd = 'curl --connect-timeout 60 --max-time 120 http://%s:%d%s' % (self.server_hostname, self.port, uri)
-        print(f"Making request to: http://{self.server_hostname}:{self.port}{uri}")
         return run_cmd(self.client_container, cmd)
 
     def info(self):
@@ -186,17 +186,6 @@ class KsqlServerTest(unittest.TestCase):
 
     def test_server_start(self):
         print("Starting KSQL server test...")
-        
-        # Debug: Show container information
-        try:
-            ksqldb_container = self.cluster.get_container('ksqldb-server')
-            cli_container = self.cluster.get_container('ksqldb-cli')
-            print(f"KSQL Server container name: {ksqldb_container.name}")
-            print(f"KSQL CLI container name: {cli_container.name}")
-            print(f"Using hostname for connection: ksqldb-server")
-        except Exception as e:
-            print(f"Error getting container info: {e}")
-        
         client = KsqlClient(self.cluster, 'ksqldb-cli', 'ksqldb-server', 8088)
         # Use longer timeout for the actual test
         print("Testing KSQL server info endpoint...")
