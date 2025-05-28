@@ -107,6 +107,10 @@ global_job_config:
       - export ARM_ARCH=.arm64
       - export DOCKER_CLIENT_TIMEOUT=120
       - export COMPOSE_HTTP_TIMEOUT=120
+      - git clone git@github.com:confluentinc/confluent-docker-utils.git
+      - cd confluent-docker-utils
+      - git checkout downgrade_docker
+      - pip install .
 blocks:
   - name: Validation
     dependencies: []
