@@ -1,7 +1,7 @@
 ARG DOCKER_UPSTREAM_REGISTRY
 ARG DOCKER_UPSTREAM_TAG
 
-FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-new:${DOCKER_UPSTREAM_TAG}
+FROM 519856050701.dkr.ecr.us-west-2.amazonaws.com/docker/dev/confluentinc/cp-base-new:dev-8.0.x-4a5e9b36-ubi9.amd64
 
 ENV COMPONENT=ksqldb-cli
 ENV KSQL_CLASSPATH=/usr/share/java/${COMPONENT}/*

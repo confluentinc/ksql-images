@@ -2,7 +2,7 @@ ARG DOCKER_UPSTREAM_REGISTRY
 ARG DOCKER_UPSTREAM_TAG
 ARG UBI_MINIMAL_VERSION
 
-FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-java:${DOCKER_UPSTREAM_TAG} as intermediate
+FROM 519856050701.dkr.ecr.us-west-2.amazonaws.com/docker/dev/confluentinc/cp-base-java:dev-8.0.x-4a5e9b36-ubi9.amd64 as intermediate
 
 ENV COMPONENT=ksqldb-server
 ENV KSQL_CLASSPATH=/usr/share/java/${COMPONENT}/*
