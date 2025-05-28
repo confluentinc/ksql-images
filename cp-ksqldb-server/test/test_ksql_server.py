@@ -70,10 +70,6 @@ def retry(op, timeout=600):
 class KsqlServerTest(unittest.TestCase):
     @classmethod
     def setup_class(cls):
-        env_vars = list(os.environ.keys())
-        for var in env_vars:
-            os.environ.pop(var, None)
-
         cls.cluster = utils.TestCluster(
             "ksql-server-test", FIXTURES_DIR, "basic-cluster.yml")
         cls.cluster.start()
