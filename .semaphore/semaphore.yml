@@ -98,12 +98,6 @@ global_job_config:
       - export DOCKER_DEV_TAG="dev-$BRANCH_TAG-$BUILD_NUMBER"
       - export AMD_ARCH=.amd64
       - export ARM_ARCH=.arm64
-      - git clone git@github.com:confluentinc/confluent-docker-utils.git
-      - cd confluent-docker-utils
-      - git checkout downgrade_docker
-      - python -m pip install -e .
-      - cd ..
-      - rm -rf confluent-docker-utils
 blocks:
   - name: Validation
     dependencies: []
