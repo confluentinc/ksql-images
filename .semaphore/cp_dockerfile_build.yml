@@ -105,6 +105,8 @@ global_job_config:
       - export DOCKER_DEV_TAG="dev-$BRANCH_TAG-$BUILD_NUMBER"
       - export AMD_ARCH=.amd64
       - export ARM_ARCH=.arm64
+      - export DOCKER_CLIENT_TIMEOUT=120
+      - export COMPOSE_HTTP_TIMEOUT=120
 blocks:
   - name: Validation
     dependencies: []
