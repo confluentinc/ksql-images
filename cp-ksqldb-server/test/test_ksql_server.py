@@ -13,29 +13,32 @@ KAFKA_READY = (
 SR_READY = "bash -c 'cub sr-ready {host} {port} 20 && echo PASS || echo FAIL'"
 
 
-def is_ubi9_amd64():
-    """Check if running on UBI9 AMD64 architecture"""
-    try:
-        # Check if running on AMD64
-        is_amd64 = platform.machine().lower() in ['x86_64', 'amd64']
-        
-        # Check if running on UBI9 (check for UBI-specific files or environment)
-        is_ubi9 = (
-            os.path.exists('/etc/redhat-release') and 
-            any('ubi' in line.lower() for line in open('/etc/redhat-release', 'r').readlines())
-        ) or os.environ.get('UBI_VERSION', '').startswith('9')
-        
-        return is_amd64 and is_ubi9
-    except:
-        return False
-
-
 def get_docker_timeout():
-    """Get appropriate Docker timeout based on platform"""
-    if is_ubi9_amd64():
-        # Increased timeout for UBI9 AMD64 due to known socket timeout issues
-        return 300  # 5 minutes instead of default
-    return 120  # Default timeout
+    """Get Docker timeout - increased for UBI9 socket timeout issues affecting both AMD64 and ARM"""
+    return 600  # 10 minutes for UBI9 (both AMD64 and ARM)
+
+
+def configure_docker_timeouts():
+    """Configure comprehensive Docker timeout settings"""
+    timeout = get_docker_timeout()
+    
+    # Set multiple timeout environment variables for comprehensive coverage
+    timeout_env_vars = {
+        'COMPOSE_HTTP_TIMEOUT': str(timeout),
+        'DOCKER_CLIENT_TIMEOUT': str(timeout),
+        'DOCKER_TIMEOUT': str(timeout),
+        'DOCKERD_TIMEOUT': str(timeout),
+        'DOCKER_API_TIMEOUT': str(timeout),
+        'DOCKER_SOCKET_TIMEOUT': str(timeout),
+        'REQUESTS_TIMEOUT': str(timeout),
+        'HTTP_TIMEOUT': str(timeout),
+        'URLLIB3_TIMEOUT': str(timeout)
+    }
+    
+    for var, value in timeout_env_vars.items():
+        os.environ[var] = value
+    
+    return timeout
 
 
 def check_cluster_ready(cluster):
@@ -82,35 +85,36 @@ class KsqlClient(object):
         return self.request('/info').decode()
 
 
-def retry(op, timeout=600):
+def retry(op, timeout=900):  # Increased default retry timeout to 15 minutes
     start = time.time()
     while time.time() - start < timeout:
         try:
             return op()
         except:
             pass
-        time.sleep(1)
+        time.sleep(2)  # Increased sleep interval to reduce load
     return op()
 
 
 class KsqlServerTest(unittest.TestCase):
     @classmethod
     def setup_class(cls):
-        # Configure Docker client with appropriate timeout for UBI9 AMD64
-        docker_timeout = get_docker_timeout()
+        # Configure comprehensive Docker timeouts for all architectures
+        docker_timeout = configure_docker_timeouts()
         
-        # Set environment variables that docker-compose/docker client will use
-        os.environ['COMPOSE_HTTP_TIMEOUT'] = str(docker_timeout)
-        os.environ['DOCKER_CLIENT_TIMEOUT'] = str(docker_timeout)
+        print(f"Configured Docker timeout: {docker_timeout}s for platform: {platform.machine()}")
         
         cls.cluster = utils.TestCluster(
             "ksql-server-test", FIXTURES_DIR, "basic-cluster.yml")
         cls.cluster.start()
         try:
             start = time.time()
-            while time.time() - start < 600:
+            # Increased cluster ready timeout to match Docker timeouts
+            cluster_ready_timeout = docker_timeout
+            while time.time() - start < cluster_ready_timeout:
                 if check_cluster_ready(cls.cluster):
                     return
+                time.sleep(5)  # Check every 5 seconds instead of 1
             assert check_cluster_ready(cls.cluster)
         except:
             cls.cluster.shutdown()
@@ -118,24 +122,25 @@ class KsqlServerTest(unittest.TestCase):
 
     @classmethod
     def teardown_class(cls):
-        # Use longer timeout for shutdown on UBI9 AMD64
+        # Use longer timeout for shutdown with retries for UBI9
         if hasattr(cls.cluster, 'shutdown'):
-            if is_ubi9_amd64():
-                # For UBI9 AMD64, use a more graceful shutdown with retries
+            max_retries = 3
+            for attempt in range(max_retries):
                 try:
+                    print(f"Shutdown attempt {attempt + 1}/{max_retries}")
                     cls.cluster.shutdown()
+                    break
                 except Exception as e:
-                    print(f"First shutdown attempt failed: {e}")
-                    time.sleep(10)  # Wait before retry
-                    try:
-                        cls.cluster.shutdown()
-                    except Exception as e2:
-                        print(f"Second shutdown attempt failed: {e2}")
-                        # Force cleanup if needed
+                    print(f"Shutdown attempt {attempt + 1} failed: {e}")
+                    if attempt < max_retries - 1:
+                        time.sleep(15)  # Wait longer between retries
+                    else:
+                        print("All shutdown attempts failed, forcing cleanup")
+                        # Force cleanup if all attempts fail
                         os.system("docker container prune -f")
-            else:
-                cls.cluster.shutdown()
+                        os.system("docker network prune -f")
 
     def test_server_start(self):
         client = KsqlClient(self.cluster, 'ksqldb-cli', 'ksqldb-server', 8088)
-        retry(client.info)
+        # Use longer timeout for the actual test
+        retry(client.info, timeout=get_docker_timeout())
