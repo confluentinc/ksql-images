@@ -19,15 +19,6 @@ services:
       KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
       KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
       CLUSTER_ID: '9-fLubcIRYqQaWkrwEThnQ'
-      KAFKA_SOCKET_SEND_BUFFER_BYTES: 102400
-      KAFKA_SOCKET_RECEIVE_BUFFER_BYTES: 102400
-      KAFKA_SOCKET_REQUEST_MAX_BYTES: 104857600
-    healthcheck:
-      test: ["CMD-SHELL", "kafka-broker-api-versions --bootstrap-server localhost:39092 || exit 1"]
-      interval: 30s
-      timeout: 30s
-      retries: 10
-      start_period: 60s
     labels:
       - io.confluent.docker.testing=true
 
@@ -35,19 +26,10 @@ services:
     hostname: schema-registry 
     image: "${DOCKER_TEST_REGISTRY}confluentinc/cp-schema-registry:${DOCKER_TEST_TAG}"
     depends_on:
-      kafka:
-        condition: service_healthy
+      - kafka
     environment:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:39092
-      SCHEMA_REGISTRY_KAFKASTORE_TIMEOUT_MS: 60000
-      SCHEMA_REGISTRY_KAFKASTORE_INIT_TIMEOUT_MS: 120000
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8081/subjects || exit 1"]
-      interval: 30s
-      timeout: 30s
-      retries: 10
-      start_period: 60s
     labels:
       - io.confluent.docker.testing=true
 
@@ -55,28 +37,12 @@ services:
     hostname: ksqldb-server
     image: "${DOCKER_REGISTRY}confluentinc/cp-ksqldb-server:${DOCKER_TAG}"
     depends_on:
-      kafka:
-        condition: service_healthy
-      schema-registry:
-        condition: service_healthy
+      - kafka
+      - schema-registry
     environment:
       KSQL_BOOTSTRAP_SERVERS: kafka:39092
       KSQL_LISTENERS: http://0.0.0.0:8088
       KSQL_KSQL_SCHEMA_REGISTRY_URL: http://schema-registry:8081
-      KSQL_KSQL_STREAMS_BOOTSTRAP_SERVERS: kafka:39092
-      KSQL_KSQL_STREAMS_STATE_DIR: /tmp/kafka-streams
-      KSQL_KSQL_STREAMS_NUM_STREAM_THREADS: 1
-      KSQL_KSQL_STREAMS_REPLICATION_FACTOR: 1
-      KSQL_KSQL_INTERNAL_TOPIC_REPLICAS: 1
-      KSQL_KSQL_SINK_REPLICAS: 1
-      KSQL_KSQL_STREAMS_REQUEST_TIMEOUT_MS: 60000
-      KSQL_KSQL_STREAMS_RETRY_BACKOFF_MS: 1000
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8088/info || exit 1"]
-      interval: 30s
-      timeout: 30s
-      retries: 10
-      start_period: 120s
     labels:
       - io.confluent.docker.testing=true
 
@@ -84,8 +50,7 @@ services:
     hostname: ksqldb-cli 
     image: "${DOCKER_REGISTRY}confluentinc/cp-ksqldb-cli:${DOCKER_TAG}"
     depends_on:
-      ksqldb-server:
-        condition: service_healthy
+      - ksqldb-server
     entrypoint:
         - "/bin/sleep"
         - "1800"
