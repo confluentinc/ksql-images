@@ -78,7 +78,7 @@ global_job_config:
       - export DOCKER_PROD_REGISTRY="519856050701.dkr.ecr.us-west-2.amazonaws.com/docker/prod/"
       - export DOCKER_UPSTREAM_REGISTRY=$DOCKER_PROD_REGISTRY
       - export LATEST_TAG=$BRANCH_TAG-latest
-      - export DOCKER_UPSTREAM_TAG="$LATEST_TAG"
+      - export DOCKER_UPSTREAM_TAG="8.0.x-latest"
       - export DOCKER_REPOS="confluentinc/cp-ksqldb-server confluentinc/cp-ksqldb-cli confluentinc/ksqldb-examples"
       - export COMMUNITY_DOCKER_REPOS=""
       - |
@@ -146,96 +146,96 @@ blocks:
             - . publish-test-results
             - artifact push workflow target/test-results
             - artifact push workflow target --destination target-AMD
-  - name: Deploy AMD confluentinc/cp-ksqldb-server
-    dependencies: ["Build, Test, & Scan AMD"]
-    run:
-      when: "branch = 'master' or branch =~ '^[0-9]+\\.[0-9]+\\.x$' or branch =~ '^[0-9]+\\.[0-9]+\\.[0-9]+(-cp[0-9]+)?(-rc[0-9]+)?$'"
-    task:
-      jobs:
-        - name: Deploy AMD confluentinc/cp-ksqldb-server ubi9
-          env_vars:
-            - name: DOCKER_IMAGE
-              value: confluentinc/cp-ksqldb-server
-          commands:
-            - export OS_TAG="-ubi9"
-            - export PROD_IMAGE_NAME=${DOCKER_PROD_REGISTRY}confluentinc/cp-ksqldb-server
-            - export GIT_COMMIT_TAG=$GIT_COMMIT$OS_TAG$AMD_ARCH
-            - export BRANCH_BUILD_TAG=$BRANCH_TAG-$BUILD_NUMBER$OS_TAG$AMD_ARCH
-            - export DEV_IMAGE_FULL=${DOCKER_DEV_REGISTRY}confluentinc/cp-ksqldb-server:$DOCKER_DEV_TAG$OS_TAG$AMD_ARCH
-            - docker pull $DEV_IMAGE_FULL
-            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
-            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
-            - docker push $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
-            - docker push $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
-            - sign-images $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
-            - sign-images $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
-            - export PACKAGE_TAG=$BRANCH_TAG-$PACKAGING_BUILD_NUMBER$OS_TAG$AMD_ARCH
-            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$PACKAGE_TAG
-            - docker push $PROD_IMAGE_NAME:$PACKAGE_TAG
-            - sign-images $PROD_IMAGE_NAME:$PACKAGE_TAG
-            - export LATEST_PUSH_TAG=$LATEST_TAG$OS_TAG$AMD_ARCH
-            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
-            - docker push $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
-  - name: Deploy AMD confluentinc/cp-ksqldb-cli
-    dependencies: ["Build, Test, & Scan AMD"]
-    run:
-      when: "branch = 'master' or branch =~ '^[0-9]+\\.[0-9]+\\.x$' or branch =~ '^[0-9]+\\.[0-9]+\\.[0-9]+(-cp[0-9]+)?(-rc[0-9]+)?$'"
-    task:
-      jobs:
-        - name: Deploy AMD confluentinc/cp-ksqldb-cli ubi9
-          env_vars:
-            - name: DOCKER_IMAGE
-              value: confluentinc/cp-ksqldb-cli
-          commands:
-            - export OS_TAG="-ubi9"
-            - export PROD_IMAGE_NAME=${DOCKER_PROD_REGISTRY}confluentinc/cp-ksqldb-cli
-            - export GIT_COMMIT_TAG=$GIT_COMMIT$OS_TAG$AMD_ARCH
-            - export BRANCH_BUILD_TAG=$BRANCH_TAG-$BUILD_NUMBER$OS_TAG$AMD_ARCH
-            - export DEV_IMAGE_FULL=${DOCKER_DEV_REGISTRY}confluentinc/cp-ksqldb-cli:$DOCKER_DEV_TAG$OS_TAG$AMD_ARCH
-            - docker pull $DEV_IMAGE_FULL
-            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
-            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
-            - docker push $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
-            - docker push $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
-            - sign-images $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
-            - sign-images $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
-            - export PACKAGE_TAG=$BRANCH_TAG-$PACKAGING_BUILD_NUMBER$OS_TAG$AMD_ARCH
-            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$PACKAGE_TAG
-            - docker push $PROD_IMAGE_NAME:$PACKAGE_TAG
-            - sign-images $PROD_IMAGE_NAME:$PACKAGE_TAG
-            - export LATEST_PUSH_TAG=$LATEST_TAG$OS_TAG$AMD_ARCH
-            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
-            - docker push $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
-  - name: Deploy AMD confluentinc/ksqldb-examples
-    dependencies: ["Build, Test, & Scan AMD"]
-    run:
-      when: "branch = 'master' or branch =~ '^[0-9]+\\.[0-9]+\\.x$' or branch =~ '^[0-9]+\\.[0-9]+\\.[0-9]+(-cp[0-9]+)?(-rc[0-9]+)?$'"
-    task:
-      jobs:
-        - name: Deploy AMD confluentinc/ksqldb-examples ubi9
-          env_vars:
-            - name: DOCKER_IMAGE
-              value: confluentinc/ksqldb-examples
-          commands:
-            - export OS_TAG="-ubi9"
-            - export PROD_IMAGE_NAME=${DOCKER_PROD_REGISTRY}confluentinc/ksqldb-examples
-            - export GIT_COMMIT_TAG=$GIT_COMMIT$OS_TAG$AMD_ARCH
-            - export BRANCH_BUILD_TAG=$BRANCH_TAG-$BUILD_NUMBER$OS_TAG$AMD_ARCH
-            - export DEV_IMAGE_FULL=${DOCKER_DEV_REGISTRY}confluentinc/ksqldb-examples:$DOCKER_DEV_TAG$OS_TAG$AMD_ARCH
-            - docker pull $DEV_IMAGE_FULL
-            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
-            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
-            - docker push $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
-            - docker push $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
-            - sign-images $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
-            - sign-images $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
-            - export PACKAGE_TAG=$BRANCH_TAG-$PACKAGING_BUILD_NUMBER$OS_TAG$AMD_ARCH
-            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$PACKAGE_TAG
-            - docker push $PROD_IMAGE_NAME:$PACKAGE_TAG
-            - sign-images $PROD_IMAGE_NAME:$PACKAGE_TAG
-            - export LATEST_PUSH_TAG=$LATEST_TAG$OS_TAG$AMD_ARCH
-            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
-            - docker push $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
+  #  - name: Deploy AMD confluentinc/cp-ksqldb-server
+  #    dependencies: ["Build, Test, & Scan AMD"]
+  #    run:
+  #      when: "branch = 'master' or branch =~ '^[0-9]+\\.[0-9]+\\.x$' or branch =~ '^[0-9]+\\.[0-9]+\\.[0-9]+(-cp[0-9]+)?(-rc[0-9]+)?$'"
+  #    task:
+  #      jobs:
+  #        - name: Deploy AMD confluentinc/cp-ksqldb-server ubi9
+  #          env_vars:
+  #            - name: DOCKER_IMAGE
+  #              value: confluentinc/cp-ksqldb-server
+  #          commands:
+  #            - export OS_TAG="-ubi9"
+  #            - export PROD_IMAGE_NAME=${DOCKER_PROD_REGISTRY}confluentinc/cp-ksqldb-server
+  #            - export GIT_COMMIT_TAG=$GIT_COMMIT$OS_TAG$AMD_ARCH
+  #            - export BRANCH_BUILD_TAG=$BRANCH_TAG-$BUILD_NUMBER$OS_TAG$AMD_ARCH
+  #            - export DEV_IMAGE_FULL=${DOCKER_DEV_REGISTRY}confluentinc/cp-ksqldb-server:$DOCKER_DEV_TAG$OS_TAG$AMD_ARCH
+  #            - docker pull $DEV_IMAGE_FULL
+  #            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
+  #            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
+  #            - docker push $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
+  #            - docker push $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
+  #            - sign-images $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
+  #            - sign-images $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
+  #            - export PACKAGE_TAG=$BRANCH_TAG-$PACKAGING_BUILD_NUMBER$OS_TAG$AMD_ARCH
+  #            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$PACKAGE_TAG
+  #            - docker push $PROD_IMAGE_NAME:$PACKAGE_TAG
+  #            - sign-images $PROD_IMAGE_NAME:$PACKAGE_TAG
+  #            - export LATEST_PUSH_TAG=$LATEST_TAG$OS_TAG$AMD_ARCH
+  #            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
+  #            - docker push $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
+  #  - name: Deploy AMD confluentinc/cp-ksqldb-cli
+  #    dependencies: ["Build, Test, & Scan AMD"]
+  #    run:
+  #      when: "branch = 'master' or branch =~ '^[0-9]+\\.[0-9]+\\.x$' or branch =~ '^[0-9]+\\.[0-9]+\\.[0-9]+(-cp[0-9]+)?(-rc[0-9]+)?$'"
+  #    task:
+  #      jobs:
+  #        - name: Deploy AMD confluentinc/cp-ksqldb-cli ubi9
+  #          env_vars:
+  #            - name: DOCKER_IMAGE
+  #              value: confluentinc/cp-ksqldb-cli
+  #          commands:
+  #            - export OS_TAG="-ubi9"
+  #            - export PROD_IMAGE_NAME=${DOCKER_PROD_REGISTRY}confluentinc/cp-ksqldb-cli
+  #            - export GIT_COMMIT_TAG=$GIT_COMMIT$OS_TAG$AMD_ARCH
+  #            - export BRANCH_BUILD_TAG=$BRANCH_TAG-$BUILD_NUMBER$OS_TAG$AMD_ARCH
+  #            - export DEV_IMAGE_FULL=${DOCKER_DEV_REGISTRY}confluentinc/cp-ksqldb-cli:$DOCKER_DEV_TAG$OS_TAG$AMD_ARCH
+  #            - docker pull $DEV_IMAGE_FULL
+  #            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
+  #            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
+  #            - docker push $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
+  #            - docker push $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
+  #            - sign-images $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
+  #            - sign-images $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
+  #            - export PACKAGE_TAG=$BRANCH_TAG-$PACKAGING_BUILD_NUMBER$OS_TAG$AMD_ARCH
+  #            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$PACKAGE_TAG
+  #            - docker push $PROD_IMAGE_NAME:$PACKAGE_TAG
+  #            - sign-images $PROD_IMAGE_NAME:$PACKAGE_TAG
+  #            - export LATEST_PUSH_TAG=$LATEST_TAG$OS_TAG$AMD_ARCH
+  #            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
+  #            - docker push $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
+  #  - name: Deploy AMD confluentinc/ksqldb-examples
+  #    dependencies: ["Build, Test, & Scan AMD"]
+  #    run:
+  #      when: "branch = 'master' or branch =~ '^[0-9]+\\.[0-9]+\\.x$' or branch =~ '^[0-9]+\\.[0-9]+\\.[0-9]+(-cp[0-9]+)?(-rc[0-9]+)?$'"
+  #    task:
+  #      jobs:
+  #        - name: Deploy AMD confluentinc/ksqldb-examples ubi9
+  #          env_vars:
+  #            - name: DOCKER_IMAGE
+  #              value: confluentinc/ksqldb-examples
+  #          commands:
+  #            - export OS_TAG="-ubi9"
+  #            - export PROD_IMAGE_NAME=${DOCKER_PROD_REGISTRY}confluentinc/ksqldb-examples
+  #            - export GIT_COMMIT_TAG=$GIT_COMMIT$OS_TAG$AMD_ARCH
+  #            - export BRANCH_BUILD_TAG=$BRANCH_TAG-$BUILD_NUMBER$OS_TAG$AMD_ARCH
+  #            - export DEV_IMAGE_FULL=${DOCKER_DEV_REGISTRY}confluentinc/ksqldb-examples:$DOCKER_DEV_TAG$OS_TAG$AMD_ARCH
+  #            - docker pull $DEV_IMAGE_FULL
+  #            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
+  #            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
+  #            - docker push $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
+  #            - docker push $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
+  #            - sign-images $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
+  #            - sign-images $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
+  #            - export PACKAGE_TAG=$BRANCH_TAG-$PACKAGING_BUILD_NUMBER$OS_TAG$AMD_ARCH
+  #            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$PACKAGE_TAG
+  #            - docker push $PROD_IMAGE_NAME:$PACKAGE_TAG
+  #            - sign-images $PROD_IMAGE_NAME:$PACKAGE_TAG
+  #            - export LATEST_PUSH_TAG=$LATEST_TAG$OS_TAG$AMD_ARCH
+  #            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
+  #            - docker push $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
   - name: Build & Test ARM
     dependencies: ["Validation"]
     run:
@@ -265,143 +265,143 @@ blocks:
             - . publish-test-results
             - artifact push workflow target/test-results
             - artifact push workflow target --destination target-ARM
-  - name: Deploy ARM confluentinc/cp-ksqldb-server
-    dependencies: ["Build & Test ARM"]
-    run:
-      when: "branch = 'master' or branch =~ '^[0-9]+\\.[0-9]+\\.x$' or branch =~ '^[0-9]+\\.[0-9]+\\.[0-9]+(-cp[0-9]+)?(-rc[0-9]+)?$'"
-    task:
-      agent:
-        machine:
-          type: s1-prod-ubuntu24-04-arm64-1
-      jobs:
-        - name: Deploy ARM confluentinc/cp-ksqldb-server ubi9
-          env_vars:
-            - name: DOCKER_IMAGE
-              value: confluentinc/cp-ksqldb-server
-          commands:
-            - export OS_TAG="-ubi9"
-            - export PROD_IMAGE_NAME=${DOCKER_PROD_REGISTRY}confluentinc/cp-ksqldb-server
-            - export GIT_COMMIT_TAG=$GIT_COMMIT$OS_TAG$ARM_ARCH
-            - export BRANCH_BUILD_TAG=$BRANCH_TAG-$BUILD_NUMBER$OS_TAG$ARM_ARCH
-            - export DEV_IMAGE_FULL=${DOCKER_DEV_REGISTRY}confluentinc/cp-ksqldb-server:$DOCKER_DEV_TAG$OS_TAG$ARM_ARCH
-            - docker pull $DEV_IMAGE_FULL
-            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
-            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
-            - docker push $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
-            - docker push $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
-            - sign-images $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
-            - sign-images $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
-            - export PACKAGE_TAG=$BRANCH_TAG-$PACKAGING_BUILD_NUMBER$OS_TAG$ARM_ARCH
-            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$PACKAGE_TAG
-            - docker push $PROD_IMAGE_NAME:$PACKAGE_TAG
-            - sign-images $PROD_IMAGE_NAME:$PACKAGE_TAG
-            - export LATEST_PUSH_TAG=$LATEST_TAG$OS_TAG$ARM_ARCH
-            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
-            - docker push $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
-  - name: Deploy ARM confluentinc/cp-ksqldb-cli
-    dependencies: ["Build & Test ARM"]
-    run:
-      when: "branch = 'master' or branch =~ '^[0-9]+\\.[0-9]+\\.x$' or branch =~ '^[0-9]+\\.[0-9]+\\.[0-9]+(-cp[0-9]+)?(-rc[0-9]+)?$'"
-    task:
-      agent:
-        machine:
-          type: s1-prod-ubuntu24-04-arm64-1
-      jobs:
-        - name: Deploy ARM confluentinc/cp-ksqldb-cli ubi9
-          env_vars:
-            - name: DOCKER_IMAGE
-              value: confluentinc/cp-ksqldb-cli
-          commands:
-            - export OS_TAG="-ubi9"
-            - export PROD_IMAGE_NAME=${DOCKER_PROD_REGISTRY}confluentinc/cp-ksqldb-cli
-            - export GIT_COMMIT_TAG=$GIT_COMMIT$OS_TAG$ARM_ARCH
-            - export BRANCH_BUILD_TAG=$BRANCH_TAG-$BUILD_NUMBER$OS_TAG$ARM_ARCH
-            - export DEV_IMAGE_FULL=${DOCKER_DEV_REGISTRY}confluentinc/cp-ksqldb-cli:$DOCKER_DEV_TAG$OS_TAG$ARM_ARCH
-            - docker pull $DEV_IMAGE_FULL
-            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
-            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
-            - docker push $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
-            - docker push $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
-            - sign-images $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
-            - sign-images $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
-            - export PACKAGE_TAG=$BRANCH_TAG-$PACKAGING_BUILD_NUMBER$OS_TAG$ARM_ARCH
-            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$PACKAGE_TAG
-            - docker push $PROD_IMAGE_NAME:$PACKAGE_TAG
-            - sign-images $PROD_IMAGE_NAME:$PACKAGE_TAG
-            - export LATEST_PUSH_TAG=$LATEST_TAG$OS_TAG$ARM_ARCH
-            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
-            - docker push $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
-  - name: Deploy ARM confluentinc/ksqldb-examples
-    dependencies: ["Build & Test ARM"]
-    run:
-      when: "branch = 'master' or branch =~ '^[0-9]+\\.[0-9]+\\.x$' or branch =~ '^[0-9]+\\.[0-9]+\\.[0-9]+(-cp[0-9]+)?(-rc[0-9]+)?$'"
-    task:
-      agent:
-        machine:
-          type: s1-prod-ubuntu24-04-arm64-1
-      jobs:
-        - name: Deploy ARM confluentinc/ksqldb-examples ubi9
-          env_vars:
-            - name: DOCKER_IMAGE
-              value: confluentinc/ksqldb-examples
-          commands:
-            - export OS_TAG="-ubi9"
-            - export PROD_IMAGE_NAME=${DOCKER_PROD_REGISTRY}confluentinc/ksqldb-examples
-            - export GIT_COMMIT_TAG=$GIT_COMMIT$OS_TAG$ARM_ARCH
-            - export BRANCH_BUILD_TAG=$BRANCH_TAG-$BUILD_NUMBER$OS_TAG$ARM_ARCH
-            - export DEV_IMAGE_FULL=${DOCKER_DEV_REGISTRY}confluentinc/ksqldb-examples:$DOCKER_DEV_TAG$OS_TAG$ARM_ARCH
-            - docker pull $DEV_IMAGE_FULL
-            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
-            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
-            - docker push $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
-            - docker push $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
-            - sign-images $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
-            - sign-images $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
-            - export PACKAGE_TAG=$BRANCH_TAG-$PACKAGING_BUILD_NUMBER$OS_TAG$ARM_ARCH
-            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$PACKAGE_TAG
-            - docker push $PROD_IMAGE_NAME:$PACKAGE_TAG
-            - sign-images $PROD_IMAGE_NAME:$PACKAGE_TAG
-            - export LATEST_PUSH_TAG=$LATEST_TAG$OS_TAG$ARM_ARCH
-            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
-            - docker push $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
-  - name: Create Manifest and Maven Deploy
-    dependencies: ["Deploy AMD confluentinc/cp-ksqldb-server", "Deploy AMD confluentinc/cp-ksqldb-cli", "Deploy AMD confluentinc/ksqldb-examples", "Deploy ARM confluentinc/cp-ksqldb-server", "Deploy ARM
-          confluentinc/cp-ksqldb-cli", "Deploy ARM confluentinc/ksqldb-examples"]
-    run:
-      when: "branch = 'master' or branch =~ '^[0-9]+\\.[0-9]+\\.x$' or branch =~ '^[0-9]+\\.[0-9]+\\.[0-9]+(-cp[0-9]+)?(-rc[0-9]+)?$'"
-    task:
-      jobs:
-        - name: Create Manifest and Maven Deploy
-          commands:
-            - export DOCKER_PROD_IMAGE_NAME=$DOCKER_PROD_REGISTRY${DOCKER_REPOS// / $DOCKER_PROD_REGISTRY}
-            - ci-tools ci-update-version
-            - ci-tools ci-push-tag
-            - |-
-              if [[ ! $IS_RELEASE && ! $IS_PREVIEW ]]; then
-                mvn -Dmaven.wagon.http.retryHandler.count=3 --batch-mode -P jenkins,docker -DaltDeploymentRepository=confluent-codeartifact-internal::default::https://confluent-519856050701.d.codeartifact.us-west-2.amazonaws.com/maven/maven-snapshots/ -DrepositoryId=confluent-codeartifact-internal deploy -DskipTests -Ddocker.skip-build=true -Ddocker.skip-test=true  $MAVEN_EXTRA_ARGS
-              fi
-            # Create manifest
-            - >-
-              for image in $DOCKER_PROD_IMAGE_NAME;
-              do
-                export OS_TAG="-ubi9"
-                export GIT_TAG=$GIT_COMMIT$OS_TAG
-                docker manifest create $image:$GIT_TAG $image:$GIT_TAG$AMD_ARCH $image:$GIT_TAG$ARM_ARCH
-                docker manifest push $image:$GIT_TAG
-                docker pull $image:$GIT_TAG
-                sign-images $image:$GIT_TAG
-                export BRANCH_BUILD_TAG=$BRANCH_TAG-$BUILD_NUMBER$OS_TAG
-                docker manifest create $image:$BRANCH_BUILD_TAG $image:$BRANCH_BUILD_TAG$AMD_ARCH $image:$BRANCH_BUILD_TAG$ARM_ARCH
-                docker manifest push $image:$BRANCH_BUILD_TAG
-                docker pull $image:$BRANCH_BUILD_TAG
-                sign-images $image:$BRANCH_BUILD_TAG
-                export PACKAGE_TAG=$BRANCH_TAG-$PACKAGING_BUILD_NUMBER$OS_TAG
-                docker manifest create $image:$PACKAGE_TAG $image:$PACKAGE_TAG$AMD_ARCH $image:$PACKAGE_TAG$ARM_ARCH
-                docker manifest push $image:$PACKAGE_TAG
-                export LATEST_MANIFEST_TAG=$LATEST_TAG$OS_TAG
-                docker manifest create $image:$LATEST_MANIFEST_TAG $image:$LATEST_MANIFEST_TAG$AMD_ARCH $image:$LATEST_MANIFEST_TAG$ARM_ARCH
-                docker manifest push $image:$LATEST_MANIFEST_TAG
-              done
+#  - name: Deploy ARM confluentinc/cp-ksqldb-server
+#    dependencies: ["Build & Test ARM"]
+#    run:
+#      when: "branch = 'master' or branch =~ '^[0-9]+\\.[0-9]+\\.x$' or branch =~ '^[0-9]+\\.[0-9]+\\.[0-9]+(-cp[0-9]+)?(-rc[0-9]+)?$'"
+#    task:
+#      agent:
+#        machine:
+#          type: s1-prod-ubuntu24-04-arm64-1
+#      jobs:
+#        - name: Deploy ARM confluentinc/cp-ksqldb-server ubi9
+#          env_vars:
+#            - name: DOCKER_IMAGE
+#              value: confluentinc/cp-ksqldb-server
+#          commands:
+#            - export OS_TAG="-ubi9"
+#            - export PROD_IMAGE_NAME=${DOCKER_PROD_REGISTRY}confluentinc/cp-ksqldb-server
+#            - export GIT_COMMIT_TAG=$GIT_COMMIT$OS_TAG$ARM_ARCH
+#            - export BRANCH_BUILD_TAG=$BRANCH_TAG-$BUILD_NUMBER$OS_TAG$ARM_ARCH
+#            - export DEV_IMAGE_FULL=${DOCKER_DEV_REGISTRY}confluentinc/cp-ksqldb-server:$DOCKER_DEV_TAG$OS_TAG$ARM_ARCH
+#            - docker pull $DEV_IMAGE_FULL
+#            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
+#            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
+#            - docker push $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
+#            - docker push $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
+#            - sign-images $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
+#            - sign-images $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
+#            - export PACKAGE_TAG=$BRANCH_TAG-$PACKAGING_BUILD_NUMBER$OS_TAG$ARM_ARCH
+#            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$PACKAGE_TAG
+#            - docker push $PROD_IMAGE_NAME:$PACKAGE_TAG
+#            - sign-images $PROD_IMAGE_NAME:$PACKAGE_TAG
+#            - export LATEST_PUSH_TAG=$LATEST_TAG$OS_TAG$ARM_ARCH
+#            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
+#            - docker push $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
+#  - name: Deploy ARM confluentinc/cp-ksqldb-cli
+#    dependencies: ["Build & Test ARM"]
+#    run:
+#      when: "branch = 'master' or branch =~ '^[0-9]+\\.[0-9]+\\.x$' or branch =~ '^[0-9]+\\.[0-9]+\\.[0-9]+(-cp[0-9]+)?(-rc[0-9]+)?$'"
+#    task:
+#      agent:
+#        machine:
+#          type: s1-prod-ubuntu24-04-arm64-1
+#      jobs:
+#        - name: Deploy ARM confluentinc/cp-ksqldb-cli ubi9
+#          env_vars:
+#            - name: DOCKER_IMAGE
+#              value: confluentinc/cp-ksqldb-cli
+#          commands:
+#            - export OS_TAG="-ubi9"
+#            - export PROD_IMAGE_NAME=${DOCKER_PROD_REGISTRY}confluentinc/cp-ksqldb-cli
+#            - export GIT_COMMIT_TAG=$GIT_COMMIT$OS_TAG$ARM_ARCH
+#            - export BRANCH_BUILD_TAG=$BRANCH_TAG-$BUILD_NUMBER$OS_TAG$ARM_ARCH
+#            - export DEV_IMAGE_FULL=${DOCKER_DEV_REGISTRY}confluentinc/cp-ksqldb-cli:$DOCKER_DEV_TAG$OS_TAG$ARM_ARCH
+#            - docker pull $DEV_IMAGE_FULL
+#            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
+#            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
+#            - docker push $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
+#            - docker push $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
+#            - sign-images $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
+#            - sign-images $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
+#            - export PACKAGE_TAG=$BRANCH_TAG-$PACKAGING_BUILD_NUMBER$OS_TAG$ARM_ARCH
+#            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$PACKAGE_TAG
+#            - docker push $PROD_IMAGE_NAME:$PACKAGE_TAG
+#            - sign-images $PROD_IMAGE_NAME:$PACKAGE_TAG
+#            - export LATEST_PUSH_TAG=$LATEST_TAG$OS_TAG$ARM_ARCH
+#            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
+#            - docker push $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
+#  - name: Deploy ARM confluentinc/ksqldb-examples
+#    dependencies: ["Build & Test ARM"]
+#    run:
+#      when: "branch = 'master' or branch =~ '^[0-9]+\\.[0-9]+\\.x$' or branch =~ '^[0-9]+\\.[0-9]+\\.[0-9]+(-cp[0-9]+)?(-rc[0-9]+)?$'"
+#    task:
+#      agent:
+#        machine:
+#          type: s1-prod-ubuntu24-04-arm64-1
+#      jobs:
+#        - name: Deploy ARM confluentinc/ksqldb-examples ubi9
+#          env_vars:
+#            - name: DOCKER_IMAGE
+#              value: confluentinc/ksqldb-examples
+#          commands:
+#            - export OS_TAG="-ubi9"
+#            - export PROD_IMAGE_NAME=${DOCKER_PROD_REGISTRY}confluentinc/ksqldb-examples
+#            - export GIT_COMMIT_TAG=$GIT_COMMIT$OS_TAG$ARM_ARCH
+#            - export BRANCH_BUILD_TAG=$BRANCH_TAG-$BUILD_NUMBER$OS_TAG$ARM_ARCH
+#            - export DEV_IMAGE_FULL=${DOCKER_DEV_REGISTRY}confluentinc/ksqldb-examples:$DOCKER_DEV_TAG$OS_TAG$ARM_ARCH
+#            - docker pull $DEV_IMAGE_FULL
+#            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
+#            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
+#            - docker push $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
+#            - docker push $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
+#            - sign-images $PROD_IMAGE_NAME:$GIT_COMMIT_TAG
+#            - sign-images $PROD_IMAGE_NAME:$BRANCH_BUILD_TAG
+#            - export PACKAGE_TAG=$BRANCH_TAG-$PACKAGING_BUILD_NUMBER$OS_TAG$ARM_ARCH
+#            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$PACKAGE_TAG
+#            - docker push $PROD_IMAGE_NAME:$PACKAGE_TAG
+#            - sign-images $PROD_IMAGE_NAME:$PACKAGE_TAG
+#            - export LATEST_PUSH_TAG=$LATEST_TAG$OS_TAG$ARM_ARCH
+#            - docker tag $DEV_IMAGE_FULL $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
+#            - docker push $PROD_IMAGE_NAME:$LATEST_PUSH_TAG
+#  - name: Create Manifest and Maven Deploy
+#    dependencies: ["Deploy AMD confluentinc/cp-ksqldb-server", "Deploy AMD confluentinc/cp-ksqldb-cli", "Deploy AMD confluentinc/ksqldb-examples", "Deploy ARM confluentinc/cp-ksqldb-server", "Deploy ARM
+#          confluentinc/cp-ksqldb-cli", "Deploy ARM confluentinc/ksqldb-examples"]
+#    run:
+#      when: "branch = 'master' or branch =~ '^[0-9]+\\.[0-9]+\\.x$' or branch =~ '^[0-9]+\\.[0-9]+\\.[0-9]+(-cp[0-9]+)?(-rc[0-9]+)?$'"
+#    task:
+#      jobs:
+#        - name: Create Manifest and Maven Deploy
+#          commands:
+#            - export DOCKER_PROD_IMAGE_NAME=$DOCKER_PROD_REGISTRY${DOCKER_REPOS// / $DOCKER_PROD_REGISTRY}
+#            - ci-tools ci-update-version
+#            - ci-tools ci-push-tag
+#            - |-
+#              if [[ ! $IS_RELEASE && ! $IS_PREVIEW ]]; then
+#                mvn -Dmaven.wagon.http.retryHandler.count=3 --batch-mode -P jenkins,docker -DaltDeploymentRepository=confluent-codeartifact-internal::default::https://confluent-519856050701.d.codeartifact.us-west-2.amazonaws.com/maven/maven-snapshots/ -DrepositoryId=confluent-codeartifact-internal deploy -DskipTests -Ddocker.skip-build=true -Ddocker.skip-test=true  $MAVEN_EXTRA_ARGS
+#              fi
+#            # Create manifest
+#            - >-
+#              for image in $DOCKER_PROD_IMAGE_NAME;
+#              do
+#                export OS_TAG="-ubi9"
+#                export GIT_TAG=$GIT_COMMIT$OS_TAG
+#                docker manifest create $image:$GIT_TAG $image:$GIT_TAG$AMD_ARCH $image:$GIT_TAG$ARM_ARCH
+#                docker manifest push $image:$GIT_TAG
+#                docker pull $image:$GIT_TAG
+#                sign-images $image:$GIT_TAG
+#                export BRANCH_BUILD_TAG=$BRANCH_TAG-$BUILD_NUMBER$OS_TAG
+#                docker manifest create $image:$BRANCH_BUILD_TAG $image:$BRANCH_BUILD_TAG$AMD_ARCH $image:$BRANCH_BUILD_TAG$ARM_ARCH
+#                docker manifest push $image:$BRANCH_BUILD_TAG
+#                docker pull $image:$BRANCH_BUILD_TAG
+#                sign-images $image:$BRANCH_BUILD_TAG
+#                export PACKAGE_TAG=$BRANCH_TAG-$PACKAGING_BUILD_NUMBER$OS_TAG
+#                docker manifest create $image:$PACKAGE_TAG $image:$PACKAGE_TAG$AMD_ARCH $image:$PACKAGE_TAG$ARM_ARCH
+#                docker manifest push $image:$PACKAGE_TAG
+#                export LATEST_MANIFEST_TAG=$LATEST_TAG$OS_TAG
+#                docker manifest create $image:$LATEST_MANIFEST_TAG $image:$LATEST_MANIFEST_TAG$AMD_ARCH $image:$LATEST_MANIFEST_TAG$ARM_ARCH
+#                docker manifest push $image:$LATEST_MANIFEST_TAG
+#              done
 after_pipeline:
   task:
     agent:
