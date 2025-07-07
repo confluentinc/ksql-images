@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+#
+# Copyright 2025 Confluent Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+. /etc/confluent/docker/bash-config
+
+echo "===> Check if Kafka is healthy ..."
+
+BOOTSTRAP_SERVER_CONFIG=""
+if [[ -n "${KSQL_BOOTSTRAP_SERVERS-}" ]]
+then
+    BOOTSTRAP_SERVER_CONFIG=${KSQL_BOOTSTRAP_SERVERS}
+else
+    BOOTSTRAP_SERVER_CONFIG=${KSQL_KSQL_STREAMS_BOOTSTRAP_SERVERS}
+fi
+
+if [[ -n "${KSQL_SECURITY_PROTOCOL-}" ]] && [[ $KSQL_SECURITY_PROTOCOL != "PLAINTEXT" ]]
+then
+    ub kafka-ready \
+        "${KSQL_CUB_KAFKA_MIN_BROKERS:-1}" \
+        "${KSQL_CUB_KAFKA_TIMEOUT:-180}" \
+        -b "${BOOTSTRAP_SERVER_CONFIG}" \
+        --config /etc/"${COMPONENT}"/"${COMPONENT}".properties
+elif [[ -n "${BOOTSTRAP_SERVER_CONFIG-}" ]]
+then
+    ub kafka-ready \
+        "${KSQL_CUB_KAFKA_MIN_BROKERS:-1}" \
+        "${KSQL_CUB_KAFKA_TIMEOUT:-180}" \
+        -b "${BOOTSTRAP_SERVER_CONFIG}"
+fi
+
+# KSQL_CONNECT_GROUP_ID is a required configuration for running embedded connect
+if ! [[ -z "${KSQL_CONNECT_GROUP_ID:=}" ]]; then
+  ub ensure KSQL_CONNECT_BOOTSTRAP_SERVERS
+  ub ensure KSQL_CONNECT_GROUP_ID
+  ub ensure KSQL_CONNECT_CONFIG_STORAGE_TOPIC
+  ub ensure KSQL_CONNECT_OFFSET_STORAGE_TOPIC
+  ub ensure KSQL_CONNECT_STATUS_STORAGE_TOPIC
+  ub ensure KSQL_CONNECT_KEY_CONVERTER
+  ub ensure KSQL_CONNECT_VALUE_CONVERTER
+
+  # This is required to avoid config bugs. You should set this to a value that is
+  # resolvable by all containers.
+  ub ensure KSQL_CONNECT_REST_ADVERTISED_HOST_NAME
+
+  if [[ $KSQL_CONNECT_KEY_CONVERTER == "io.confluent.connect.avro.AvroConverter" ]]
+  then
+    ub ensure KSQL_CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL
+  fi
+
+  if [[ $KSQL_CONNECT_VALUE_CONVERTER == "io.confluent.connect.avro.AvroConverter" ]]
+  then
+    ub ensure KSQL_CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL
+  fi
+fi
