@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+#
+# Copyright 2025 Confluent Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+. /etc/confluent/docker/bash-config
+
+ub ensure KSQL_BOOTSTRAP_SERVERS || ub ensure KSQL_KSQL_STREAMS_BOOTSTRAP_SERVERS
+
+ub path /etc/"${COMPONENT}"/ writable
+
+if [[ -n "${KSQL_JMX_OPTS-}" ]]
+then
+  if [[ ! $KSQL_JMX_OPTS == *"com.sun.management.jmxremote.rmi.port"*  ]]
+  then
+    echo "KSQL_OPTS should contain the 'com.sun.management.jmxremote.rmi.port' property. It is required for accessing the JMX metrics externally. Also remember to map the JMX port so that it is accessible from outside the container."
+  fi
+fi
+
+# KSQL_CONNECT_GROUP_ID is a required configuration for running embedded connect,
+# so we can proxy it to check whether or not to start an embedded connect worker
+if ! [[ -z "${KSQL_CONNECT_GROUP_ID:=}" ]]; then
+  echo "===> Enabling Embedded Connect"
+  export KSQL_KSQL_CONNECT_WORKER_CONFIG="/etc/ksqldb/connect.properties"
+
+  # Default to 8083, which matches the mesos-overrides. This is here in case we extend the containers to remove the mesos overrides.
+  if [ -z "${KSQL_CONNECT_REST_PORT:=}" ]; then
+    export KSQL_CONNECT_REST_PORT=8083
+  fi
+fi
+
+echo "===> Preparing KSQL Server properties"
+ub render-template "/etc/confluent/docker-server/ksqldb-server.properties.template" > "/etc/${COMPONENT}/${COMPONENT}.properties"
+ub render-template "/etc/confluent/docker-server/connect.properties.template" > "/etc/${COMPONENT}/connect.properties"
+ub render-template "/etc/confluent/docker-server/log4j2.yaml.template" > "/etc/${COMPONENT}/log4j2.yaml"
+echo "===> Prepared KSQL Server properties - /etc/${COMPONENT}/${COMPONENT}.properties, /etc/${COMPONENT}/connect.properties, /etc/${COMPONENT}/log4j2.yaml"
