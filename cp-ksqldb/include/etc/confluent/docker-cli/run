@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# This script runs KSQL in CLI mode
+export COMPONENT=ksqldb-cli
+
+. /etc/confluent/docker/bash-config
+
+echo "===> User"
+id
+
+echo "===> Configuring KSQL CLI..."
+/etc/confluent/docker-cli/configure
+
+# Set log4j options for CLI
+export KSQL_LOG4J_OPTS="-Dlog4j2.configurationFile=file:/etc/${COMPONENT}/log4j2.yaml"
+
+# If no arguments provided, default to localhost:8088
+if [ $# -eq 0 ]; then
+  echo "===> Connecting to KSQL Server at http://localhost:8088"
+  exec ksql "http://localhost:8088"
+else
+  echo "===> Starting KSQL CLI with provided arguments"
+  exec ksql "$@"
+fi
