@@ -23,13 +23,11 @@ case "$MODE" in
   server)
     echo "===> Starting KSQLDB in server mode..."
     export COMPONENT=ksqldb-server
-    export KSQL_MODE=server
     exec /etc/confluent/docker-server/run
     ;;
   cli)
     echo "===> Starting KSQLDB in CLI mode..."
     export COMPONENT=ksqldb-cli
-    export KSQL_MODE=cli
     # Shift to remove the 'cli' argument and pass remaining args to ksql
     shift
     exec /etc/confluent/docker-cli/run "$@"
@@ -37,7 +35,8 @@ case "$MODE" in
   examples)
     echo "===> Starting KSQLDB in examples mode..."
     export COMPONENT=ksqldb-examples
-    export KSQL_MODE=examples
+    # Change to root directory to avoid /home/appuser prefix issues
+    cd /
     # For examples, we just run a shell or execute passed commands
     shift
     if [ $# -eq 0 ]; then
