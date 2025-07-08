@@ -28,23 +28,14 @@ case "$MODE" in
   cli)
     echo "===> Starting KSQLDB in CLI mode..."
     export COMPONENT=ksqldb-cli
-    # Shift to remove the 'cli' argument and pass remaining args to ksql
     shift
     exec /etc/confluent/docker-cli/run "$@"
     ;;
   examples)
     echo "===> Starting KSQLDB in examples mode..."
     export COMPONENT=ksqldb-examples
-    # Change to root directory to avoid /home/appuser prefix issues
-    cd /
-    # For examples, we just run a shell or execute passed commands
     shift
-    if [ $# -eq 0 ]; then
-      exec /bin/bash
-    else
-      # Use bash -c but source bash-config first to get utilities
-      exec /bin/bash -c ". /etc/confluent/docker/bash-config && $*"
-    fi
+    exec /etc/confluent/docker-examples/run "$*"
     ;;
   *)
     echo "Error: Unknown mode '$MODE'. Valid modes are: server, cli, examples"

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# This script runs KSQL in Examples mode
+export COMPONENT=ksqldb-examples
+
+. /etc/confluent/docker/bash-config
+
+if [ $# -eq 0 ]; then
+  exec /bin/bash
+else
+  exec bash -c "$*"
+fi
