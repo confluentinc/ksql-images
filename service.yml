@@ -16,7 +16,7 @@ semaphore:
   pipeline_type: cp-dockerfile
   execution_time_limit: {"hours": 8}
   docker_repos: [
-    'confluentinc/cp-ksqlsb',
+    'confluentinc/cp-ksqldb',
     'confluentinc/cp-ksqldb-server',
     'confluentinc/cp-ksqldb-cli',
     'confluentinc/ksqldb-examples'

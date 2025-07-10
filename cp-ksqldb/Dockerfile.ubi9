@@ -97,4 +97,4 @@ ENV KSQL_LOG4J_OPTS=-Dlog4j2.configurationFile=file:/etc/ksqldb-server/log4j2.ya
 # Default entrypoint is the wrapper script that determines mode
 ENTRYPOINT ["/etc/confluent/docker/entrypoint.sh"]
 # Default mode is server
-CMD ["server"]
+CMD ["ksqldb-server"]

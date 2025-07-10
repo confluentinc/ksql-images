@@ -20,38 +20,38 @@ set -e
 MODE="${1:-server}"
 
 case "$MODE" in
-  server)
+  ksqldb-server)
     echo "===> Starting KSQLDB in server mode..."
     export COMPONENT=ksqldb-server
     exec /etc/confluent/docker-server/run
     ;;
-  cli)
+  ksqldb-cli)
     echo "===> Starting KSQLDB in CLI mode..."
     export COMPONENT=ksqldb-cli
     shift
     exec /etc/confluent/docker-cli/run "$@"
     ;;
-  examples)
+  ksqldb-examples)
     echo "===> Starting KSQLDB in examples mode..."
     export COMPONENT=ksqldb-examples
     shift
-    exec /etc/confluent/docker-examples/run "$*"
+    exec /etc/confluent/docker-examples/run "$@"
     ;;
   *)
-    echo "Error: Unknown mode '$MODE'. Valid modes are: server, cli, examples"
+    echo "Error: Unknown mode '$MODE'. Valid modes are: ksqldb-server, ksqldb-cli, ksqldb-examples"
     echo ""
     echo "Usage:"
     echo "  Docker run with server mode (default):"
     echo "    docker run <image>"
-    echo "    docker run <image> server"
+    echo "    docker run <image> ksqldb-server"
     echo ""
     echo "  Docker run with CLI mode:"
-    echo "    docker run -it <image> cli [ksql-server-url]"
-    echo "    docker run -it <image> cli http://localhost:8088"
+    echo "    docker run -it <image> ksqldb-cli [ksql-server-url]"
+    echo "    docker run -it <image> ksqldb-cli http://localhost:8088"
     echo ""
     echo "  Docker run with examples mode:"
-    echo "    docker run -it <image> examples"
-    echo "    docker run -it <image> examples [command]"
+    echo "    docker run -it <image> ksqldb-examples"
+    echo "    docker run -it <image> ksqldb-examples [command]"
     echo ""
     echo "  Using --entrypoint override:"
     echo "    docker run -it --entrypoint ksql <image> http://localhost:8088"
