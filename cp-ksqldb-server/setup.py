@@ -2,13 +2,13 @@ import setuptools
 
 
 setuptools.setup(
-    name='cp-ksqldb-server-tests',
+    name='cp-ksql-server-tests',
     version='0.0.1',
 
     author="Confluent, Inc.",
     author_email="partner-support@confluent.io",
 
-    description='Docker image tests for unified KSQL image',
+    description='Docker image tests',
 
     url="https://github.com/confluentinc/ksql-images",
 
