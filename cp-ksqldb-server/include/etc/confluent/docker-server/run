@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright 2017 Confluent Inc.
+# Copyright 2025 Confluent Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,10 +20,10 @@ echo "===> User"
 id
 
 echo "===> Configuring ..."
-/etc/confluent/docker/configure
+/etc/confluent/docker-server/configure
 
 echo "===> Running preflight checks ... "
-/etc/confluent/docker/ensure
+/etc/confluent/docker-server/ensure
 
 echo "===> Launching ... "
-exec /etc/confluent/docker/launch
+exec /etc/confluent/docker-server/launch
