@@ -1,13 +1,12 @@
 # CP-KSQLDB Unified Docker Image
 
-This is a unified Docker image for KSQLDB that combines server, CLI, and examples functionality into a single image. The image supports multiple modes of operation through a flexible entrypoint system.
+This is a unified Docker image for KSQLDB that combines server, and CLI functionality into a single image. The image supports multiple modes of operation through a flexible entrypoint system.
 
 ## Overview
 
 The cp-ksqldb-server image provides three distinct modes:
 - **Server Mode** - Runs the KSQLDB server (default)
 - **CLI Mode** - Runs the KSQLDB interactive CLI
-- **Examples Mode** - Runs KSQLDB examples and demonstrations
 
 ## Modes of Operation
 
@@ -46,22 +45,6 @@ When running in CLI mode:
 - Executes `/etc/confluent/docker-cli/run`
 - Passes all additional arguments to the KSQL CLI
 
-### 3. Examples Mode
-
-Examples mode provides ready-to-run KSQLDB examples and demonstrations.
-
-```bash
-# Run examples
-docker run -it confluentinc/cp-ksqldb-server ksqldb-examples
-
-# Run examples with specific command
-docker run -it confluentinc/cp-ksqldb-server ksqldb-examples [command]
-```
-
-When running in examples mode:
-- Sets `COMPONENT=ksqldb-examples`
-- Executes `/etc/confluent/docker-examples/run`
-- Passes any additional arguments as commands
 
 ## Using Custom Entrypoints
 

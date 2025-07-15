@@ -71,8 +71,6 @@ RUN mkdir -p /usr/share/confluent-hub-components \
 COPY --chown=appuser:appuser include/etc/confluent/docker/* /etc/confluent/docker/
 COPY --chown=appuser:appuser include/etc/confluent/docker-server/* /etc/confluent/docker-server/
 COPY --chown=appuser:appuser include/etc/confluent/docker-cli/* /etc/confluent/docker-cli/
-COPY --chown=appuser:appuser include/etc/confluent/docker-examples/* /etc/confluent/docker-examples/
-
 
 # Create directories for server, CLI, and examples
 RUN mkdir -p /etc/ksqldb-server /etc/ksqldb-server/secrets /etc/ksqldb-cli /etc/ksqldb-cli/secrets /usr/logs /var/log/ksqldb-cli \
@@ -86,8 +84,7 @@ RUN chmod +x /etc/confluent/docker/entrypoint.sh \
   && chmod +x /etc/confluent/docker-server/launch \
   && chmod +x /etc/confluent/docker-server/ensure \
   && chmod +x /etc/confluent/docker-cli/run \
-  && chmod +x /etc/confluent/docker-cli/configure \
-  && chmod +x /etc/confluent/docker-examples/run
+  && chmod +x /etc/confluent/docker-cli/configure
 
 USER appuser
 

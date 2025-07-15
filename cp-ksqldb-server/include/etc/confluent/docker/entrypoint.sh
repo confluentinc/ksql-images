@@ -31,14 +31,8 @@ case "$MODE" in
     shift
     exec /etc/confluent/docker-cli/run "$@"
     ;;
-  ksqldb-examples)
-    echo "===> Starting KSQLDB in examples mode..."
-    export COMPONENT=ksqldb-examples
-    shift
-    exec /etc/confluent/docker-examples/run "$@"
-    ;;
   *)
-    echo "Error: Unknown mode '$MODE'. Valid modes are: ksqldb-server, ksqldb-cli, ksqldb-examples"
+    echo "Error: Unknown mode '$MODE'. Valid modes are: ksqldb-server, ksqldb-cli"
     echo ""
     echo "Usage:"
     echo "  Docker run with server mode (default):"
@@ -48,10 +42,6 @@ case "$MODE" in
     echo "  Docker run with CLI mode:"
     echo "    docker run -it <image> ksqldb-cli [ksql-server-url]"
     echo "    docker run -it <image> ksqldb-cli http://localhost:8088"
-    echo ""
-    echo "  Docker run with examples mode:"
-    echo "    docker run -it <image> ksqldb-examples"
-    echo "    docker run -it <image> ksqldb-examples [command]"
     echo ""
     echo "  Using --entrypoint override:"
     echo "    docker run -it --entrypoint ksql <image> http://localhost:8088"
