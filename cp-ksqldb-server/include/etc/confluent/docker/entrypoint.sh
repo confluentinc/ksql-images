@@ -31,12 +31,6 @@ case "$MODE" in
     shift
     exec /etc/confluent/docker-cli/run "$@"
     ;;
-  ksqldb-examples)
-    echo "===> Starting KSQLDB in examples mode..."
-    export COMPONENT=ksqldb-examples
-    shift
-    exec /etc/confluent/docker-examples/run "$@"
-    ;;
   *)
     echo "Error: Unknown mode '$MODE'. Valid modes are: ksqldb-server, ksqldb-cli, ksqldb-examples"
     echo ""
