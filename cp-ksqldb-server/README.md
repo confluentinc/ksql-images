@@ -4,7 +4,7 @@ This is a unified Docker image for KSQLDB that combines server, and CLI function
 
 ## Overview
 
-The cp-ksqldb-server image provides three distinct modes:
+The cp-ksqldb-server image provides two distinct modes:
 - **Server Mode** - Runs the KSQLDB server (default)
 - **CLI Mode** - Runs the KSQLDB interactive CLI
 

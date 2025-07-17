@@ -17,7 +17,7 @@
 set -e
 
 # Determine the mode based on the first argument
-MODE="${1:-server}"
+MODE="${1:-ksqldb-server}"
 
 case "$MODE" in
   ksqldb-server)

@@ -27,7 +27,7 @@
     </parent>
 
     <artifactId>cp-ksqldb-server</artifactId>
-    <name>KSQL Docker image</name>
+    <name>KSQL Server Docker image</name>
 
     <properties>
         <docker.skip-build>false</docker.skip-build>
