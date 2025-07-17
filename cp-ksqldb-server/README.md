@@ -1,6 +1,6 @@
-# CP-KSQLDB Unified Docker Image
+# CP-KSQLDB Server Docker Image
 
-This is a unified Docker image for KSQLDB that combines server, and CLI functionality into a single image. The image supports multiple modes of operation through a flexible entrypoint system.
+This is the Docker image for KSQLDB that combines server and CLI functionality into a single image. The image supports multiple modes of operation through a flexible entrypoint system.
 
 ## Overview
 
