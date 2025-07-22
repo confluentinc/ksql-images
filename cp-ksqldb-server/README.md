@@ -22,7 +22,7 @@ docker run confluentinc/cp-ksqldb-server
 
 When running in server mode:
 - Sets `COMPONENT=ksqldb-server`
-- Executes `/etc/confluent/docker-server/run`
+- Executes `/etc/confluent/docker/docker-server/run`
 - Starts the KSQLDB server on default port 8088
 
 ### 2. CLI Mode
@@ -42,7 +42,7 @@ docker run -it confluentinc/cp-ksqldb-server ksqldb-cli http://ksqldb-server:808
 
 When running in CLI mode:
 - Sets `COMPONENT=ksqldb-cli`
-- Executes `/etc/confluent/docker-cli/run`
+- Executes `/etc/confluent/docker/docker-cli/run`
 - Passes all additional arguments to the KSQL CLI
 
 
