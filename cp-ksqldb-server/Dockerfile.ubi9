@@ -69,8 +69,6 @@ RUN mkdir -p /usr/share/confluent-hub-components \
 
 # Copy all configuration files
 COPY --chown=appuser:appuser include/etc/confluent/docker/ /etc/confluent/docker/
-COPY --chown=appuser:appuser include/etc/confluent/docker/docker-server/* /etc/confluent/docker/docker-server/
-COPY --chown=appuser:appuser include/etc/confluent/docker/docker-cli/* /etc/confluent/docker/docker-cli/
 
 # Create directories for server, CLI, and examples
 RUN mkdir -p /etc/ksqldb-server /etc/ksqldb-server/secrets /etc/ksqldb-cli /etc/ksqldb-cli/secrets /usr/logs /var/log/ksqldb-cli \

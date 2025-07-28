@@ -34,8 +34,6 @@
         <docker.skip-test>false</docker.skip-test>
         <io.confluent.confluent-security-plugins.version>${confluent.version.range}</io.confluent.confluent-security-plugins.version>
         <io.confluent.ksql.version>${confluent.version.range}</io.confluent.ksql.version>
-        <io.confluent.rest-utils.version>${confluent.version.range}</io.confluent.rest-utils.version>
-        <io.confluent.blueway.version>${confluent.version.range}</io.confluent.blueway.version>
     </properties>
 
     <dependencies>
@@ -56,8 +54,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13.2</version>
-            <scope>compile</scope>
+            <scope>test</scope>
             <exclusions>
                 <exclusion>
                     <groupId>org.hamcrest</groupId>
