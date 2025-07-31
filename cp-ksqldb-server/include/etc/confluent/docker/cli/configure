@@ -23,5 +23,5 @@ echo "===> Configuring ..."
 ub path /etc/"${COMPONENT}"/ writable
 ub path /var/log/"${COMPONENT}"/ writable
 
-ub render-template "/etc/confluent/docker/docker-cli/log4j2.yaml.template" > "/etc/${COMPONENT}/log4j2.yaml"
+ub render-template "/etc/confluent/docker/cli/log4j2.yaml.template" > "/etc/${COMPONENT}/log4j2.yaml"
 

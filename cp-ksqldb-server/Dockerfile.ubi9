@@ -77,12 +77,12 @@ RUN mkdir -p /etc/ksqldb-server /etc/ksqldb-server/secrets /etc/ksqldb-cli /etc/
 
 # Make all scripts executable
 RUN chmod +x /etc/confluent/docker/entrypoint.sh \
-  && chmod +x /etc/confluent/docker/docker-server/run \
-  && chmod +x /etc/confluent/docker/docker-server/configure \
-  && chmod +x /etc/confluent/docker/docker-server/launch \
-  && chmod +x /etc/confluent/docker/docker-server/ensure \
-  && chmod +x /etc/confluent/docker/docker-cli/run \
-  && chmod +x /etc/confluent/docker/docker-cli/configure
+  && chmod +x /etc/confluent/docker/server/run \
+  && chmod +x /etc/confluent/docker/server/configure \
+  && chmod +x /etc/confluent/docker/server/launch \
+  && chmod +x /etc/confluent/docker/server/ensure \
+  && chmod +x /etc/confluent/docker/cli/run \
+  && chmod +x /etc/confluent/docker/cli/configure
 
 USER appuser
 

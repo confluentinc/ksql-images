@@ -23,13 +23,13 @@ case "$MODE" in
   ksqldb-server)
     echo "===> Starting KSQLDB in server mode..."
     export COMPONENT=ksqldb-server
-    exec /etc/confluent/docker/docker-server/run
+    exec /etc/confluent/docker/server/run
     ;;
   ksqldb-cli)
     echo "===> Starting KSQLDB in CLI mode..."
     export COMPONENT=ksqldb-cli
     shift
-    exec /etc/confluent/docker/docker-cli/run "$@"
+    exec /etc/confluent/docker/cli/run "$@"
     ;;
   *)
     echo "Error: Unknown mode '$MODE'. Valid modes are: ksqldb-server, ksqldb-cli"
