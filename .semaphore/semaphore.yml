@@ -74,7 +74,7 @@ global_job_config:
       - export DOCKER_UPSTREAM_REGISTRY=$DOCKER_PROD_REGISTRY
       - export LATEST_TAG=$BRANCH_TAG-latest
       - export DOCKER_UPSTREAM_TAG="$LATEST_TAG"
-      - export DOCKER_REPOS="confluentinc/cp-ksqldb-server confluentinc/cp-ksqldb-cli confluentinc/ksqldb-examples"
+      - export DOCKER_REPOS="confluentinc/cp-ksqldb-server"
       - export COMMUNITY_DOCKER_REPOS=""
       - |
         if [[ $SKIP_COMMUNITY == "True" ]]; then
