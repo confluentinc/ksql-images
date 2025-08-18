@@ -6,9 +6,8 @@ Configuration:
       PatternLayout:
         pattern: "[%d] %p %m (%c)%n"
 {{- if getEnv "KSQL_LOG4J_PROCESSING_LOG_BROKERLIST" "" }}
-    KafkaAppender:
+    Kafka:
       name: KafkaAppender
-      type: Kafka
       topic: {{ getEnv "KSQL_LOG4J_PROCESSING_LOG_TOPIC" "default_ksql_processing_log" }}
       brokers: {{ getEnv "KSQL_LOG4J_PROCESSING_LOG_BROKERLIST" "localhost:9092" }}
       layout:
@@ -23,7 +22,6 @@ Configuration:
       - name: io.confluent.rest-utils.requests
         level: WARN
 {{- if getEnv "KSQL_LOG4J_PROCESSING_LOG_BROKERLIST" "" }}
-    Logger:
       - name: processing
         level: ERROR
         AppenderRef:
@@ -31,7 +29,6 @@ Configuration:
 {{- end }}
 {{- $loggers := getEnv "KSQL_LOG4J_LOGGERS" "" -}}
 {{- range $logger, $loglevel := splitToMapDefaults ","  "" $loggers}}
-    Logger:
       - name: {{ $logger }}
         level: {{ $loglevel }}
         AppenderRef:
