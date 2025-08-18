@@ -9,9 +9,13 @@ Configuration:
     Kafka:
       name: KafkaAppender
       topic: {{ getEnv "KSQL_LOG4J_PROCESSING_LOG_TOPIC" "default_ksql_processing_log" }}
-      brokers: {{ getEnv "KSQL_LOG4J_PROCESSING_LOG_BROKERLIST" "localhost:9092" }}
-      layout:
-        type: JsonLayout
+      StructuredJsonLayout:
+        Property:
+          - name: schemas.enable
+            value: false
+      Property:
+        - name: bootstrap.servers
+          value: {{ getEnv "KSQL_LOG4J_PROCESSING_LOG_BROKERLIST" "localhost:9092" }}
 {{- end }}
   Loggers:
     Root:
