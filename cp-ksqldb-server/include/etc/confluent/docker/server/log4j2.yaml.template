@@ -6,9 +6,8 @@ Configuration:
       PatternLayout:
         pattern: "[%d] %p %m (%c)%n"
 {{- if getEnv "KSQL_LOG4J_PROCESSING_LOG_BROKERLIST" "" }}
-    KafkaAppender:
+    Kafka:
       name: KafkaAppender
-      type: Kafka
       topic: {{ getEnv "KSQL_LOG4J_PROCESSING_LOG_TOPIC" "default_ksql_processing_log" }}
       brokers: {{ getEnv "KSQL_LOG4J_PROCESSING_LOG_BROKERLIST" "localhost:9092" }}
       layout:
