@@ -2,7 +2,7 @@ ARG DOCKER_UPSTREAM_REGISTRY
 ARG DOCKER_UPSTREAM_TAG
 ARG UBI_MINIMAL_VERSION
 
-FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-java:${DOCKER_UPSTREAM_TAG}
+FROM 519856050701.dkr.ecr.us-west-2.amazonaws.com/docker/prod/confluentinc/cp-base-java:8.0.x-latest-ubi9
 
 EXPOSE 8088
 
@@ -29,6 +29,9 @@ LABEL io.confluent.docker.git.repo="confluentinc/ksql-images"
 ARG CONFLUENT_VERSION
 ARG CONFLUENT_PACKAGES_REPO
 ARG CONFLUENT_PLATFORM_LABEL
+
+CONFLUENT_PACKAGES_REPO=https://dev-confluent-packages-654654529379-us-west-2.s3.us-west-2.amazonaws.com/8.0.x/6768/rpm/8.0
+CONFLUENT_VERSION=8.0.1
 
 USER root
 
