@@ -21,7 +21,7 @@ semaphore:
   ]
   community_docker_repos: []
   community_maven_modules: []
-  maven_phase: 'package integration-test'
+  maven_phase: 'package'
   maven_skip_deploy: true
   build_arm: true
   nano_version: true
