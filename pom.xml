@@ -143,5 +143,7 @@
         <netty-codec-http2-version>4.2.4.Final</netty-codec-http2-version>
         <component.name>ksqldb</component.name>
         <io.confluent.ksql-images.version>8.1.1-0</io.confluent.ksql-images.version>
+
+        <ubi9.image.version>9.7-1762948793</ubi9.image.version>
     </properties>
 </project>

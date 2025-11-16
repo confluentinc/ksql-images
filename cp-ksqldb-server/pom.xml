@@ -109,7 +109,8 @@
                 <artifactId>dockerfile-maven-plugin</artifactId>
                 <configuration>
                     <buildArgs>
-                        <UBI_MINIMAL_VERSION>${ubi9.minimal.image.version}</UBI_MINIMAL_VERSION>
+                        <UBI9_VERSION>${ubi9.image.version}</UBI9_VERSION>
+                        <ARCH_TYPE>${arch.type}</ARCH_TYPE>
                     </buildArgs>
                 </configuration>
             </plugin>
@@ -123,7 +124,8 @@
                         <image>
                             <build>
                                 <args>
-                                    <UBI_MINIMAL_VERSION>${ubi9.minimal.image.version}</UBI_MINIMAL_VERSION>
+                                    <UBI9_VERSION>${ubi9.image.version}</UBI9_VERSION>
+                                    <ARCH_TYPE>${arch.type}</ARCH_TYPE>
                                 </args>
                             </build>
                         </image>
