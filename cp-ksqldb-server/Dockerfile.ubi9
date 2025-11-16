@@ -3,7 +3,10 @@ ARG DOCKER_UPSTREAM_TAG
 ARG ARCH_TYPE
 ARG UBI9_VERSION
 
-# Stage 1: Install packages using ubi9 with dnf to /microdir
+# Stage 1: Get package_dedupe tool from base image
+FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-java:${DOCKER_UPSTREAM_TAG}${ARCH_TYPE} AS tools
+
+# Stage 2: Install packages using ubi9 with dnf to /microdir
 FROM registry.access.redhat.com/ubi9:${UBI9_VERSION} AS builder
 
 ARG BUILD_NUMBER=-1
@@ -25,6 +28,9 @@ gpgkey=${CONFLUENT_PACKAGES_REPO}/archive.key \n\
 enabled=1 " > /etc/yum.repos.d/confluent.repo \
     && mkdir -p /microdir
 
+# Copy package_dedupe from tools stage
+COPY --from=tools /usr/bin/package_dedupe /usr/local/bin/package_dedupe
+
 RUN echo "===> Installing packages to /microdir with dnf" \
     && dnf install -y --installroot=/microdir --releasever=9 --setopt=install_weak_deps=False --nodocs \
        confluent-security-${CONFLUENT_VERSION} \
@@ -35,12 +41,14 @@ RUN echo "===> Installing packages to /microdir with dnf" \
     && rm -rf /microdir/usr/share/java/confluent-security/schema-registry \
               /microdir/usr/share/java/confluent-security/connect \
               /microdir/usr/share/java/confluent-security/kafka-rest \
+    && echo "===> Deduping jars in /microdir ..." \
+    && package_dedupe /microdir/usr/share/java \
     && echo "===> Cleaning up ..." \
     && dnf --installroot=/microdir clean all \
     && rm -rf /microdir/var/cache/* /microdir/var/log/dnf* /microdir/var/log/yum.* \
     && rm -rf /etc/yum.repos.d/confluent.repo
 
-# Stage 2: Final image using cp-base-java
+# Stage 3: Final image using cp-base-java
 FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-java:${DOCKER_UPSTREAM_TAG}${ARCH_TYPE}
 
 EXPOSE 8088
@@ -62,15 +70,13 @@ LABEL io.confluent.docker.git.repo="confluentinc/ksql-images"
 
 USER root
 
-# Copy installed packages from builder stage
-COPY --from=builder /microdir /
-
-# Run package_dedupe
-RUN echo "===> Deduping jars present in /usr/share/java ..." \
-    && package_dedupe /usr/share/java
+# Copy installed and deduped packages from builder stage, preserving base image's user database
+COPY --from=builder /microdir/usr /usr
+COPY --from=builder /microdir/var /var
 
 # Copy all configuration files
-COPY --chown=appuser:appuser include/etc/confluent/docker/ /etc/confluent/docker/
+COPY include/etc/confluent/docker/ /etc/confluent/docker/
+RUN chown -R appuser:appuser /etc/confluent/docker
 
 # Create directories needed by all modes
 RUN mkdir -p /usr/share/confluent-hub-components \

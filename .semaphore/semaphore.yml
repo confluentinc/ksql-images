@@ -72,7 +72,7 @@ global_job_config:
       - export DOCKER_UPSTREAM_REGISTRY=$DOCKER_DEV_REGISTRY # Updated for POC - to be removed later
       - export LATEST_TAG=$BRANCH_TAG-latest
 #      - export DOCKER_UPSTREAM_TAG="$LATEST_TAG"
-      - export DOCKER_UPSTREAM_TAG="dev-8.1.x-6fc6aa80-ubi9" # Updated for POC - to be removed later
+      - export DOCKER_UPSTREAM_TAG="dev-8.1.x-6fc6aa80" # Updated for POC - to be removed later
       - export DOCKER_REPOS="confluentinc/cp-ksqldb-server"
       - export COMMUNITY_DOCKER_REPOS=""
       - |
