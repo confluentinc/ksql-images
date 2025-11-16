@@ -68,9 +68,11 @@ global_job_config:
         fi
       - export DOCKER_DEV_REGISTRY="519856050701.dkr.ecr.us-west-2.amazonaws.com/docker/dev/"
       - export DOCKER_PROD_REGISTRY="519856050701.dkr.ecr.us-west-2.amazonaws.com/docker/prod/"
-      - export DOCKER_UPSTREAM_REGISTRY=$DOCKER_PROD_REGISTRY
+#      - export DOCKER_UPSTREAM_REGISTRY=$DOCKER_PROD_REGISTRY
+      - export DOCKER_UPSTREAM_REGISTRY=$DOCKER_DEV_REGISTRY # Updated for POC - to be removed later
       - export LATEST_TAG=$BRANCH_TAG-latest
-      - export DOCKER_UPSTREAM_TAG="$LATEST_TAG"
+#      - export DOCKER_UPSTREAM_TAG="$LATEST_TAG"
+      - export DOCKER_UPSTREAM_TAG="dev-8.1.x-6fc6aa80-ubi9" # Updated for POC - to be removed later
       - export DOCKER_REPOS="confluentinc/cp-ksqldb-server"
       - export COMMUNITY_DOCKER_REPOS=""
       - |

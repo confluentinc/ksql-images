@@ -40,8 +40,8 @@ RUN echo "===> Installing packages to /microdir with dnf" \
     && rm -rf /microdir/var/cache/* /microdir/var/log/dnf* /microdir/var/log/yum.* \
     && rm -rf /etc/yum.repos.d/confluent.repo
 
-# Stage 2: Final image using cp-base-java-micro
-FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-java-micro:${DOCKER_UPSTREAM_TAG}.${ARCH_TYPE}
+# Stage 2: Final image using cp-base-java
+FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-java:${DOCKER_UPSTREAM_TAG}${ARCH_TYPE}
 
 EXPOSE 8088
 
