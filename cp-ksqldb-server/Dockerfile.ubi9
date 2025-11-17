@@ -6,7 +6,7 @@ FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-java:${DOCKER_UPSTREAM_TAG}
 EXPOSE 8088
 
 ENV COMPONENT=ksqldb-server
-ENV KSQL_CLASSPATH=/usr/share/java/${COMPONENT}/*
+ENV KSQL_CLASSPATH=/usr/share/java/ksqldb-server/*
 
 ARG BUILD_NUMBER=-1
 ARG PROJECT_VERSION
@@ -60,22 +60,32 @@ RUN echo "===> Cleaning up ..."  \
     && microdnf clean all \
     && rm -rf /tmp/* /etc/yum.repos.d/confluent.repo
 
+# Create directories needed by all modes
 RUN mkdir -p /usr/share/confluent-hub-components \
     && chown appuser:appuser -R /usr/share/confluent-hub-components \
     && mkdir -p /var/lib/kafka-streams \
     && chown appuser:appuser -R /var/lib/kafka-streams
 
-COPY --chown=appuser:appuser include/etc/confluent/docker/* /etc/confluent/docker/
+# Copy all configuration files
+COPY --chown=appuser:appuser include/etc/confluent/docker/ /etc/confluent/docker/
 
-RUN mkdir -p /etc/${COMPONENT} /etc/${COMPONENT}/secrets /usr/logs \
-  && chown appuser:root -R /etc/${COMPONENT} /usr/logs \
-  && chmod ug+w -R /etc/${COMPONENT} /usr/logs
+# Create directories for server, CLI, and examples
+RUN mkdir -p /etc/ksqldb-server /etc/ksqldb-server/secrets /etc/ksqldb-cli /etc/ksqldb-cli/secrets /usr/logs /var/log/ksqldb-cli \
+  && chown appuser:root -R /etc/ksqldb-server /etc/ksqldb-cli /usr/logs /var/log/ksqldb-cli \
+  && chmod ug+w -R /etc/ksqldb-server /etc/ksqldb-cli /usr/logs /var/log/ksqldb-cli
 
-RUN chmod +x /etc/confluent/docker/run
-RUN chmod +x /etc/confluent/docker/configure
-RUN chmod +x /etc/confluent/docker/launch
-RUN chmod +x /etc/confluent/docker/ensure
+# Make all scripts executable
+RUN chmod +x /etc/confluent/docker/entrypoint.sh \
+  && chmod +x /etc/confluent/docker/server/run \
+  && chmod +x /etc/confluent/docker/server/configure \
+  && chmod +x /etc/confluent/docker/server/launch \
+  && chmod +x /etc/confluent/docker/server/ensure \
+  && chmod +x /etc/confluent/docker/cli/run \
+  && chmod +x /etc/confluent/docker/cli/configure
 
 USER appuser
 
-CMD ["/etc/confluent/docker/run"]
+# Default entrypoint is the wrapper script that determines mode
+ENTRYPOINT ["/etc/confluent/docker/entrypoint.sh"]
+# Default mode is server
+CMD ["ksqldb-server"]

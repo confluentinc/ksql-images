@@ -48,7 +48,7 @@ services:
 
   ksqldb-cli:
     hostname: ksqldb-cli 
-    image: "${DOCKER_REGISTRY}confluentinc/cp-ksqldb-cli:${DOCKER_TAG}"
+    image: "${DOCKER_REGISTRY}confluentinc/cp-ksqldb-server:${DOCKER_TAG}"
     depends_on:
       - ksqldb-server
     entrypoint:
