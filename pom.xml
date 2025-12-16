@@ -139,7 +139,7 @@
              Please check top level `pom.xml` at https://github.com/netty/netty
              for the netty version we bump to (ie, corresponding git tag),
              to find the correct `tcnative` version. -->
-        <netty.version>4.2.5.Final</netty.version>
+        <netty.version>4.2.8.Final</netty.version>
         <netty-codec-http2-version>4.2.4.Final</netty-codec-http2-version>
         <component.name>ksqldb</component.name>
         <io.confluent.ksql-images.version>8.3.0-0</io.confluent.ksql-images.version>
