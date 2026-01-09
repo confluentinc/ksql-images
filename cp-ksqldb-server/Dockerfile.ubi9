@@ -43,7 +43,11 @@ RUN echo "===> Installing packages to /microdir with dnf" \
     && echo "===> Cleaning up ..." \
     && dnf --installroot=/microdir clean all \
     && rm -rf /microdir/var/cache/* /microdir/var/log/dnf* /microdir/var/log/yum.* \
-    && rm -rf /etc/yum.repos.d/confluent.repo
+    && rm -rf /etc/yum.repos.d/confluent.repo \
+    && echo "===> Removing user database files to preserve base image's appuser ..." \
+    && rm -f /microdir/etc/passwd /microdir/etc/group /microdir/etc/shadow /microdir/etc/gshadow \
+             /microdir/etc/subuid /microdir/etc/subgid \
+    && rm -rf /microdir/dev/* /microdir/proc/* /microdir/sys/*
 
 # Stage 3: Final image using cp-base-java-micro
 FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-java-micro:${DOCKER_UPSTREAM_TAG}
@@ -73,8 +77,7 @@ LABEL io.confluent.docker.git.repo="confluentinc/ksql-images"
 USER root
 
 # Copy installed and deduped packages from builder stage
-COPY --from=builder /microdir/usr /usr
-COPY --from=builder /microdir/var /var
+COPY --from=builder /microdir/ /
 
 # Copy all configuration files
 COPY include/etc/confluent/docker/ /etc/confluent/docker/
@@ -86,7 +89,7 @@ RUN mkdir -p /usr/share/confluent-hub-components \
     && mkdir -p /var/lib/kafka-streams \
     && chown ${APP_UID}:${APP_GID} -R /var/lib/kafka-streams \
     && mkdir -p /etc/ksqldb-server /etc/ksqldb-server/secrets /etc/ksqldb-cli /etc/ksqldb-cli/secrets /usr/logs /var/log/ksqldb-cli \
-    && chown ${APP_UID}:0 -R /etc/ksqldb-server /etc/ksqldb-cli /usr/logs /var/log/ksqldb-cli \
+    && chown ${APP_UID}:root -R /etc/ksqldb-server /etc/ksqldb-cli /usr/logs /var/log/ksqldb-cli \
     && chmod ug+w -R /etc/ksqldb-server /etc/ksqldb-cli /usr/logs /var/log/ksqldb-cli \
     && chmod +x /etc/confluent/docker/entrypoint.sh \
     && chmod +x /etc/confluent/docker/server/run \
