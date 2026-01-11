@@ -80,21 +80,17 @@ USER root
 # /usr/bin - overlapping files are identical, safe to overwrite
 COPY --from=builder /microdir/usr/bin/ /usr/bin/
 
-# /usr/share/java - no overlap with base image
 COPY --from=builder /microdir/usr/share/java/ /usr/share/java/
 
-# /usr/share/doc - documentation
 COPY --from=builder /microdir/usr/share/doc/ /usr/share/doc/
 
 # /etc - only Confluent-specific directories (not system configs)
 COPY --from=builder /microdir/etc/ksqldb /etc/ksqldb
 COPY --from=builder /microdir/etc/confluent-hub-client /etc/confluent-hub-client
 
-# Copy docker configuration files
 COPY include/etc/confluent/docker/ /etc/confluent/docker/
 RUN chown -R ${APP_UID}:${APP_GID} /etc/confluent/docker
 
-# Create directories needed by all modes and set permissions
 RUN mkdir -p /usr/share/confluent-hub-components \
     && chown ${APP_UID}:${APP_GID} -R /usr/share/confluent-hub-components \
     && mkdir -p /var/lib/kafka-streams \
