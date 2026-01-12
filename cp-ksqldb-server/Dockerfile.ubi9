@@ -77,7 +77,7 @@ LABEL io.confluent.docker.git.repo="confluentinc/ksql-images"
 USER root
 
 # Copy only ksql binaries from /usr/bin to avoid overwriting base image files
-# Blindling copy /usr/bin leads to Redhat Certification failures
+# Blindly copying /usr/bin leads to RedHat certification failures
 COPY --from=builder /microdir/usr/bin/*ksql* /usr/bin/
 
 COPY --from=builder /microdir/usr/share/java/ /usr/share/java/
