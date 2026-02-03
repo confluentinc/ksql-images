@@ -18,9 +18,9 @@
     <version>8.0.4-0</version>
 
     <modules>
-        <module>cp-ksqldb-cli</module>
+        <!-- <module>cp-ksqldb-cli</module> -->
         <module>cp-ksqldb-server</module>
-        <module>cp-ksqldb-examples</module>
+        <!-- <module>cp-ksqldb-examples</module> -->
     </modules>
 
     <dependencyManagement>
