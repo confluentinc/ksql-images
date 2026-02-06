@@ -1,7 +1,7 @@
 ARG DOCKER_UPSTREAM_REGISTRY
 ARG DOCKER_UPSTREAM_TAG
 
-FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-new:${DOCKER_UPSTREAM_TAG}
+FROM 519856050701.dkr.ecr.us-west-2.amazonaws.com/docker/dev/confluentinc/cp-base-new:dev-7.9.x-cb2fe0b0-ubi8.amd64
 
 EXPOSE 8088
 
@@ -33,18 +33,18 @@ USER root
 RUN echo "===> Adding confluent repository...${CONFLUENT_PACKAGES_REPO}" \
     && rpm --import ${CONFLUENT_PACKAGES_REPO}/archive.key \
     && printf "[Confluent.dist] \n\
-name=Confluent repository (dist) \n\
-baseurl=${CONFLUENT_PACKAGES_REPO}/\$releasever \n\
-gpgcheck=1 \n\
-gpgkey=${CONFLUENT_PACKAGES_REPO}/archive.key \n\
-enabled=1 \n\
-\n\
-[Confluent] \n\
-name=Confluent repository \n\
-baseurl=${CONFLUENT_PACKAGES_REPO}/ \n\
-gpgcheck=1 \n\
-gpgkey=${CONFLUENT_PACKAGES_REPO}/archive.key \n\
-enabled=1 " > /etc/yum.repos.d/confluent.repo
+    name=Confluent repository (dist) \n\
+    baseurl=${CONFLUENT_PACKAGES_REPO}/\$releasever \n\
+    gpgcheck=1 \n\
+    gpgkey=${CONFLUENT_PACKAGES_REPO}/archive.key \n\
+    enabled=1 \n\
+    \n\
+    [Confluent] \n\
+    name=Confluent repository \n\
+    baseurl=${CONFLUENT_PACKAGES_REPO}/ \n\
+    gpgcheck=1 \n\
+    gpgkey=${CONFLUENT_PACKAGES_REPO}/archive.key \n\
+    enabled=1 " > /etc/yum.repos.d/confluent.repo
 
 RUN echo "===> Installing Confluent security plugins ..." \
     && yum install -y confluent-security-${CONFLUENT_VERSION} \
@@ -70,8 +70,8 @@ RUN echo "===> Cleaning up ..."  \
 COPY --chown=appuser:appuser include/etc/confluent/docker/* /etc/confluent/docker/
 
 RUN mkdir -p /etc/${COMPONENT} /etc/${COMPONENT}/secrets /usr/logs \
-  && chown appuser:root -R /etc/${COMPONENT} /usr/logs \
-  && chmod ug+w -R /etc/${COMPONENT} /usr/logs
+    && chown appuser:root -R /etc/${COMPONENT} /usr/logs \
+    && chmod ug+w -R /etc/${COMPONENT} /usr/logs
 
 RUN chmod +x /etc/confluent/docker/run
 RUN chmod +x /etc/confluent/docker/configure
