@@ -23,7 +23,7 @@
     <parent>
         <groupId>io.confluent.ksql</groupId>
         <artifactId>ksql-images-parent</artifactId>
-        <version>8.0.2-cp5</version>
+        <version>8.0.2-1-0-cp5</version>
     </parent>
 
     <artifactId>cp-ksqldb-examples</artifactId>
