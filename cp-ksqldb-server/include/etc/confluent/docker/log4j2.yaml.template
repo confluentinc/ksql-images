@@ -1,0 +1,40 @@
+Configuration:
+  Appenders:
+    Console:
+      name: Console
+      target: SYSTEM_OUT
+      PatternLayout:
+        pattern: "[%d] %p %m (%c)%n"
+{{- if getEnv "KSQL_LOG4J_PROCESSING_LOG_BROKERLIST" "" }}
+    Kafka:
+      name: KafkaAppender
+      topic: {{ getEnv "KSQL_LOG4J_PROCESSING_LOG_TOPIC" "default_ksql_processing_log" }}
+      StructuredJsonLayout:
+        Property:
+          - name: schemas.enable
+            value: false
+      Property:
+        - name: bootstrap.servers
+          value: {{ getEnv "KSQL_LOG4J_PROCESSING_LOG_BROKERLIST" "localhost:9092" }}
+{{- end }}
+  Loggers:
+    Root:
+      level: {{ getEnv "KSQL_LOG4J_ROOT_LOGLEVEL" "INFO" }}
+      AppenderRef:
+        - ref: Console
+    Logger:
+      - name: io.confluent.rest-utils.requests
+        level: WARN
+{{- if getEnv "KSQL_LOG4J_PROCESSING_LOG_BROKERLIST" "" }}
+      - name: processing
+        level: ERROR
+        AppenderRef:
+          - ref: KafkaAppender
+{{- end }}
+{{- $loggers := getEnv "KSQL_LOG4J_LOGGERS" "" -}}
+{{- range $logger, $loglevel := splitToMapDefaults ","  "" $loggers}}
+      - name: {{ $logger }}
+        level: {{ $loglevel }}
+        AppenderRef:
+            - ref: Console
+{{- end }}

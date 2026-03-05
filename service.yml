@@ -21,11 +21,11 @@ semaphore:
   ]
   community_docker_repos: []
   community_maven_modules: []
-  maven_phase: 'package integration-test'
+  maven_phase: 'package'
   maven_skip_deploy: true
   build_arm: true
   nano_version: true
-  os_types: ["ubi8"]
+  os_types: ["ubi9"]
   pip_install_package: 'tox==3.28.0'
   use_packages: true
   cp_images: true
@@ -53,6 +53,13 @@ semaphore:
         - name: CONFLUENT_DEB_VERSION
           required: true
           default_value: '1'
+        - name: SKIP_COMMUNITY
+          required: false
+          default_value: 'False'
+          description: 'Skip building community docker images'
+          options:
+            - 'True'
+            - 'False'
     - name: cp-dockerfile-promote
       branch: master
       pipeline_file: .semaphore/cp_dockerfile_promote.yml
@@ -71,3 +78,10 @@ semaphore:
           options:
             - 'deb'
             - 'ubi'
+        - name: SKIP_COMMUNITY
+          required: false
+          default_value: 'False'
+          description: 'Skip publishing community docker images'
+          options:
+            - 'True'
+            - 'False'

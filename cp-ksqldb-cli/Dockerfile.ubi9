@@ -35,14 +35,7 @@ RUN mkdir -p /etc/${COMPONENT} /etc/${COMPONENT}/secrets /var/log/${COMPONENT} /
 
 RUN echo "===> Adding confluent repository...${CONFLUENT_PACKAGES_REPO}" \
     && rpm --import ${CONFLUENT_PACKAGES_REPO}/archive.key \
-    && printf "[Confluent.dist] \n\
-name=Confluent repository (dist) \n\
-baseurl=${CONFLUENT_PACKAGES_REPO}/\$releasever \n\
-gpgcheck=1 \n\
-gpgkey=${CONFLUENT_PACKAGES_REPO}/archive.key \n\
-enabled=1 \n\
-\n\
-[Confluent] \n\
+    && printf "[Confluent] \n\
 name=Confluent repository \n\
 baseurl=${CONFLUENT_PACKAGES_REPO}/ \n\
 gpgcheck=1 \n\
@@ -61,7 +54,7 @@ RUN echo "===> Cleaning up ..."  \
 USER appuser
 
 RUN bash /etc/confluent/docker/configure
-ENV KSQL_LOG4J_OPTS=-Dlog4j.configuration=file:/etc/${COMPONENT}/log4j.properties
+ENV KSQL_LOG4J_OPTS=-Dlog4j2.configurationFile=file:/etc/${COMPONENT}/log4j2.yaml
 
 ENTRYPOINT ["ksql"]
 CMD ["http://localhost:8088"]
