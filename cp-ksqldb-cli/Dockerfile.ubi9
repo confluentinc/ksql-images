@@ -1,7 +1,7 @@
 ARG DOCKER_UPSTREAM_REGISTRY
 ARG DOCKER_UPSTREAM_TAG
 
-FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-new:${DOCKER_UPSTREAM_TAG}
+FROM ${DOCKER_UPSTREAM_REGISTRY}confluentinc/cp-base-java:${DOCKER_UPSTREAM_TAG}
 
 ENV COMPONENT=ksqldb-cli
 ENV KSQL_CLASSPATH=/usr/share/java/${COMPONENT}/*
@@ -43,10 +43,10 @@ gpgkey=${CONFLUENT_PACKAGES_REPO}/archive.key \n\
 enabled=1 " > /etc/yum.repos.d/confluent.repo
 
 RUN echo "===> Installing Confluent Hub client ${CONFLUENT_VERSION}..." \
-    && yum install -y confluent-hub-client-${CONFLUENT_VERSION} confluent-ksqldb-${CONFLUENT_VERSION}
+    && microdnf install -y confluent-hub-client-${CONFLUENT_VERSION} confluent-ksqldb-${CONFLUENT_VERSION}
 
 RUN echo "===> Cleaning up ..."  \
-    && yum clean all \
+    && microdnf clean all \
     && rm -rf /tmp/* /etc/yum.repos.d/confluent.repo \
     && mkdir -p /usr/share/confluent-hub-components \
     && chown appuser:appuser -R /usr/share/confluent-hub-components
