@@ -1,4 +1,5 @@
 import os
+import socket
 import time
 import unittest
 import urllib.request
@@ -7,21 +8,26 @@ import confluent.docker_utils as utils
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 FIXTURES_DIR = os.path.join(CURRENT_DIR, "fixtures")
-KAFKA_READY = (
-    "bash -c 'ub kafka-ready {brokers} 40 -b kafka:39092 " +
-    "&& echo PASS || echo FAIL'")
-SR_READY = "bash -c 'ub sr-ready {host} {port} 20 && echo PASS || echo FAIL'"
+
+
+def get_container_ip(cluster, service):
+    container = cluster.get_container(service)
+    networks = container.inspect_container['NetworkSettings']['Networks']
+    return next(iter(networks.values()))['IPAddress']
 
 
 def check_cluster_ready(cluster):
-    checks = [
-        ['kafka', KAFKA_READY.format(brokers=1)],
-        ['schema-registry',
-            SR_READY.format(host="schema-registry", port="8081")]
-    ]
-    return all(
-        [('PASS' in cluster.run_command_on_service(*args).decode())
-            for args in checks])
+    try:
+        kafka_ip = get_container_ip(cluster, 'kafka')
+        socket.create_connection((kafka_ip, 39092), timeout=5).close()
+
+        sr_ip = get_container_ip(cluster, 'schema-registry')
+        urllib.request.urlopen(
+            'http://%s:8081/subjects' % sr_ip, timeout=5).close()
+
+        return True
+    except Exception:
+        return False
 
 
 
