@@ -26,7 +26,6 @@ global_job_config:
       - checkout
       - if [[ $SEMAPHORE_GIT_BRANCH =~ ^7\..* ]]; then sem-version java 8; else sem-version java 17; fi
       - sem-version python 3.9
-      - . vault-setup
       - . cache-maven restore
       - pip install tox==3.28.0
       - export GIT_COMMIT=$(git rev-parse --verify HEAD --short)
