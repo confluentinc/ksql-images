@@ -1,56 +1,47 @@
 import os
+import socket
 import time
 import unittest
+import urllib.request
 
 import confluent.docker_utils as utils
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 FIXTURES_DIR = os.path.join(CURRENT_DIR, "fixtures")
-KAFKA_READY = (
-    "bash -c 'cub kafka-ready -b kafka:39092 {brokers} 40 " +
-    "&& echo PASS || echo FAIL'")
-SR_READY = "bash -c 'cub sr-ready {host} {port} 20 && echo PASS || echo FAIL'"
+
+
+def get_container_ip(cluster, service):
+    container = cluster.get_container(service)
+    networks = container.inspect_container['NetworkSettings']['Networks']
+    return next(iter(networks.values()))['IPAddress']
 
 
 def check_cluster_ready(cluster):
-    checks = [
-        ['kafka', KAFKA_READY.format(brokers=1)],
-        ['schema-registry',
-            SR_READY.format(host="schema-registry", port="8081")]
-    ]
-    return all(
-        [('PASS' in cluster.run_command_on_service(*args).decode())
-            for args in checks])
+    try:
+        kafka_ip = get_container_ip(cluster, 'kafka')
+        socket.create_connection((kafka_ip, 39092), timeout=5).close()
 
+        sr_ip = get_container_ip(cluster, 'schema-registry')
+        urllib.request.urlopen(
+            'http://%s:8081/subjects' % sr_ip, timeout=5).close()
 
-class RunCommandException(Exception):
-    def __init__(self, exit_code, output):
-        super(RunCommandException, self).__init__(
-            'Cmd failed with output: ' + output.decode())
-        self.exit_code = exit_code
-        self.output = output
+        return True
+    except Exception:
+        return False
 
-
-def run_cmd(container, cmd):
-    eid = container.create_exec(cmd)
-    output = container.start_exec(eid)
-    inspect = container.client.exec_inspect(eid)
-    if inspect['ExitCode'] != 0:
-        raise RunCommandException(inspect['ExitCode'], output)
-    return output
 
 
 class KsqlClient(object):
-    def __init__(self, cluster, client, server, port):
-        self.cluster = cluster
-        self.client_container = self.cluster.get_container(client)
-        server_container = self.cluster.get_container(server)
-        self.server_hostname = server_container.name
+    def __init__(self, cluster, server, port):
+        server_container = cluster.get_container(server)
+        networks = server_container.inspect_container['NetworkSettings']['Networks']
+        self.server_ip = next(iter(networks.values()))['IPAddress']
         self.port = port
 
     def request(self, uri):
-        cmd = 'curl http://%s:%d%s' % (self.server_hostname, self.port, uri)
-        return run_cmd(self.client_container, cmd)
+        url = 'http://%s:%d%s' % (self.server_ip, self.port, uri)
+        with urllib.request.urlopen(url) as response:
+            return response.read()
 
     def info(self):
         return self.request('/info').decode()
@@ -88,5 +79,5 @@ class KsqlServerTest(unittest.TestCase):
         cls.cluster.shutdown()
 
     def test_server_start(self):
-        client = KsqlClient(self.cluster, 'ksqldb-cli', 'ksqldb-server', 8088)
+        client = KsqlClient(self.cluster, 'ksqldb-server', 8088)
         retry(client.info)

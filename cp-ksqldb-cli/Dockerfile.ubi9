@@ -42,14 +42,12 @@ gpgcheck=1 \n\
 gpgkey=${CONFLUENT_PACKAGES_REPO}/archive.key \n\
 enabled=1 " > /etc/yum.repos.d/confluent.repo
 
-RUN echo "===> Installing Confluent Hub client ${CONFLUENT_VERSION}..." \
-    && yum install -y confluent-hub-client-${CONFLUENT_VERSION} confluent-ksqldb-${CONFLUENT_VERSION}
+RUN echo "===> Installing ksqldb ${CONFLUENT_VERSION}..." \
+    && yum install -y confluent-ksqldb-${CONFLUENT_VERSION}
 
 RUN echo "===> Cleaning up ..."  \
     && yum clean all \
-    && rm -rf /tmp/* /etc/yum.repos.d/confluent.repo \
-    && mkdir -p /usr/share/confluent-hub-components \
-    && chown appuser:appuser -R /usr/share/confluent-hub-components
+    && rm -rf /tmp/* /etc/yum.repos.d/confluent.repo
 
 USER appuser
 
