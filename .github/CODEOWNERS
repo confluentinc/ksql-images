@@ -1,3 +1,4 @@
 # assign ksql team as reviewers for all PRs:
 *       @confluentinc/ksql
-
+.semaphore/	@confluentinc/ksql @confluentinc/cp-build-and-release-team
+service.yml	@confluentinc/ksql @confluentinc/cp-build-and-release-team
