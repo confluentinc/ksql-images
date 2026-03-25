@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright 2017 Confluent Inc.
+# Copyright 2025 Confluent Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,10 +20,8 @@ echo "===> User"
 id
 
 echo "===> Configuring ..."
-/etc/confluent/docker/configure
+ub path /etc/"${COMPONENT}"/ writable
+ub path /var/log/"${COMPONENT}"/ writable
 
-echo "===> Running preflight checks ... "
-/etc/confluent/docker/ensure
+ub render-template "/etc/confluent/docker/cli/log4j2.yaml.template" > "/etc/${COMPONENT}/log4j2.yaml"
 
-echo "===> Launching ... "
-exec /etc/confluent/docker/launch

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright 2017 Confluent Inc.
+# Copyright 2025 Confluent Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ if ! [[ -z "${KSQL_CONNECT_GROUP_ID:=}" ]]; then
 fi
 
 echo "===> Preparing KSQL Server properties"
-ub render-template "/etc/confluent/docker/ksqldb-server.properties.template" > "/etc/${COMPONENT}/${COMPONENT}.properties"
-ub render-template "/etc/confluent/docker/connect.properties.template" > "/etc/${COMPONENT}/connect.properties"
-ub render-template "/etc/confluent/docker/log4j2.yaml.template" > "/etc/${COMPONENT}/log4j2.yaml"
+ub render-template "/etc/confluent/docker/server/ksqldb-server.properties.template" > "/etc/${COMPONENT}/${COMPONENT}.properties"
+ub render-template "/etc/confluent/docker/server/connect.properties.template" > "/etc/${COMPONENT}/connect.properties"
+ub render-template "/etc/confluent/docker/server/log4j2.yaml.template" > "/etc/${COMPONENT}/log4j2.yaml"
 echo "===> Prepared KSQL Server properties - /etc/${COMPONENT}/${COMPONENT}.properties, /etc/${COMPONENT}/connect.properties, /etc/${COMPONENT}/log4j2.yaml"
