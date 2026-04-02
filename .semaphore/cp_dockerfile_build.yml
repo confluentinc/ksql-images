@@ -373,7 +373,7 @@ blocks:
           commands:
             - export DOCKER_PROD_IMAGE_NAME=$DOCKER_PROD_REGISTRY${DOCKER_REPOS// / $DOCKER_PROD_REGISTRY}
             - |-
-              if [[ ! $IS_RELEASE && ! $IS_PREVIEW ]]; then
+              if [[ ! $IS_RELEASE ]]; then
                 #use semaphore default maven config to deploy jars to codeartifact
                 cp /tmp/temp_settings.xml ~/.m2/settings.xml
                 #clear maven repository cache coming from previous blocks
