@@ -83,3 +83,6 @@ semaphore:
           options:
             - 'True'
             - 'False'
+cp_dockerfile:
+  s390x_docker_repos: ['confluentinc/cp-ksqldb-server']
+  s390x_maven_modules: ['cp-ksqldb-server']
