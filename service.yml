@@ -3,6 +3,9 @@ lang: python
 lang_version: "3.9"
 git:
   enable: true
+cp_dockerfile:
+  s390x_docker_repos: ['confluentinc/cp-ksqldb-server']
+  s390x_maven_modules: ['cp-ksqldb-server']
 code_artifact:
   enable: true
   package_paths:
