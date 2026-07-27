@@ -14,9 +14,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# JMX settings
-if [ -z "$KSQL_JMX_OPTS" ]; then
-  KSQL_JMX_OPTS="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false "
+# JMX settings.
+# Remote JMX without authentication is a code-execution primitive for any peer
+# that can reach the port, so this image does not enable it. Operators who need
+# remote JMX set KSQL_JMX_OPTS explicitly, with authentication and TLS. See:
+# https://docs.confluent.io/platform/current/ksqldb/operate-and-deploy/monitoring.html
+#
+# When the operator supplies nothing we must still export a loopback-only value
+# rather than leaving KSQL_JMX_OPTS empty: ksql-run-class falls back to its own
+# default, which binds every interface with no authentication, and then appends
+# JMX_PORT to it. Exporting here is what keeps the listener on loopback.
+#
+# The flag that confines the listener is com.sun.management.jmxremote.host.
+# com.sun.management.jmxremote.local.only does NOT restrict the remote
+# connector -- with local.only=true and a port set, the JDK still binds the
+# RMI registry to the wildcard address and accepts remote connections.
+KSQL_JMX_OPTS_FROM_OPERATOR="${KSQL_JMX_OPTS-}"
+if [ -z "$KSQL_JMX_OPTS_FROM_OPERATOR" ]; then
+  export KSQL_JMX_OPTS="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.host=127.0.0.1 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
 fi
 
 # Ensure that KSQL picks up the correct log4j properties file
@@ -32,10 +47,21 @@ fi
 # the default is to pick the first IP (or network).
 export KSQL_JMX_HOSTNAME=${KSQL_JMX_HOSTNAME:-$(hostname -i | cut -d" " -f1)}
 
-# JMX port to use
-if [  $KSQL_JMX_PORT ]; then
+# JMX port to use. ksql-run-class appends the port to whichever KSQL_JMX_OPTS
+# ends up being used, so setting JMX_PORT is all that is needed here.
+if [ -n "${KSQL_JMX_PORT-}" ]; then
   export JMX_PORT=$KSQL_JMX_PORT
-export KSQL_JMX_OPTS="$KSQL_JMX_OPTS -Djava.rmi.server.hostname=$KSQL_JMX_HOSTNAME -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.rmi.port=$JMX_PORT -Dcom.sun.management.jmxremote.port=$JMX_PORT"
+
+  if [ -z "$KSQL_JMX_OPTS_FROM_OPERATOR" ]; then
+    echo "===> WARNING: KSQL_JMX_PORT is set but KSQL_JMX_OPTS is not."
+    echo "===> WARNING: JMX will listen on loopback only and will NOT accept remote connections."
+    echo "===> WARNING: To enable remote JMX, set KSQL_JMX_OPTS explicitly with authentication and TLS. See:"
+    echo "===> WARNING: https://docs.confluent.io/platform/current/ksqldb/operate-and-deploy/monitoring.html"
+  elif [[ $KSQL_JMX_OPTS != *"java.rmi.server.hostname"* && -n "$KSQL_JMX_HOSTNAME" ]]; then
+    # The JMX client needs to reach java.rmi.server.hostname, which the operator
+    # is unlikely to know at image-build time, so supply it if they have not.
+    export KSQL_JMX_OPTS="$KSQL_JMX_OPTS -Djava.rmi.server.hostname=$KSQL_JMX_HOSTNAME"
+  fi
 fi
 
 echo "===> Launching ${COMPONENT} ... "
