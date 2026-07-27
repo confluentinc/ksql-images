@@ -1,0 +1,32 @@
+---
+# Minimal Kafka the ksqlDB container can pass its kafka-ready preflight against.
+# Only exists so that a real ksqlDB JVM comes up and binds its JMX listener.
+services:
+  zookeeper:
+    hostname: zookeeper
+    container_name: jmxtest-zookeeper
+    image: confluentinc/cp-zookeeper:${TEST_TAG:-7.5.15}
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 32181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks: [jmxtest]
+
+  kafka:
+    hostname: kafka
+    container_name: jmxtest-kafka
+    image: confluentinc/cp-kafka:${TEST_TAG:-7.5.15}
+    depends_on: [zookeeper]
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:32181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:39092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 100
+    networks: [jmxtest]
+
+networks:
+  jmxtest:
+    name: jmxtest
