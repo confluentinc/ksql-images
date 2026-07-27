@@ -14,9 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# JMX settings
-if [ -z "$KSQL_JMX_OPTS" ]; then
-  KSQL_JMX_OPTS="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false "
+# JMX settings. Remote JMX without authentication allows remote code execution,
+# so it is off by default; set KSQL_JMX_OPTS to enable it. Must be exported --
+# ksql-run-class applies its own unrestricted default if KSQL_JMX_OPTS is empty.
+# jmxremote.host is what confines the listener; local.only does not. rmi.server
+# hostname must match, or the registry hands clients a stub pointing at the
+# container IP and loopback connections are refused too.
+KSQL_JMX_OPTS_FROM_OPERATOR="${KSQL_JMX_OPTS-}"
+if [ -z "$KSQL_JMX_OPTS_FROM_OPERATOR" ]; then
+  export KSQL_JMX_OPTS="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.host=127.0.0.1 -Djava.rmi.server.hostname=127.0.0.1 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
 fi
 
 # Ensure that KSQL picks up the correct log4j properties file
@@ -32,10 +38,19 @@ fi
 # the default is to pick the first IP (or network).
 export KSQL_JMX_HOSTNAME=${KSQL_JMX_HOSTNAME:-$(hostname -i | cut -d" " -f1)}
 
-# JMX port to use
-if [  $KSQL_JMX_PORT ]; then
+# JMX port to use. ksql-run-class appends the port to whichever KSQL_JMX_OPTS is
+# in effect, so setting JMX_PORT is sufficient here.
+if [ -n "${KSQL_JMX_PORT-}" ]; then
   export JMX_PORT=$KSQL_JMX_PORT
-export KSQL_JMX_OPTS="$KSQL_JMX_OPTS -Djava.rmi.server.hostname=$KSQL_JMX_HOSTNAME -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.rmi.port=$JMX_PORT -Dcom.sun.management.jmxremote.port=$JMX_PORT"
+
+  if [ -z "$KSQL_JMX_OPTS_FROM_OPERATOR" ]; then
+    echo "WARNING: KSQL_JMX_PORT is set without KSQL_JMX_OPTS. JMX will listen on loopback only."
+    echo "WARNING: To enable remote JMX, set KSQL_JMX_OPTS with authentication and TLS. See"
+    echo "WARNING: https://docs.confluent.io/platform/current/ksqldb/operate-and-deploy/monitoring.html"
+  elif [[ $KSQL_JMX_OPTS != *"java.rmi.server.hostname"* && -n "$KSQL_JMX_HOSTNAME" ]]; then
+    # Supply the RMI hostname the operator cannot know at image-build time.
+    export KSQL_JMX_OPTS="$KSQL_JMX_OPTS -Djava.rmi.server.hostname=$KSQL_JMX_HOSTNAME"
+  fi
 fi
 
 echo "===> Launching ${COMPONENT} ... "
