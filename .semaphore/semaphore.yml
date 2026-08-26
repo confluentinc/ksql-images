@@ -47,6 +47,12 @@ global_job_config:
       - echo "DEBUG pinto --help ->"; pinto --help 2>&1 | head -20
       - echo "DEBUG pinto show-versions (first 5 lines) ->"; pinto show-versions 2>&1 | head -5
       - echo "DEBUG re-run with 7.6.x directly ->"; pinto get-version --build 7.6.x --key confluent.version 2>&1; echo " (rc=$?)"
+      - echo "DEBUG confluent-devtools dist-info:"; find /home/semaphore/.local/share/uv/tools/confluent-devtools -iname "*.dist-info" -maxdepth 6 2>&1 | while read d; do echo "== $d =="; cat "$d/METADATA" 2>&1 | grep -i "^Name:\|^Version:"; done
+      - echo "DEBUG confluent-devtools install mtime:"; stat /home/semaphore/.local/share/uv/tools/confluent-devtools/bin/pinto 2>&1 | head -10
+      - echo "DEBUG uv tool list:"; uv tool list 2>&1
+      - echo "DEBUG attempting uv tool upgrade confluent-devtools:"; uv tool upgrade confluent-devtools 2>&1 | tail -30
+      - echo "DEBUG post-upgrade dist-info:"; find /home/semaphore/.local/share/uv/tools/confluent-devtools -iname "*.dist-info" -maxdepth 6 2>&1 | while read d; do echo "== $d =="; cat "$d/METADATA" 2>&1 | grep -i "^Name:\|^Version:"; done
+      - echo "DEBUG post-upgrade get-version 7.6.x ->"; pinto get-version --build 7.6.x --key confluent.version 2>&1; echo " (rc=$?)"
       - export DEFAULT_OS_TYPE="ubi"
       - export URL_CONFLUENT_VERSION=$(echo $CONFLUENT_VERSION | awk -F . '{print $1"."$2}')
       - export PACKAGES_URL="https://s3-us-west-2.amazonaws.com/dev-confluent-packages-654654529379-us-west-2/$BRANCH_TAG/$LATEST_PACKAGING_BUILD_NUMBER/PACKAGE_TYPE/$URL_CONFLUENT_VERSION"
