@@ -38,13 +38,15 @@ global_job_config:
       # Check if version is complete, otherwise use the previous version
       - (aws s3 ls $PACKAGING_BUCKET$LATEST_PACKAGING_BUILD_NUMBER/deb/ && aws s3 ls $PACKAGING_BUCKET$LATEST_PACKAGING_BUILD_NUMBER/rpm/ && aws s3 ls $PACKAGING_BUCKET$LATEST_PACKAGING_BUILD_NUMBER/archive/)
         || export LATEST_PACKAGING_BUILD_NUMBER=$(aws s3 ls $PACKAGING_BUCKET --no-paginate | grep 'PRE' | awk '{print $NF}' | awk '{print substr($1, 1, length($1)-1)}' | sort -n | tail -n 2 | head -n 1)
-      - export CONFLUENT_VERSION=$(pinto get-version --build $BUILD_KEY --key confluent.version)
+      - PINTO_RAW_OUTPUT=$(pinto get-version --build $BUILD_KEY --key confluent.version 2>&1); PINTO_RC=$?; export CONFLUENT_VERSION=$PINTO_RAW_OUTPUT
       # TEMP DEBUG (CPBR investigation): why does pinto resolve a stale/mismatched confluent.version here? Remove before merge.
-      - echo "DEBUG BUILD_KEY=$BUILD_KEY CONFLUENT_VERSION=$CONFLUENT_VERSION"
-      - echo "DEBUG which pinto -> $(which pinto)"
-      - pip show confluent-devtools 2>&1 || echo "DEBUG confluent-devtools not installed"
-      - pip show confluent-release-tools 2>&1 || echo "DEBUG confluent-release-tools not installed"
-      - python3 -c "from common_tools import config; d = config.load_config(config_name='versions', env_name='prod'); print('DEBUG 7.6.x entry ->', d.get('7.6.x')); print('DEBUG exact branch key present? ->', '$BUILD_KEY' in d)" || echo "DEBUG python introspection failed"
+      - echo "DEBUG BUILD_KEY=[$BUILD_KEY] pinto_rc=[$PINTO_RC] pinto_output=[$PINTO_RAW_OUTPUT]"
+      - echo "DEBUG which pinto -> $(which pinto)"; echo "DEBUG file -> $(file $(which pinto) 2>&1)"; echo "DEBUG shebang/head -> $(head -c 300 $(which pinto) 2>&1 | tr -d '\0')"
+      - pip list 2>&1 | grep -i "pint\|confluent\|devtools\|release-tools" || echo "DEBUG no matching pip packages"
+      - pip show pinto 2>&1 || echo "DEBUG no 'pinto' pip package"
+      - echo "DEBUG pinto --help ->"; pinto --help 2>&1 | head -20
+      - echo "DEBUG pinto show-versions (first 5 lines) ->"; pinto show-versions 2>&1 | head -5
+      - echo "DEBUG re-run with 7.6.x directly ->"; pinto get-version --build 7.6.x --key confluent.version 2>&1; echo " (rc=$?)"
       - export DEFAULT_OS_TYPE="ubi"
       - export URL_CONFLUENT_VERSION=$(echo $CONFLUENT_VERSION | awk -F . '{print $1"."$2}')
       - export PACKAGES_URL="https://s3-us-west-2.amazonaws.com/dev-confluent-packages-654654529379-us-west-2/$BRANCH_TAG/$LATEST_PACKAGING_BUILD_NUMBER/PACKAGE_TYPE/$URL_CONFLUENT_VERSION"
