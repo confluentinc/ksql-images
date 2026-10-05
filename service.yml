@@ -1,11 +1,11 @@
 name: ksql-images
 lang: python
-lang_version: "3.9"
+lang_version: '3.9'
 git:
   enable: true
 cp_dockerfile:
-  s390x_docker_repos: ['confluentinc/cp-ksqldb-server']
-  s390x_maven_modules: ['cp-ksqldb-server']
+  s390x_docker_repos: [confluentinc/cp-ksqldb-server]
+  s390x_maven_modules: [cp-ksqldb-server]
 code_artifact:
   enable: true
   package_paths:
@@ -16,25 +16,22 @@ code_artifact:
 semaphore:
   enable: true
   pipeline_type: cp-dockerfile
-  execution_time_limit: {"hours": 8}
-  docker_repos: [
-    'confluentinc/cp-ksqldb-server'
-  ]
+  execution_time_limit: {hours: 8}
+  docker_repos: [confluentinc/cp-ksqldb-server]
   community_docker_repos: []
   community_maven_modules: []
-  maven_phase: 'package'
+  maven_phase: package
   maven_skip_deploy: true
   build_arm: true
   nano_version: true
-  os_types: ["ubi9"]
-  pip_install_package: 'tox==3.28.0'
+  os_types: [ubi9]
   use_packages: true
   cp_images: true
   sign_images: true
   push_latest: true
   tasks:
     - name: cp-dockerfile-build
-      branch: "master"
+      branch: master
       pipeline_file: .semaphore/cp_dockerfile_build.yml
       parameters:
         - name: CONFLUENT_VERSION
@@ -57,7 +54,7 @@ semaphore:
         - name: SKIP_COMMUNITY
           required: false
           default_value: 'False'
-          description: 'Skip building community docker images'
+          description: Skip building community docker images
           options:
             - 'True'
             - 'False'
@@ -77,12 +74,13 @@ semaphore:
         - name: PROMOTE_OS_TYPE
           required: true
           options:
-            - 'deb'
-            - 'ubi'
+            - deb
+            - ubi
         - name: SKIP_COMMUNITY
           required: false
           default_value: 'False'
-          description: 'Skip publishing community docker images'
+          description: Skip publishing community docker images
           options:
             - 'True'
             - 'False'
+  pip_install_packages: tox==3.28.0
